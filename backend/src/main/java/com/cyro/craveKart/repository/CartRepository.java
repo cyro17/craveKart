@@ -1,4 +1,7 @@
 package com.cyro.craveKart.repository;
 
-public class CartRepository {
+import com.cyro.craveKart.model.Cart;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CartRepository extends JpaRepository<Cart, Long> {
 }
