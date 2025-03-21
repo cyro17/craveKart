@@ -2,7 +2,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import './App.css';
 import Navbar from './component/Navbar';
 import { darkTheme } from './Theme/DarkTheme';
-import Home from './component/Home';
+import Home from './component/Home/Home.jsx';
 
 function App() {
   return (

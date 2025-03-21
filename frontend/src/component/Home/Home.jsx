@@ -1,5 +1,6 @@
 import React from 'react';
 import './Home.css';
+import MultiItemCarousel from './MultiItemCarousel';
 
 export default function Home() {
     return (
@@ -17,6 +18,11 @@ export default function Home() {
                 
             </div>
         </section>
+        <section className='p-10 lg:py-10 lg:px-20'>
+          <p className='text-2xl font-semibold text-grey-400 py-3 pb-10'>Top Meals</p>
+          <MultiItemCarousel />
+        </section>
+        
       </div>
   )
 }
