@@ -1,13 +1,32 @@
 import React from 'react';
-import { Grid2 } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid2, Radio, RadioGroup, Typography } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import MenuCard from './MenuCard';
+
+const categories = [
+    "pizza", "biryani", "burger", "chinese", "south indian", "north indian"
+];
+
+const menu = [1, 1, 1, 1, 1, 1, 1, 1];
+
+const foodTypes = [
+    { lable: "All", value: "all" }, 
+    { lable: "Vegetarian Only", value: "vegetarian" }, 
+    { lable: "Non-Vegetarian", value: "non_vegetarian" },
+    { lable: "Seasonal", value: "seasonal" }, 
+]
 
 export default function RestaurantDetails() {
+    const [foodType, setFoodType] = React.useState("all");
+    const [foodCategory, setFoodCategory] = React.useState("");
+    const handleFilter = (event) => {
+        console.log(event.target.value, event.target.name)
+    }
   return (
       <div className='relative text-white-100 px-5 lg:px-20'>
           <section>
-              <h3 className='text-gray-500 py-2 mt-20'>Home/india/indian fast food</h3> 
+              <h3 className='text-gray-500 py-2 mt-10'>Home/india/indian fast food</h3> 
               <div>
                   <Grid2 container spacing={2}>
                       <Grid2 item size={{ xs:12} }>
@@ -47,6 +66,66 @@ export default function RestaurantDetails() {
                   </div>
                   
               </div>
+          </section>
+          <Divider />
+          
+          <section className='pt-[2rem] lg:flex relative'>
+              <div className='space-y-10 lg: w-[20%] filter p-5 shadow-sm'>
+                  <div className='box space-y-5 lg:sticky top-28'>
+                      <div>
+                          <Typography variant='h5' sx={{ paddingBottom: "1rem" }}>
+                              Food Type
+                          </Typography>
+
+                          <FormControl className='py-10 space-y-5 component={"fieldset"}'>
+                              <RadioGroup
+                                  name='foodType'
+                                  value={foodType}
+                                  onChange={handleFilter}
+                              >
+                                  { foodTypes.map((item, index) =>
+                                      <FormControlLabel
+                                          key={index}
+                                          value={item.value}
+                                          control={<Radio />}
+                                          label={item.lable}
+                                      />
+                                  )}
+                              </RadioGroup>
+                          </FormControl>
+                      </div>
+                      <Divider />
+                      <div>
+                          <Typography variant='h5' sx={{ paddingBottom: "1rem" }}>
+                              Food Category
+                          </Typography>
+
+                          <FormControl className='py-10 space-y-5 component={"fieldset"}'>
+                              <RadioGroup
+                                  name='foodCategory-group'
+                                  value={foodCategory}
+                                  
+                              >
+                                  { categories.map((item, index) =>
+                                      <FormControlLabel
+                                          key={index}
+                                          value={item}
+                                          control={<Radio />}
+                                          label={item}
+                                      />
+                                  )}
+                              </RadioGroup>
+                          </FormControl>
+                      </div>
+                  </div>
+              </div>
+
+              <div className='space-y-5 lg:w-[80%] lg:pl-10'>
+                  {menu.map((item, index) => {
+                      return <MenuCard key={index} label={ item} />
+                  })}
+              </div>
+              
           </section>
     </div>
   )
