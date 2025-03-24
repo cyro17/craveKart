@@ -4,6 +4,8 @@ import Navbar from './component/navbar/Navbar.jsx';
 import { darkTheme } from './Theme/DarkTheme';
 import Home from './component/Home/Home.jsx';
 import RestaurantDetails from './component/restaurant/RestaurantDetails.jsx';
+import Cart from './component/cart/Cart.jsx';
+import Profile from './component/profile/Profile.jsx';
 
 function App() {
   return (
@@ -11,7 +13,9 @@ function App() {
       <CssBaseline />
       <Navbar />
       {/* <Home /> */}
-      <RestaurantDetails />
+      {/* <RestaurantDetails /> */}
+      {/* <Cart /> */}
+      <Profile />
 
     </ThemeProvider>
   );
