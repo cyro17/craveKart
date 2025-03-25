@@ -6,14 +6,20 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import IconButton from '@mui/material/IconButton';
 import { Badge } from '@mui/material';
 import './Navbar.css';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Navbar() {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate("/");
+    }
     return (
         <div className='navbar sticky top-[0] w-full  px-5 z-50 py-[.8rem] bg-[#e91e63] lg:px-20 flex justify-between' >
-
+            
             <div className='lg:mr-10 cursor-pointer flex items-center space-x-4'>
-                <div className='logo font-semibold text-grey-300 text-2xl'>
+                <div className='logo font-semibold text-grey-300 text-2xl' onClick={handleClick}>
                     CraveKart
                 </div>
             </div>
@@ -31,7 +37,6 @@ export default function Navbar() {
                     <Badge badgeContent={4} color="secondary">
                         <ShoppingCartIcon sx={{ fontSize: "1.5rem" }} />
                     </Badge>
-
                 </IconButton>
             </div>
 
