@@ -5,8 +5,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PaymentIcon from '@mui/icons-material/Payment';
 import BusinessIcon from '@mui/icons-material/Business';
-import { Divider, Drawer, useMediaQuery } from '@mui/material';
+import {  Drawer, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 const menu = [
     {
         title: "Order", 
@@ -25,7 +26,7 @@ const menu = [
         icon: <PaymentIcon />
     },
     {
-        title: "Notificaion", 
+        title: "Notification", 
         icon: <NotificationsIcon />
     }, 
     {
@@ -47,7 +48,8 @@ export default function ProfileNavigation({open, handleClose}) {
           <Drawer anchor='left'
               open={isSmallScreen ? open : true}
               onClose={handleClose}
-              variant={isSmallScreen ? "temporary" : "permanent"} sx={{zIndex: 1}}>
+              variant={isSmallScreen ? "temporary" : "permanent"}
+              sx={{ zIndex: 1 }} >
               <div className='w-[50vw] lg:w-[20vw] h-[100vh] flex flex-col justify-center text-xl 
                                 gap-8 pt-16 '>
                   {
@@ -55,7 +57,7 @@ export default function ProfileNavigation({open, handleClose}) {
                           <div onClick={()=>handleNavigate(item)} className='px-5 flex items-center space-x-5 cursor-pointer h-20'>
                                     {item.icon}
                                     <span>{item.title}</span>
-                          </div> 
+                          </div>
                       ))
                   }
                 </div>
