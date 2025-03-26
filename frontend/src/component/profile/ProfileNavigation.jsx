@@ -26,7 +26,7 @@ const menu = [
         icon: <PaymentIcon />
     },
     {
-        title: "Notification", 
+        title: "Events", 
         icon: <NotificationsIcon />
     }, 
     {
