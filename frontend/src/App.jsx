@@ -11,8 +11,8 @@ import Events from './component/profile/Events';
 import Layout from './Layout';
 import Profile from './component/profile/Profile.jsx';
 import { Logout } from '@mui/icons-material';
-import UserProfile from './component/profile/UserProfile.jsx';
-
+import Auth from './component/Auth/Auth.jsx';
+import UserProfile from "./component/profile/UserProfile"
 
 const router = createBrowserRouter([
   {
@@ -20,12 +20,20 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home />},
-      { path: "cart", element: <Cart />},
+      { path: "cart", element: <Cart /> },
+      {
+        path: "account", element: <Home />,
+        children: [
+          { path: "login", element: <Auth /> }, 
+          { path: "register", element: <Auth /> }, 
+          
+        ]
+      },
       {
         path: "my-profile",
         element: <Profile />, 
         children: [
-          { index: true, element: <UserProfile/>},
+          { index: true, element: <UserProfile />},
           { path: "order", element: <Orders /> },
           { path: "favourite", element: <Favourites /> },
           { path: "address", element: <Address /> },

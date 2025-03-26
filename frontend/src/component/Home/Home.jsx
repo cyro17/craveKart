@@ -2,6 +2,7 @@ import React from 'react';
 import './Home.css';
 import MultiItemCarousel from './MultiItemCarousel';
 import RestaurantCard from '../restaurant/RestaurantCard';
+import Auth from '../Auth/Auth';
 
 const restaurant = [1, 1, 1, 1, 1, 1, 1, 1, 1];
 
@@ -34,7 +35,7 @@ export default function Home() {
             }
           </div>
         </section>
-        
+        <Auth/>
       </div>
   )
 }

@@ -4,9 +4,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import IconButton from '@mui/material/IconButton';
-import { Badge } from '@mui/material';
+import { Avatar, Badge } from '@mui/material';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
+import { pink } from '@mui/material/colors';
 
 
 export default function Navbar() {
@@ -30,7 +31,12 @@ export default function Navbar() {
                 </IconButton>
 
                 <IconButton className=''>
-                    <PersonIcon onClick={()=> navigate("/my-profile")} sx={{ fontSize: "1.5rem" }} >R</PersonIcon>
+                    {false ? <Avatar sx={{ bgcolor: "white", color: pink.A400 }}> R</Avatar> : 
+                        <IconButton onClick={()=> navigate("/account/login")}>
+                            <PersonIcon/>
+                        </IconButton>
+                    }
+                    
                 </IconButton>
 
                 <IconButton className=''>
