@@ -1,5 +1,6 @@
-import { Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material'
-import React from 'react'
+import { Card, CardActions, CardContent, CardMedia, IconButton, Typography } from '@mui/material'
+import React from 'react';
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function EventCard() {
   return (
@@ -30,9 +31,11 @@ export default function EventCard() {
                   </div>
               </CardContent>
 
-              <CardActions>
-                  
-              </CardActions>
+              {!false && <CardActions>
+                <IconButton color="primary" aria-label="delete">
+                    <DeleteIcon />
+                    </IconButton>
+                </CardActions>}
           </Card>
     </div>
   )
