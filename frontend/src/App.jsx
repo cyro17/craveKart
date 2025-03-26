@@ -29,17 +29,15 @@ const router = createBrowserRouter([
           { path: "order", element: <Orders /> },
           { path: "favourite", element: <Favourites /> },
           { path: "address", element: <Address /> },
-          { path: "notification", element: <Events /> }, 
+          { path: "events", element: <Events /> }, 
           { path: "logout", element: <Logout /> },
-          
         ]
       }
     ]
   }
 ]);
 
-
-function App() {
+export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -48,4 +46,3 @@ function App() {
   );
 }
 
-export default App;
