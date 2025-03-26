@@ -7,7 +7,6 @@ import RegisterForm from "./RegisterForm"
 
 export default function Auth() {
     const location = useLocation();
-    console.log(location.pathname);
     const navigate = useNavigate();
 
     const handleOnClose = () => {

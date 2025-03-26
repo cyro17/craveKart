@@ -31,7 +31,7 @@ export default function Home() {
           <h1 className='text-2xl font-semibold text-green-50 py-3'> Order From Our Handpicked Favourites</h1>
           <div className='flex flex-wrap items-center justify-around'>
             {
-              restaurant.map((item)=> <RestaurantCard/> )
+              restaurant.map((item, index)=> <RestaurantCard key={index}/> )
             }
           </div>
         </section>

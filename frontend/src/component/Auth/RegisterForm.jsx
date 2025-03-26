@@ -1,22 +1,21 @@
 import React from 'react';
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { Field, Formik } from 'formik'
-import { Form, useNavigate } from 'react-router-dom'
-
+import { Form, useNavigate } from 'react-router-dom';
 
 
 const initialValues = {
   fullName:"", 
   email: "", 
   password: "",
-  role: "ROLE_CUSTOMER"
+  role: ""
 }
 
 export default function RegisterForm() {
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log("handleSubmit")
+  const handleSubmit = (values) => {
+    console.log("values", values  )
   }
   return (
     <div>
@@ -27,8 +26,16 @@ export default function RegisterForm() {
           <Form>
             <Field
               as={TextField}
+              name="fullName"
+              label="Full Name"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+          />
+          <Field
+              as={TextField}
               name="email"
-              label="email"
+              label="Email"
               fullWidth
               variant="outlined"
               margin="normal"
@@ -36,11 +43,23 @@ export default function RegisterForm() {
             <Field
               as={TextField}
               name="password"
-              label="password"
+              label="Password"
+              type="password"
               fullWidth
               variant="outlined"
               margin="normal"
-            />
+          />
+           <Field name="role">
+              {({ field }) => (
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="role-simple-select-label">Role</InputLabel>
+                  <Select {...field} labelId="role-simple-select-label">
+                    <MenuItem value="ROLE_CUSTOMER">Customer</MenuItem>
+                    <MenuItem value="ROLE_RESTAURANT_OWNER">Restaurant Owner</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            </Field>
             <Button sx={{mt: 2, padding: "1rem "}} fullWidth type='submit' variant='contained'>
               Register
             </Button>
