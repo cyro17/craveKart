@@ -4,7 +4,7 @@ import MultiItemCarousel from './MultiItemCarousel';
 import RestaurantCard from '../restaurant/RestaurantCard';
 import Auth from '../Auth/Auth';
 
-const restaurant = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+const restaurant = [1, 1, 1, 1, 1];
 
 export default function Home() {
     return (

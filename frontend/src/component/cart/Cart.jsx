@@ -6,7 +6,7 @@ import AddressCard from './AddressCard';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import Box from '@mui/material/Box';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import * as Yup from "yup";
 
 const items = [1, 1, 1, 1, 1, 1];
@@ -56,11 +56,11 @@ export default function Cart() {
               <section className=' lg:w-[30%]space-y-6 lg:min-h-screen pt-10' >
                   <div className='w-full'>
                   {
-                      items.map((item) =>
-                          <CartItem />)
-                  }
-                  </div>
+                      items.map((item, index) =>
+                          <CartItem />
+                    )}
                   
+                  </div>
                   <Divider />
 
                   <div className="billDetails px-5 text-sm w-full">
