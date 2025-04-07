@@ -5,7 +5,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export default function RestaurantCard() {
   return (
-    <Card className='w-[18rem] mb-5'>
+    <Card className='w-[18rem] mb-5 mx-1'>
       <div className={`${true? 'cursor-pointer' : 'cursore-not-allowed'} relative`}>
         <img className='w-full h-[10rem] rounded-t-md'
           src="https://images.unsplash.com/photo-1582228096960-7f5d2ec4aa8e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW5kaWFuJTIwcmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D"

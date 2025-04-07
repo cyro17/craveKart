@@ -1,4 +1,7 @@
 package com.cyro.craveKart.model;
+
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -14,17 +17,24 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    private String name;
-    
+
+    @ManyToOne
+    private User customer;
+
     @ManyToOne
     @JsonIgnore
     private Restaurant restaurant;
     
- 
+    private String message;
+    
+    private double rating;
+
+    private LocalDateTime createdAt;
+    
+   
 }
 

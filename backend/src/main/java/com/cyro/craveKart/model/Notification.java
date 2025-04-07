@@ -1,30 +1,37 @@
 package com.cyro.craveKart.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Category {
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "recipient_id")
+    private User customer;
     
     @ManyToOne
-    @JsonIgnore
     private Restaurant restaurant;
     
- 
+    private String message;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date sentAt;
+    
+    private boolean readStatus;
+    
+    
 }
 

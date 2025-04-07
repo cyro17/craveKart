@@ -1,39 +1,44 @@
 package com.cyro.craveKart.model;
-
-
-import com.cyro.craveKart.dto.RestaurantDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cyro.craveKart.dto.RestaurantDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.Data;
+
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    private String name;
-    private String email;
-    private String password;
-    private USER_ROLE role;
+	private String fullName;
+	private String email;
+	private String password;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
-    private List<Order> orders = new ArrayList<>();
+	private USER_ROLE role;
 
-    @Transient
-    private List<RestaurantDTO> favourites = new ArrayList<>();
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Order> orders;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addresses = new ArrayList<>();
-
-
+	@ElementCollection
+	private List<RestaurantDTO> favorites=new ArrayList<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Address> addresses = new ArrayList<>();
+	
+	private String status;
 
 }

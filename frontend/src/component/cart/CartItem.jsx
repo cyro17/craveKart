@@ -29,11 +29,10 @@ export default function CartItem() {
                           </div>
                           <p>2343</p>
                       </div>
-                      <div className='pt-3 space-x-2'>
+                      <div className='pt-3 space-x-2 m-1 p-1'>
                           {
                               [1, 1, 1, 1,].map((item) => (
-                                <Chip label="ing" />
-                          
+                                <Chip label="ingredient" />
                           ))}
                           
                       </div>
