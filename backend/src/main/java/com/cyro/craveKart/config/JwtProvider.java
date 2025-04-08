@@ -1,5 +1,6 @@
 package com.cyro.craveKart.config;
 
+import com.cyro.craveKart.exception.UserException;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Date;
@@ -35,11 +36,18 @@ public class JwtProvider {
 
     }
 
-    public String getEmailFromJwtToken(String jwt) {
-        jwt=jwt.substring(7);
+    public String getEmailFromJwtToken(String jwt) throws UserException {
+        if(jwt != null && jwt.startsWith("Bearer "))
+            jwt=jwt.substring(7);
+        else throw new UserException("Invalid JWT Token format");
 
-        Claims claims=Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+        Claims claims=Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
         String email=String.valueOf(claims.get("email"));
+        System.out.println("generate email from jwt token => " + email);
         return email;
     }
 
