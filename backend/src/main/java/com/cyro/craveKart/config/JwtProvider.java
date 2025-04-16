@@ -26,7 +26,7 @@ public class JwtProvider {
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
         String roles = populateAuthorities(authorities);
 
-        return Jwts.builder()
+        String jwt=Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime()+86400000))
                 .claim("email",auth.getName())
@@ -34,9 +34,13 @@ public class JwtProvider {
                 .signWith(key)
                 .compact();
 
+        System.out.println(jwt);
+        return jwt;
+
     }
 
     public String getEmailFromJwtToken(String jwt) throws UserException {
+
         if(jwt != null && jwt.startsWith("Bearer "))
             jwt=jwt.substring(7);
         else throw new UserException("Invalid JWT Token format");
@@ -47,7 +51,6 @@ public class JwtProvider {
                 .parseClaimsJws(jwt)
                 .getBody();
         String email=String.valueOf(claims.get("email"));
-        System.out.println("generate email from jwt token => " + email);
         return email;
     }
 
