@@ -105,10 +105,9 @@ public class AuthController {
         String username = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
-        System.out.println(username + "---" + password);
-
         Authentication authentication = authenticate(username, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         String token = jwtProvider.generateToken(authentication);
         AuthResponse authResponse = new AuthResponse();
