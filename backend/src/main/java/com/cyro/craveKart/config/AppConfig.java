@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -22,16 +23,19 @@ public class AppConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        return  httpSecurity.sessionManagement(session-> session
-                .sessionCreationPolicy((SessionCreationPolicy.STATELESS)))
-                .authorizeHttpRequests(requests->
-                        requests.requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                                .requestMatchers("/api/**").authenticated()
-                                .anyRequest().permitAll()
+        httpSecurity.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(Authorize -> Authorize
+                        .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
+                        .requestMatchers("/api/**").authenticated()
+
+                        .anyRequest().permitAll()
                 )
-                .csrf(Customizer->Customizer.disable())
-                .cors(cors->cors.configurationSource(corsConfigurationSource()))
-                .build();
+                .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+
+        return httpSecurity.build();
 
     }
 

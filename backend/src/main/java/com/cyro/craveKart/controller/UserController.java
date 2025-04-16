@@ -29,7 +29,6 @@ public class UserController {
         User user = userService.findUserProfileByJwtToken(jwt);
         user.setPassword(null);
         return  new ResponseEntity<>(user, HttpStatus.ACCEPTED);
-
     }
 
 }
