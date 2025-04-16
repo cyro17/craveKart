@@ -4,6 +4,7 @@ import com.cyro.craveKart.model.Address;
 import com.cyro.craveKart.model.ContactInformation;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,5 +19,5 @@ public class CreateRestaurantRequest {
     private String closingHours;
     private List<String> images;
 
-
+    private LocalDateTime registrationDate;
 }
