@@ -16,11 +16,13 @@ public interface RestaurantService {
 
     List<Restaurant> searchRestaurant(String keyword);
 
-    public Restaurant findRestaurantById(Long id) throws Exception;
+    public Restaurant findRestaurantById(Long id) throws RestaurantException;
 
-    public Restaurant getRestaurantByUserId(Long userId) throws Exception;
+    public Restaurant getRestaurantByUserId(Long userId) throws RestaurantException;
 
-    public RestaurantDTO addtoFavourites(Long restaurantId, User user) throws Exception;
+    public RestaurantDTO addtoFavourites(Long restaurantId, User user) throws RestaurantException;
 
     public Restaurant updateRestaurantStatus(Long id) throws RestaurantException;
+
+    Restaurant findRestaurantByUserId(Long id);
 }

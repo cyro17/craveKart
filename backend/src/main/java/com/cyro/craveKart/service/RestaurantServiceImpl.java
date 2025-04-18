@@ -91,7 +91,7 @@ public class RestaurantServiceImpl implements RestaurantService{
     }
 
     @Override
-    public RestaurantDTO addtoFavourites(Long restaurantId, User user) throws Exception {
+    public RestaurantDTO addtoFavourites(Long restaurantId, User user) throws RestaurantException {
         Restaurant res = findRestaurantById(restaurantId);
         RestaurantDTO restaurantDTO = new RestaurantDTO();
         restaurantDTO.setTitle(res.getName());
@@ -107,8 +107,10 @@ public class RestaurantServiceImpl implements RestaurantService{
                 break;
             }
         }
-        if(isFavoured) favorites.removeIf(fav -> fav.getId().equals(restaurantId));
-        else favorites.add(restaurantDTO);
+        if(isFavoured)
+            favorites.removeIf(fav -> fav.getId().equals(restaurantId));
+        else
+            favorites.add(restaurantDTO);
 
         userRepository.save(user);
         return restaurantDTO;
@@ -119,5 +121,10 @@ public class RestaurantServiceImpl implements RestaurantService{
         Restaurant restaurant = findRestaurantById(id);
         restaurant.setOpen(!restaurant.isOpen());
         return restaurantRepository.save(restaurant);
+    }
+
+    @Override
+    public Restaurant findRestaurantByUserId(Long userId) {
+        return restaurantRepository.findByOwnerId(userId);
     }
 }
