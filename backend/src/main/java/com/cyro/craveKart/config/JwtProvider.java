@@ -11,7 +11,6 @@ import javax.crypto.SecretKey;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -50,8 +49,7 @@ public class JwtProvider {
                 .build()
                 .parseClaimsJws(jwt)
                 .getBody();
-        String email=String.valueOf(claims.get("email"));
-        return email;
+        return String.valueOf(claims.get("email"));
     }
 
     public String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
