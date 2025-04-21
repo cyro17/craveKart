@@ -12,9 +12,11 @@ import com.cyro.craveKart.repository.CartItemRepository;
 import com.cyro.craveKart.repository.FoodRepository;
 import com.cyro.craveKart.request.AddCartItemRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class CartServiceImpl implements CartService {
     @Autowired
     private CartRepository cartRepository;
@@ -114,10 +116,12 @@ public class CartServiceImpl implements CartService {
         Optional<Cart> opt=cartRepository.findByCustomer_Id(userId);
 
         if(opt.isPresent()) {
-            return opt.get();
+            Cart cart = opt.get();
+            cart.setTotal(calculateCartTotals(cart));
+            return cart;
         }
-        throw new CartException("cart not found");
 
+        throw new CartException("cart not found");
     }
 
     @Override

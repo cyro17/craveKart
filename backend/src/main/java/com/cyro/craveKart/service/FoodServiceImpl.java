@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class FoodServiceImpl  implements FoorService{
+public class FoodServiceImpl  implements FoodService {
 
     @Autowired
     private FoodRepository foodRepository;
