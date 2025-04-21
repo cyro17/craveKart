@@ -55,3 +55,25 @@ export function getUser(token) {
         }
     }
 }
+
+export function loginUser(reqData) {
+    return async function (dispatch) {
+        try {
+            dispatch({ type: "auth/loginRequest" });
+            const { data } = await axios.post(`${API_URL}/auth/signin`, reqData.data);
+            console.log("jwt token : ", data.jwt);
+            if (data.jwt) localStorage.setItem("jwt", data.jwt);
+
+            else reqData.navigate("/");
+
+            dispatch({ type: "auth/loginSuccess", payload: data.jwt });
+        } catch (error) {
+            dispatch({
+                type: "auth/loginFailure", payload:
+                    error.response && error.response.data.message ?
+                        error.response.data.message : error.message
+            });
+        }
+
+    }
+}
