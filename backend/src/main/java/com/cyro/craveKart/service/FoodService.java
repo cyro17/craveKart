@@ -8,7 +8,7 @@ import com.cyro.craveKart.request.CreateFoodRequest;
 
 import java.util.List;
 
-public interface FoorService {
+public interface FoodService {
 
     public Food createFood(CreateFoodRequest createFoodRequest,
                            Category category,

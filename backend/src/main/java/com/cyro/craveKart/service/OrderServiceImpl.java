@@ -49,9 +49,6 @@ public class OrderServiceImpl implements OrderService {
             user.getAddresses().add(savedAddress);
         }
 
-
-        System.out.println("user addresses --------------  "+user.getAddresses());
-
         userRepository.save(user);
 
         Optional<Restaurant> restaurant = restaurantRepository.findById(order.getRestaurantId());
@@ -106,7 +103,6 @@ public class OrderServiceImpl implements OrderService {
         if(order==null) {
             throw new OrderException("Order not found with the id "+orderId);
         }
-
         orderRepository.deleteById(orderId);
 
     }
@@ -129,13 +125,11 @@ public class OrderServiceImpl implements OrderService {
             throws OrderException, RestaurantException {
 
         List<Order> orders = orderRepository.findOrdersByRestaurantId(restaurantId);
-
         if(orderStatus!=null) {
             orders = orders.stream()
                     .filter(order->order.getOrderStatus().equals(orderStatus))
                     .collect(Collectors.toList());
         }
-
         return orders;
     }
 
@@ -144,15 +138,12 @@ public class OrderServiceImpl implements OrderService {
     public Order updateOrder(Long orderId, String orderStatus) throws OrderException {
         Order order=findOrderById(orderId);
 
-        System.out.println("--------- "+orderStatus);
-
         if(orderStatus.equals("OUT_FOR_DELIVERY") || orderStatus.equals("DELIVERED")
                 || orderStatus.equals("COMPLETED") || orderStatus.equals("PENDING")) {
             order.setOrderStatus(orderStatus);
-            Notification notification=notificationService.sendOrderStatusNotification(order);
+            Notification notification = notificationService.sendOrderStatusNotification(order);
             return orderRepository.save(order);
         }
         else throw new OrderException("Please Select A Valid Order Status");
     }
-
 }
