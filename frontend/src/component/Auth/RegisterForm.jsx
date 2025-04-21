@@ -1,7 +1,10 @@
 import React from 'react';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
-import { Field, Formik } from 'formik'
-import { Form, useNavigate } from 'react-router-dom';
+import { Field, Formik, Form } from 'formik'; 
+import { useDispatch } from 'react-redux';
+import { healthCheck, registerUser } from '../../State/Authentication/Action';
+import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 
 const initialValues = {
@@ -11,18 +14,42 @@ const initialValues = {
   role: ""
 }
 
+const validationSchema = Yup.object({
+  fullName: Yup.string().required("Full Name is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .required("Password is required"),
+});
+
+
+
 export default function RegisterForm() {
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
 
   const handleSubmit = (values) => {
-    console.log("values", values  )
+    console.log("submit handler : ", values);
+    dispatch(registerUser({userData: values, navigate}))
   }
+
+  const handleHealthCheck = () => {
+    dispatch(healthCheck());
+  }
+
   return (
     <div>
       <Typography variant='h5' className='text-center'>
         Register 
       </Typography>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
           <Form>
             <Field
               as={TextField}
@@ -59,8 +86,13 @@ export default function RegisterForm() {
                   </Select>
                 </FormControl>
               )}
-            </Field>
-            <Button sx={{mt: 2, padding: "1rem "}} fullWidth type='submit' variant='contained'>
+          </Field>
+          <Button onClick={handleHealthCheck}> health Check</Button>
+          <Button sx={{ mt: 2, padding: "1rem " }}
+            fullWidth
+            type='submit'
+            variant='contained'
+          >
               Register
             </Button>
           </Form>
