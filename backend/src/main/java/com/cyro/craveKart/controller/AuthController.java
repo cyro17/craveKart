@@ -109,7 +109,6 @@ public class AuthController {
         Authentication authentication = authenticate(username, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         String token = jwtProvider.generateToken(authentication);
         AuthResponse authResponse = new AuthResponse();
 
@@ -117,7 +116,8 @@ public class AuthController {
         authResponse.setJwt(token);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        String rolename = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
+        String rolename = authorities.isEmpty() ?
+                null : authorities.iterator().next().getAuthority();
 
         authResponse.setRole(USER_ROLE.valueOf(rolename));
         return  new ResponseEntity<>(authResponse, HttpStatus.OK);
@@ -127,7 +127,6 @@ public class AuthController {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
         if(userDetails == null) {
-            System.out.println("sign in userdetails null = " + userDetails);
             throw new BadCredentialsException("Invalid Username or Password !! ");
         }
 

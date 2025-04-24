@@ -49,16 +49,18 @@ const authSlice = createSlice({
         },
         registerSuccess: (state, action) => {
             state.isLoading = false;
-            state.jwt = action.payload;
+            state.jwt = action?.payload;
             state.success = "Register Success";
         },
         // add to fav success
 
         loginSuccess: (state, action) => {
             state.isLoading = false;
+            console.log(action.payload.jwt)
             state.jwt = action.payload?.jwt;
             state.success = "Login Success";
         },
+
         getUserSuccess: (state, action) => {
             state.isLoading = false;
             state.user = action.payload;

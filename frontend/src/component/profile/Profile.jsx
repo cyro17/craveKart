@@ -9,7 +9,9 @@ export default function Profile() {
         <div className="lg:flex lg:space-x-4 p-4">
             {/* Sidebar */}
             <div className="sticky top-0 h-[80vh] lg:w-[20%]">
-            <ProfileNavigation open={openSideBar} handleClose={() => setOpenSideBar(false)} />
+                <ProfileNavigation
+                    open={openSideBar}
+                    handleClose={() => setOpenSideBar(false)} />
             </div>
     
             {/* Main Content */}
