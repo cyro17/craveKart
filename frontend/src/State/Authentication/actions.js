@@ -10,11 +10,13 @@ export function registerUser(reqData) {
         dispatch({ type: "auth/registerRequest" });
         try {
             const { data } = await axios.post(`${API_URL}/auth/signup`, userData);
-            console.log("response data :", data);
+            // console.log("response data :", data);
 
-            if (data.jwt) localStorage.setItem("jwt", data.jwt);
-
-            else navigate("/login");
+            if (data.jwt) {
+                localStorage.setItem("jwt", data.jwt);
+                dispatch({ type: "auth/registerSuccess", payload: data.jwt });
+                navigate("/");
+            }
         } catch (err) {
             console.log(err);
             dispatch({ type: "auth/registerFail", payload: err });
@@ -48,7 +50,7 @@ export function getUser(token) {
             const user = response.data;
             console.log("user", user);
             dispatch({ type: "auth/getUserSuccess", payload: user })
-            console.log("req user ", user);
+
         } catch (error) {
             const errorMessage = error.message;
             dispatch({ type: "auth/getUserFailure", payload: errorMessage });
@@ -61,12 +63,11 @@ export function loginUser(reqData) {
         try {
             dispatch({ type: "auth/loginRequest" });
             const { data } = await axios.post(`${API_URL}/auth/signin`, reqData.data);
-            console.log("jwt token : ", data.jwt);
+            console.log("data : ", data);
+
             if (data.jwt) localStorage.setItem("jwt", data.jwt);
-
-            else reqData.navigate("/");
-
-            dispatch({ type: "auth/loginSuccess", payload: data.jwt });
+            dispatch({ type: "auth/loginSuccess", payload: data });
+            reqData.navigate("/");
         } catch (error) {
             dispatch({
                 type: "auth/loginFailure", payload:
@@ -74,6 +75,13 @@ export function loginUser(reqData) {
                         error.response.data.message : error.message
             });
         }
-
     }
 }
+
+export function logout() {
+    return async function (dispatch) {
+        dispatch({ type: "auth/logout" });
+        localStorage.removeItem("jwt");
+    }
+}
+

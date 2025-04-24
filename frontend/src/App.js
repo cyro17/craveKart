@@ -15,7 +15,8 @@ import Auth from './component/Auth/Auth.jsx';
 import UserProfile from "./component/profile/UserProfile.jsx"
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getUser } from './State/Authentication/Action.js';
+import { getUser } from './State/Authentication/actions.js';
+import { getAllRestaurantRequest } from './State/Customers/Restaurant/restaurantSlice.js';
 
 const router = createBrowserRouter([
   {
@@ -50,16 +51,25 @@ const router = createBrowserRouter([
 
 export default function App() {
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
+  const { auth } = useSelector(state => state);
+  // const jwt = localStorage.setItem("jwt", auth.jwt);
+  const jwt = localStorage.getItem("jwt")
   console.log("auth", auth);
-  const jwt = localStorage.setItem("jwt", auth.jwt);
 
   useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    console.log("jwt on mount", jwt);
     if (jwt) {
       dispatch(getUser(jwt));
+      dispatch(getAllRestaurantRequest(jwt));
     }
   }, [auth.jwt]);
 
+  useEffect(() => {
+    if (auth.user?.role === "ROLE_RESTAURANT_OWNER") {
+
+    }
+  }, [auth.user])
 
   return (
     <ThemeProvider theme={darkTheme}>
