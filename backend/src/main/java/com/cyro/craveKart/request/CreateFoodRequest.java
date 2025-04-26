@@ -3,6 +3,7 @@ package com.cyro.craveKart.request;
 import com.cyro.craveKart.model.Category;
 import com.cyro.craveKart.model.IngredientsItem;
 import lombok.Data;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class CreateFoodRequest {
     private List<String> images;
 
 
-    private Long restaurantId;
+    private ObjectId restaurantId;
 
     private boolean vegetarian;
     private boolean seasonal;

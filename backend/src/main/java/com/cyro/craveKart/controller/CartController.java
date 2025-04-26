@@ -10,6 +10,7 @@ import com.cyro.craveKart.request.AddCartItemRequest;
 import com.cyro.craveKart.request.UpdateCartItemRequest;
 import com.cyro.craveKart.service.CartService;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class CartController {
     }
 
     @DeleteMapping("/cart-item/{id}/remove")
-    public ResponseEntity<Cart> removeItemFromCart(@PathVariable Long id,
+    public ResponseEntity<Cart> removeItemFromCart(@PathVariable ObjectId id,
                                                    @RequestHeader("Authorization") String jwt)
             throws UserException, CartException, CartItemException {
 
@@ -50,7 +51,7 @@ public class CartController {
     }
 
     @GetMapping("/cart/total")
-    public ResponseEntity<Double> calculateCartTotals(@RequestParam Long cartId,
+    public ResponseEntity<Double> calculateCartTotals(@RequestParam ObjectId cartId,
                                                       @RequestHeader("Authorization") String jwt)
             throws UserException, CartException {
         User user = userService.findUserProfileByJwtToken(jwt);

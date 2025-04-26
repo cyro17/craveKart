@@ -7,6 +7,7 @@ import com.cyro.craveKart.service.FoodServiceImpl;
 import com.cyro.craveKart.service.RestaurantService;
 import com.cyro.craveKart.service.UserService;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class FoodController {
             @RequestParam boolean seasonal,
             @RequestParam boolean nonVeg,
             @RequestParam(required = false) String food_category,
-            @PathVariable Long restaurantId,
+            @PathVariable ObjectId restaurantId,
             @RequestHeader("Authorization") String jwt) throws UserException {
 
         User user = userService.findUserProfileByJwtToken(jwt);

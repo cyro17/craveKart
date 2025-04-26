@@ -4,49 +4,43 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "foods") // Specifies the MongoDB collection name
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Food {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
+
+    @Id // MongoDB uses @Id for the primary key
+    private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if needed)
+
     private String name;
     private String description;
     private Long price;
-    
-    @ManyToOne
+
+    @DBRef // MongoDB reference for Category (similar to @ManyToOne in JPA)
     private Category foodCategory;
 
-
-    @ElementCollection
-    @Column(length = 1000)
-    private List<String> images;
+    private List<String> images = new ArrayList<>(); // MongoDB stores lists directly
 
     private boolean available;
 
-//    @JsonIgnore
-    @ManyToOne
+    @DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
     private Restaurant restaurant;
-    
+
     private boolean isVegetarian;
     private boolean isSeasonal;
-    
-    @ManyToMany
-    private List<IngredientsItem> ingredients=new ArrayList<>();
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    @DBRef // MongoDB reference for IngredientsItem (similar to @ManyToMany in JPA)
+    private List<IngredientsItem> ingredients = new ArrayList<>();
 
-
-    
+    private Date creationDate; // MongoDB stores Date objects as is
 }

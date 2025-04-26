@@ -1,36 +1,30 @@
 package com.cyro.craveKart.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Data
+import java.util.ArrayList;
+import java.util.List;
+
+@Document(collection = "carts") // This specifies the MongoDB collection name
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Cart {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "customer_id")
+	@Id // MongoDB uses @Id for primary key
+	private ObjectId id; // MongoDB IDs are typically Strings (not Long)
+
+	@DBRef // MongoDB reference for customer (similar to @OneToOne)
 	private User customer;
 
-	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<CartItem> items = new ArrayList<>();
-	
-	private Long total;
+	private List<CartItem> items = new ArrayList<>(); // MongoDB stores embedded objects
 
+	private Long total;
 }

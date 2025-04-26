@@ -1,47 +1,40 @@
 package com.cyro.craveKart.model;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.cyro.craveKart.dto.RestaurantDTO;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyro.craveKart.dto.RestaurantDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.Data;
-
-@Entity
+@Document(collection = "users") // MongoDB collection name
 @Data
+@NoArgsConstructor
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@Id // MongoDB uses @Id for the primary key
+	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
 
 	private String fullName;
 	private String email;
 
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private String password;
+	private String password; // Keep the password as a regular field (use @JsonProperty for sensitive data)
 
-	private USER_ROLE role;
+	private USER_ROLE role; // Assume this is an enum for the user's role
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<Order> orders;
+	@DBRef // MongoDB reference for Order (similar to @OneToMany in JPA)
+	private List<Order> orders = new ArrayList<>();
 
-	@ElementCollection
-	private List<RestaurantDTO> favorites=new ArrayList<>();
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<RestaurantDTO> favorites = new ArrayList<>(); // Embedded list of RestaurantDTO objects
+
+	@DBRef // MongoDB reference for Address (similar to @OneToMany in JPA)
 	private List<Address> addresses = new ArrayList<>();
-	
-	private String status;
 
+	private String status;
 }

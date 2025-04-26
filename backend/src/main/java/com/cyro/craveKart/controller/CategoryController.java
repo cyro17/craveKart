@@ -6,6 +6,7 @@ import com.cyro.craveKart.model.Category;
 import com.cyro.craveKart.model.User;
 import com.cyro.craveKart.service.CategoryServiceImpl;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CategoryController {
 
     @GetMapping("/category/restaurant/{id}")
     public ResponseEntity<List<Category>> getRestaurantsCategory(
-            @PathVariable Long id,
+            @PathVariable ObjectId id,
             @RequestHeader("Authorization")String jwt) throws RestaurantException, UserException {
 
         List<Category> categories=categoryService.findCategoryByRestaurantId(id);

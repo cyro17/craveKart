@@ -10,6 +10,7 @@ import com.cyro.craveKart.response.ApiResponse;
 import com.cyro.craveKart.service.FoodServiceImpl;
 import com.cyro.craveKart.service.RestaurantServiceImpl;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class AdminFoodController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteFood(@PathVariable Long id,
+    public ResponseEntity<ApiResponse> deleteFood(@PathVariable ObjectId id,
                                                   @RequestHeader("Authorization") String jwt)
             throws UserException, RestaurantException {
 
@@ -54,7 +55,7 @@ public class AdminFoodController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Food> updateFoodAvailabilityStatus(@PathVariable Long id,
+    public ResponseEntity<Food> updateFoodAvailabilityStatus(@PathVariable ObjectId id,
                                                                     @RequestHeader("Authorization") String jwt)
             throws UserException {
 

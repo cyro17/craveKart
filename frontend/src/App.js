@@ -15,8 +15,9 @@ import Auth from './component/Auth/Auth.jsx';
 import UserProfile from "./component/profile/UserProfile.jsx"
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getUser } from './State/Authentication/actions.js';
+import { getUser } from './State/Admin/Authentication/actions.js';
 import { getAllRestaurantRequest } from './State/Customers/Restaurant/restaurantSlice.js';
+import { getRestaurantByUserId } from './State/Customers/Restaurant/actions.js';
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,7 @@ export default function App() {
 
   useEffect(() => {
     if (auth.user?.role === "ROLE_RESTAURANT_OWNER") {
+      dispatch(getRestaurantByUserId(auth.jwt || jwt));
 
     }
   }, [auth.user])

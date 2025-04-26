@@ -5,14 +5,14 @@ import com.cyro.craveKart.exception.UserException;
 import com.cyro.craveKart.model.Cart;
 import com.cyro.craveKart.model.USER_ROLE;
 import com.cyro.craveKart.model.User;
+import com.cyro.craveKart.repository.CartItemsRepo;
+import com.cyro.craveKart.repository.CartRepository;
+import com.cyro.craveKart.repository.OrderItemRepository;
 import com.cyro.craveKart.repository.UserRepository;
 import com.cyro.craveKart.request.LoginRequest;
 import com.cyro.craveKart.response.AuthResponse;
-import com.cyro.craveKart.service.CartRepository;
 import com.cyro.craveKart.service.CustomUserDetailsService;
 import com.cyro.craveKart.service.UserService;
-import jdk.jshell.spi.ExecutionControl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")

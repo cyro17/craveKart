@@ -1,38 +1,31 @@
 package com.cyro.craveKart.model;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "ingredientCategories") // Specifies the MongoDB collection name
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class IngredientCategory {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	private String name;
-	
-	@JsonIgnore
-	@ManyToOne
-	private Restaurant restaurant;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
-	private List<IngredientsItem> ingredients= new ArrayList<>();
 
+	@Id // MongoDB uses @Id for primary key
+	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if needed)
+
+	private String name;
+
+	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne)
+	private Restaurant restaurant;
+
+	@DBRef // MongoDB reference for IngredientsItem (similar to @OneToMany)
+	private List<IngredientsItem> ingredients = new ArrayList<>();
 }

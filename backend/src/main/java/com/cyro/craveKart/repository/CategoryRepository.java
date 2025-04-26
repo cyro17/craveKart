@@ -1,14 +1,12 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.Category;
-import com.cyro.craveKart.service.CategoryService;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-
-public interface CategoryRepository extends JpaRepository<Category, Long> {
-
-    public List<Category> findByRestaurantId(Long id);
+@Repository
+public interface CategoryRepository extends MongoRepository<Category, ObjectId> {
+    public List<Category> findByRestaurantId(ObjectId id);
 }

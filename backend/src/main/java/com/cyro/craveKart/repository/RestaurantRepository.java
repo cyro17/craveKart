@@ -1,17 +1,21 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.Restaurant;
-import com.cyro.craveKart.service.RestaurantService;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+@Repository
+public interface RestaurantRepository extends MongoRepository<Restaurant, ObjectId> {
 
-    @Query("SELECT r FROM Restaurant r WHERE lower(r.name) LIKE lower(concat('%', :query, '%')) OR lower(r.cuisineType) LIKE lower(concat('%', :query, '%'))")
+    @Query("{ $or: [ { 'name': { $regex: ?0, $options: 'i' } }, { 'cuisineType': { $regex: ?0, $options: 'i' } } ] }")
     List<Restaurant> findBySearchQuery(String query);
 
-    Restaurant findByOwnerId(Long userId);
+    Restaurant findByOwnerId(ObjectId userId);
 
 }

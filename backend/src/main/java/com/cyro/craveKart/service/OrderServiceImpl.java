@@ -7,6 +7,7 @@ import com.cyro.craveKart.exception.UserException;
 import com.cyro.craveKart.model.*;
 import com.cyro.craveKart.repository.*;
 import com.cyro.craveKart.request.OrderRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(Long orderId) throws OrderException {
+    public void cancelOrder(ObjectId orderId) throws OrderException {
         Order order =findOrderById(orderId);
         if(order==null) {
             throw new OrderException("Order not found with the id "+orderId);
@@ -107,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    public Order findOrderById(Long orderId) throws OrderException {
+    public Order findOrderById(ObjectId orderId) throws OrderException {
         Optional<Order> order = orderRepository.findById(orderId);
         if(order.isPresent()) return order.get();
 
@@ -115,13 +116,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getUserOrders(Long userId) throws OrderException {
+    public List<Order> getUserOrders(ObjectId userId) throws OrderException {
         List<Order> orders=orderRepository.findAllUserOrders(userId);
         return orders;
     }
 
     @Override
-    public List<Order> getOrdersOfRestaurant(Long restaurantId,String orderStatus)
+    public List<Order> getOrdersOfRestaurant(ObjectId restaurantId,String orderStatus)
             throws OrderException, RestaurantException {
 
         List<Order> orders = orderRepository.findOrdersByRestaurantId(restaurantId);
@@ -135,7 +136,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order updateOrder(Long orderId, String orderStatus) throws OrderException {
+    public Order updateOrder(ObjectId orderId, String orderStatus) throws OrderException {
         Order order=findOrderById(orderId);
 
         if(orderStatus.equals("OUT_FOR_DELIVERY") || orderStatus.equals("DELIVERED")

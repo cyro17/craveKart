@@ -4,6 +4,7 @@ import com.cyro.craveKart.model.Notification;
 import com.cyro.craveKart.model.Order;
 import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.model.User;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface NotificationService {
     public void sendRestaurantNotification(Restaurant restaurant, String message);
     public void sendPromotionalNotification(User user, String message);
 
-    public List<Notification> findUsersNotification(Long userId);
+    public List<Notification> findUsersNotification(ObjectId userId);
 }

@@ -1,17 +1,15 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
+@Repository
+public interface UserRepository extends MongoRepository<User, ObjectId> {
 
-public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByStatus(String status);
 
-    @Query("SELECT u FROM User u where u.status='PENDING'")
-    List<User> getPendingRestaurantOwners();
-
-    public User findByEmail(String username);
+    User findByEmail(String username);
 }

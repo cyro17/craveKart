@@ -5,6 +5,7 @@ import com.cyro.craveKart.model.Category;
 import com.cyro.craveKart.model.Food;
 import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.request.CreateFoodRequest;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -13,9 +14,9 @@ public interface FoodService {
     public Food createFood(CreateFoodRequest createFoodRequest,
                            Category category,
                            Restaurant restaurant) throws FoodException;
-    void deleteFood(Long foodId) throws FoodException;
+    void deleteFood(ObjectId foodId) throws FoodException;
 
-    public List<Food> getRestaurantsFood(Long restaurantId,
+    public List<Food> getRestaurantsFood(ObjectId restaurantId,
                                          boolean isVeg,
                                          boolean isNonVeg,
                                          boolean isSeasonal,
@@ -23,8 +24,8 @@ public interface FoodService {
 
     public List<Food> searchFood(String food);
 
-    public Food findFoodById(Long foodId) throws FoodException;
+    public Food findFoodById(ObjectId foodId) throws FoodException;
 
-    public Food updateAvalibilityStatus(Long foodId) throws FoodException;
+    public Food updateAvalibilityStatus(ObjectId foodId) throws FoodException;
 
 }

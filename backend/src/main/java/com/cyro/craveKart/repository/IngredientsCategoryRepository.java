@@ -1,22 +1,24 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.IngredientCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.bson.types.ObjectId;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface IngredientsCategoryRepository extends JpaRepository<IngredientCategory, Long> {
+@Repository
+public interface IngredientsCategoryRepository extends MongoRepository<IngredientCategory, ObjectId> {
 
-    List<IngredientCategory> findByRestaurantId(Long id);
+    @Query("{ 'restaurant.id': ?0 }")
+    List<IngredientCategory> findByRestaurantId(ObjectId restaurantId);
 
-    @Query("SELECT e FROM IngredientCategory e "
-            + "WHERE e.restaurant.id = :restaurantId "
-            + "AND lower(e.name) = lower(:name)")
+    @Query("{ 'restaurant.id': ?0, 'name': { $regex: ?1, $options: 'i' } }")
     IngredientCategory findByRestaurantIdAndNameIgnoreCase(
-            @Param("restaurantId") Long restaurantId,
-            @Param("name") String name
+            ObjectId restaurantId,
+            String name
     );
 
 }

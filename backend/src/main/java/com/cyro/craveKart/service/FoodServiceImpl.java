@@ -7,6 +7,7 @@ import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.repository.FoodRepository;
 import com.cyro.craveKart.repository.IngredientsCategoryRepository;
 import com.cyro.craveKart.request.CreateFoodRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,14 +52,14 @@ public class FoodServiceImpl  implements FoodService {
     }
 
     @Override
-    public void deleteFood(Long foodId) throws FoodException {
+    public void deleteFood(ObjectId foodId) throws FoodException {
         Food foodById = findFoodById(foodId);
         foodById.setRestaurant(null);
         foodRepository.delete(foodById);
     }
 
     @Override
-    public List<Food> getRestaurantsFood(Long restaurantId,
+    public List<Food> getRestaurantsFood(ObjectId restaurantId,
                                          boolean isVeg,
                                          boolean isNonVeg,
                                          boolean isSeasonal,
@@ -114,14 +115,14 @@ public class FoodServiceImpl  implements FoodService {
     }
 
     @Override
-    public Food findFoodById(Long foodId) throws FoodException {
+    public Food findFoodById(ObjectId foodId) throws FoodException {
         Optional<Food> food = foodRepository.findById(foodId);
         if(food.isPresent()) return food.get();
         throw new FoodException("Food with id : " + foodId + "not found ");
     }
 
     @Override
-    public Food updateAvalibilityStatus(Long foodId) throws FoodException {
+    public Food updateAvalibilityStatus(ObjectId foodId) throws FoodException {
         Food food = findFoodById(foodId);
         food.setAvailable(!food.isAvailable());
         foodRepository.save(food);

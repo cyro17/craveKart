@@ -3,7 +3,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../State/Authentication/actions';
+import { logout } from '../../State/Admin/Authentication/actions';
 
 export default function UserProfile() {
   const navigate = useNavigate();

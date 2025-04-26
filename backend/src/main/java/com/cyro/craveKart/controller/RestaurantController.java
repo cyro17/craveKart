@@ -7,6 +7,7 @@ import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.model.User;
 import com.cyro.craveKart.service.RestaurantService;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> findRestaurantById(@PathVariable Long id)
+    public ResponseEntity<Restaurant> findRestaurantById(@PathVariable ObjectId id)
             throws RestaurantException {
         Restaurant restaurant = restaurantService.findRestaurantById(id);
         return  ResponseEntity.ok(restaurant);
@@ -52,7 +53,7 @@ public class RestaurantController {
     @PutMapping("/{id}/add-favorites")
     public ResponseEntity<RestaurantDTO> addToFavorite(
             @RequestHeader("Authorization") String jwt,
-            @PathVariable Long id
+            @PathVariable ObjectId id
     ) throws RestaurantException, UserException{
 
         User user = userService.findUserProfileByJwtToken(jwt);

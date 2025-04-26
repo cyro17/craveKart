@@ -10,6 +10,7 @@ import com.cyro.craveKart.response.ApiResponse;
 import com.cyro.craveKart.service.RestaurantService;
 import com.cyro.craveKart.service.RestaurantServiceImpl;
 import com.cyro.craveKart.service.UserServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class AdminRestaurantController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Restaurant> updateRestaurant(@PathVariable Long id, @RequestBody CreateRestaurantRequest req,
+    public ResponseEntity<Restaurant> updateRestaurant(@PathVariable ObjectId id, @RequestBody CreateRestaurantRequest req,
                                                        @RequestHeader("Authorization") String jwt) throws RestaurantException, UserException {
         User user = userService.findUserProfileByJwtToken(jwt);
         Restaurant restaurant = restaurantService.updateRestaurant(id, req);
@@ -62,7 +63,7 @@ public class AdminRestaurantController {
     @PutMapping("/{id}/status")
     public ResponseEntity<Restaurant> updateRestaurantStatus(
             @RequestHeader("Authorization") String jwt,
-            @PathVariable Long id
+            @PathVariable ObjectId id
     ) throws RestaurantException, UserException{
         Restaurant restaurant = restaurantService.updateRestaurantStatus(id);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
@@ -70,7 +71,7 @@ public class AdminRestaurantController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteRestaurantById(@PathVariable("id") Long restaurantId,
+    public ResponseEntity<ApiResponse> deleteRestaurantById(@PathVariable("id") ObjectId restaurantId,
                                                             @RequestHeader("Authorization") String jwt) throws RestaurantException, UserException {
         User user = userService.findUserProfileByJwtToken(jwt);
         restaurantService.deleteRestaurant(restaurantId);
