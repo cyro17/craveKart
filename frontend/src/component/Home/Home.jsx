@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Home.css';
 import MultiItemCarousel from './MultiItemCarousel';
 import RestaurantCard from '../restaurant/RestaurantCard';
 import Auth from '../Auth/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllRestaurant } from '../../State/Customers/Restaurant/actions';
 
-const restaurant = [1, 1, 1, 1, 1];
+// const restaurant = [1, 1, 1, 1, 1];
 
 export default function Home() {
+
+  const dispatch = useDispatch();
+  const { auth, restaurant } = useSelector(store => store);
+  console.log(restaurant);
+  useEffect(() => {
+    if (auth.user) {
+      dispatch(getAllRestaurant(localStorage.getItem("jwt")));
+    }
+  }, [auth.user])
+
     return (
       <div className='pb-10'>    
         <section className='banner -z-50 relative flex flex-col justify-center items-center'>
@@ -28,10 +40,13 @@ export default function Home() {
         </section>
 
         <section className='px-5 lg:px-20'>
-          <h1 className='text-2xl font-semibold text-green-50 py-3'> Order From Our Handpicked Favourites</h1>
+          <h1 className='text-2xl font-semibold text-green-50 py-3'>
+            Order From Our Handpicked Favourites
+          </h1>
           <div className='flex flex-wrap items-center justify-around'>
             {
-              restaurant.map((item, index)=> <RestaurantCard key={index}/> )
+              restaurant.restaurants.map((item, index) =>
+                <RestaurantCard data={item} index = {index} />)
             }
           </div>
         </section>

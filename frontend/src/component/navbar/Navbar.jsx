@@ -24,7 +24,7 @@ export default function Navbar() {
         if (auth.user?.role === "ROLE_CUSTOMER")
             navigate("/my-profile");
         else
-            navigate("/");
+            navigate("/admin/restaurant");
     }
 
     return (

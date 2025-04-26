@@ -1,12 +1,16 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.Notification;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.bson.types.ObjectId;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+@Repository
+public interface NotificationRepository extends MongoRepository<Notification, ObjectId> {
 
-    public List<Notification> findByCustomerId(Long userId);
-    public List<Notification> findByRestaurantId(Long restaurantId);
+    public List<Notification> findByCustomerId(ObjectId userId);
+    public List<Notification> findByRestaurantId(ObjectId restaurantId);
 }

@@ -5,6 +5,7 @@ import com.cyro.craveKart.model.IngredientCategory;
 import com.cyro.craveKart.model.IngredientsItem;
 import com.cyro.craveKart.request.CreateIngredientRequest;
 import com.cyro.craveKart.service.IngredientsServiceImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class IngredientsController {
     }
 
     @PutMapping("/{id}/stock")
-    public ResponseEntity<IngredientsItem> updateStock(@PathVariable Long id) throws Exception{
+    public ResponseEntity<IngredientsItem> updateStock(@PathVariable ObjectId id) throws Exception{
         IngredientsItem ingredientsItem = ingredientsService.updateStock(id);
         return  new ResponseEntity<>(ingredientsItem, HttpStatus.OK);
     }
@@ -49,7 +50,7 @@ public class IngredientsController {
 
     @GetMapping("/restaurant/{id}/category")
     public ResponseEntity<List<IngredientCategory>> restaurantsIngredientCategory(
-            @PathVariable Long id) throws Exception{
+            @PathVariable ObjectId id) throws Exception{
         List<IngredientCategory> items=ingredientsService.findIngredientsCategoryByRestaurantId(id);
         return new ResponseEntity<>(items,HttpStatus.OK);
     }

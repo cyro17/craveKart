@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<User> getPendingRestaurantOwner() {
-        return userRepository.getPendingRestaurantOwners();
+        return userRepository.findByStatus("PENDING");
     }
 
     @Override

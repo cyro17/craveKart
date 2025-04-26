@@ -5,6 +5,7 @@ import com.cyro.craveKart.model.Order;
 import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.model.User;
 import com.cyro.craveKart.repository.NotificationRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> findUsersNotification(Long userId) {
+    public List<Notification> findUsersNotification(ObjectId userId) {
         // TODO Auto-generated method stub
         return notificationRepository.findByCustomerId(userId);
     }

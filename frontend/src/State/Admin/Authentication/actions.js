@@ -1,7 +1,6 @@
 
-import { api, API_URL } from "../../component/config/api";
 import axios from "axios";
-
+import { api, API_URL } from "../../../component/config/api";
 
 export function registerUser(reqData) {
     return async function (dispatch) {

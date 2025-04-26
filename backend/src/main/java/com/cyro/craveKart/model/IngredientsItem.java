@@ -1,41 +1,30 @@
 package com.cyro.craveKart.model;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document(collection = "ingredientsItems") // Specifies the MongoDB collection name
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class IngredientsItem {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
+
+	@Id // MongoDB uses @Id for primary key
+	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
+
 	private String name;
 
-	@ManyToOne
+	@DBRef // MongoDB reference for IngredientCategory (similar to @ManyToOne)
 	private IngredientCategory category;
-	
-	@JsonIgnore
-	@ManyToOne
-	private Restaurant restaurant;
-	
-	private boolean inStoke=true;
-	
-	
 
+	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne)
+	private Restaurant restaurant;
+
+	private boolean inStoke = true;
 }

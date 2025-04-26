@@ -1,62 +1,48 @@
 package com.cyro.craveKart.model;
 
-import java.util.Date;
-import java.util.List;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+import java.util.Date;
+import java.util.List;
+
+@Document(collection = "orders") // Specifies the MongoDB collection name
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "orders")
 public class Order {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@ManyToOne
+	@Id // MongoDB uses @Id for primary key
+	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
+
+	@DBRef // MongoDB reference for User (similar to @ManyToOne in JPA)
 	private User customer;
 
-	@JsonIgnore
-	@ManyToOne
+	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
 	private Restaurant restaurant;
 
 	private Long totalAmount;
-	
+
 	private String orderStatus;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private Date createdAt; // MongoDB stores Date objects as is
 
-	@ManyToOne
+	@DBRef // MongoDB reference for Address (similar to @ManyToOne in JPA)
 	private Address deliveryAddress;
 
-//	@JsonIgnore
-	@OneToMany
+	@DBRef // MongoDB reference for OrderItem (similar to @OneToMany in JPA)
 	private List<OrderItem> items;
 
-	@OneToOne
+	@DBRef // MongoDB reference for Payment (similar to @OneToOne in JPA)
 	private Payment payment;
-	
-	private int totalItem;
-	
-	private int totalPrice;
 
+	private int totalItem;
+
+	private int totalPrice;
 }

@@ -8,9 +8,11 @@ import com.cyro.craveKart.model.Cart;
 import com.cyro.craveKart.model.CartItem;
 import com.cyro.craveKart.model.Food;
 import com.cyro.craveKart.model.User;
-import com.cyro.craveKart.repository.CartItemRepository;
+import com.cyro.craveKart.repository.CartItemsRepo;
+import com.cyro.craveKart.repository.CartRepository;
 import com.cyro.craveKart.repository.FoodRepository;
 import com.cyro.craveKart.request.AddCartItemRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private UserService userService;
     @Autowired
-    private CartItemRepository cartItemRepository;
+    private CartItemsRepo cartItemRepository;
     @Autowired
     private FoodRepository menuItemRepository;
 
@@ -63,7 +65,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartItem updateCartItemQuantity(Long cartItemId,int quantity) throws CartItemException {
+    public CartItem updateCartItemQuantity(ObjectId cartItemId,int quantity) throws CartItemException {
         Optional<CartItem> cartItem=cartItemRepository.findById(cartItemId);
         if(cartItem.isEmpty()) {
             throw new CartItemException("cart item not exist with id "+cartItemId);
@@ -74,7 +76,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart removeItemFromCart(Long cartItemId, String jwt) throws UserException,
+    public Cart removeItemFromCart(ObjectId cartItemId, String jwt) throws UserException,
             CartException, CartItemException {
 
         User user = userService.findUserProfileByJwtToken(jwt);
@@ -102,7 +104,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart findCartById(Long id) throws CartException {
+    public Cart findCartById(ObjectId id) throws CartException {
         Optional<Cart> cart = cartRepository.findById(id);
         if(cart.isPresent()) {
             return cart.get();
@@ -111,9 +113,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart findCartByUserId(Long userId) throws CartException, UserException {
+    public Cart findCartByUserId(ObjectId userId) throws CartException, UserException {
 
-        Optional<Cart> opt=cartRepository.findByCustomer_Id(userId);
+        Optional<Cart> opt= cartRepository.findByCustomer_Id(userId);
 
         if(opt.isPresent()) {
             Cart cart = opt.get();
@@ -125,7 +127,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart clearCart(Long userId) throws CartException, UserException {
+    public Cart clearCart(ObjectId userId) throws CartException, UserException {
         Cart cart=findCartByUserId(userId);
 
         cart.getItems().clear();

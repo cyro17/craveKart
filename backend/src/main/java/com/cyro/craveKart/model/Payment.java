@@ -1,36 +1,29 @@
 package com.cyro.craveKart.model;
 
-import java.util.Date;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+import java.util.Date;
+
+@Document(collection = "payments") // Specifies the MongoDB collection name
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
+    @Id // MongoDB uses @Id for primary key
+    private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
 
     private Long orderId;
     private String paymentMethod;
     private String paymentStatus;
     private double totalAmount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    
-    
+    private Date createdAt; // MongoDB stores Date objects as is
 }
-

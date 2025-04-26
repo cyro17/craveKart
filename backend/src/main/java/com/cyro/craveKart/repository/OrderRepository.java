@@ -1,16 +1,17 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.Order;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("SELECT o FROM Order o WHERE o.customer.id = :userId")
-    List<Order> findAllUserOrders(@Param("userId") Long userId);
+@Repository
+public interface OrderRepository extends MongoRepository<Order, ObjectId> {
+    @org.springframework.data.mongodb.repository.Query("{ 'customer.id': ?0 }")
+    List<Order> findAllUserOrders(ObjectId userId);
 
-    @Query("SELECT o FROM Order o WHERE o.restaurant.id = :restaurantId")
-    List<Order> findOrdersByRestaurantId(@Param("restaurantId") Long restaurantId);
+    @org.springframework.data.mongodb.repository.Query("{ 'restaurant.id': ?0 }")
+    List<Order> findOrdersByRestaurantId(ObjectId restaurantId);
 }

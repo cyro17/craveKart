@@ -1,37 +1,30 @@
 package com.cyro.craveKart.model;
-import java.util.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Data;
 
-@Entity
+import java.util.Date;
+
+@Document(collection = "notifications") // Specifies the MongoDB collection name
 @Data
 public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "recipient_id")
+
+    @Id // MongoDB uses @Id for primary key
+    private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
+
+    @DBRef // MongoDB reference for User (similar to @ManyToOne in JPA)
     private User customer;
-    
-    @ManyToOne
+
+    @DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
     private Restaurant restaurant;
-    
+
     private String message;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date sentAt;
-    
-    private boolean readStatus;
-    
-    
-}
+    private Date sentAt; // MongoDB stores Date objects as is
 
+    private boolean readStatus;
+}

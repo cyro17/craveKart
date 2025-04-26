@@ -6,6 +6,7 @@ import com.cyro.craveKart.model.IngredientsItem;
 import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.repository.IngredientsCategoryRepository;
 import com.cyro.craveKart.repository.IngredientsItemRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class IngredientsServiceImpl implements IngredientsService {
     private RestaurantServiceImpl restaurantService;
 
     @Override
-    public IngredientCategory createIngredientsCategory(String name, Long restaurantId)
+    public IngredientCategory createIngredientsCategory(String name, ObjectId restaurantId)
             throws RestaurantException {
         IngredientCategory ingredientCategory_ = ingredientsCategoryRepo.findByRestaurantIdAndNameIgnoreCase(restaurantId, name);
         if(ingredientCategory_ != null ) return  ingredientCategory_;
@@ -41,14 +42,14 @@ public class IngredientsServiceImpl implements IngredientsService {
     }
 
     @Override
-    public IngredientCategory findIngredientsCategoryById(Long id) throws Exception {
+    public IngredientCategory findIngredientsCategoryById(ObjectId id) throws Exception {
         Optional<IngredientCategory> ing_op = ingredientsCategoryRepo.findById(id);
         if(ing_op.isEmpty()) throw  new Exception("ingredient category not found");
         return ing_op.get();
     }
 
     @Override
-    public List<IngredientCategory> findIngredientsCategoryByRestaurantId(Long id) throws Exception {
+    public List<IngredientCategory> findIngredientsCategoryByRestaurantId(ObjectId id) throws Exception {
         return  ingredientsCategoryRepo.findByRestaurantId(id);
     }
 
@@ -58,7 +59,7 @@ public class IngredientsServiceImpl implements IngredientsService {
     }
 
     @Override
-    public IngredientsItem createIngredientsItem(Long restaurantId, String ingredientName, Long ingredientCategoryId) throws Exception {
+    public IngredientsItem createIngredientsItem(ObjectId restaurantId, String ingredientName, ObjectId ingredientCategoryId) throws Exception {
         IngredientCategory category = findIngredientsCategoryById(ingredientCategoryId);
         IngredientsItem isExist = ingredientsItemRepository.findByRestaurantIdAndNameIngoreCase(restaurantId, ingredientName, category.getName());
         if(isExist != null) return isExist;
@@ -76,7 +77,7 @@ public class IngredientsServiceImpl implements IngredientsService {
 
 
     @Override
-    public IngredientsItem updateStock(Long id) throws Exception {
+    public IngredientsItem updateStock(ObjectId id) throws Exception {
         Optional<IngredientsItem> item=ingredientsItemRepository.findById(id);
         if(item.isEmpty()) {
             throw new Exception("ingredient not found with id "+item);

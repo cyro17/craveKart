@@ -1,7 +1,12 @@
 package com.cyro.craveKart.repository;
 
 import com.cyro.craveKart.model.OrderItem;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+
+@Repository
+public interface OrderItemRepository extends MongoRepository<OrderItem, ObjectId> {
+
 }

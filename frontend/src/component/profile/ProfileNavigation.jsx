@@ -7,6 +7,8 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import BusinessIcon from '@mui/icons-material/Business';
 import {  Drawer, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../State/Admin/Authentication/actions';
+import { useDispatch } from 'react-redux';
 
 const menu = [
     {
@@ -38,9 +40,18 @@ const menu = [
 export default function ProfileNavigation({open, handleClose}) {
     const isSmallScreen = useMediaQuery("(max-width: 1080)");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+    }
 
     const handleNavigate = (item) => {
         navigate(`/my-profile/${item.title.toLowerCase()}`);
+        if (item.title === "Logout") {
+            handleLogout();
+            navigate("/");
+        }
     }
 
   return (
@@ -54,7 +65,8 @@ export default function ProfileNavigation({open, handleClose}) {
                                 gap-8 pt-16 '>
                   {
                       menu.map((item, index) => (
-                          <div onClick={()=>handleNavigate(item)} className='px-5 flex items-center space-x-5 cursor-pointer h-20'>
+                          <div onClick={() => handleNavigate(item)}
+                              className='px-5 flex items-center space-x-5 cursor-pointer h-20'>
                                     {item.icon}
                                     <span>{item.title}</span>
                           </div>
