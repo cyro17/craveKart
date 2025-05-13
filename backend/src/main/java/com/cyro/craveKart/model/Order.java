@@ -12,34 +12,34 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
-@Document(collection = "orders") // Specifies the MongoDB collection name
+@Document(collection = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Order {
 
-	@Id // MongoDB uses @Id for primary key
-	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
+	@Id
+	private ObjectId id;
 
-	@DBRef // MongoDB reference for User (similar to @ManyToOne in JPA)
+	@DBRef
 	private User customer;
 
-	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
+	@DBRef
 	private Restaurant restaurant;
 
-	private Long totalAmount;
+	private Double totalAmount;
 
 	private String orderStatus;
 
-	private Date createdAt; // MongoDB stores Date objects as is
+	private Date createdAt;
 
-	@DBRef // MongoDB reference for Address (similar to @ManyToOne in JPA)
+	@DBRef
 	private Address deliveryAddress;
 
-	@DBRef // MongoDB reference for OrderItem (similar to @OneToMany in JPA)
+	@DBRef
 	private List<OrderItem> items;
 
-	@DBRef // MongoDB reference for Payment (similar to @OneToOne in JPA)
+	@DBRef
 	private Payment payment;
 
 	private int totalItem;

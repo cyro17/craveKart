@@ -9,6 +9,7 @@ import com.cyro.craveKart.repository.AddressRepository;
 import com.cyro.craveKart.repository.RestaurantRepository;
 import com.cyro.craveKart.repository.UserRepository;
 import com.cyro.craveKart.request.CreateRestaurantRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
 
@@ -126,6 +128,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant findRestaurantByUserId(ObjectId userId) {
-        return restaurantRepository.findByOwnerId(userId);
+        return  restaurantRepository.findByOwnerId(userId);
+
     }
 }

@@ -18,7 +18,7 @@ public interface CartService {
 
     public Cart removeItemFromCart(ObjectId cartItemId, String jwt) throws UserException, CartException, CartItemException;
 
-    public Long calculateCartTotals(Cart cart) throws UserException;
+    public Double calculateCartTotals(Cart cart) throws UserException;
 
     public Cart findCartById(ObjectId id) throws CartException;
 

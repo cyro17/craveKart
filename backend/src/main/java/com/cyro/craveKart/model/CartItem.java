@@ -16,13 +16,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "cart_items")
 public class CartItem {
     @Id
-    private ObjectId id;  // MongoDB automatically generates this field, no need for @GeneratedValue
+    private ObjectId id;
 
     @JsonIgnore
-    @DBRef  // MongoDB uses DBRef to reference other documents (Cart and Food in this case)
+    @DBRef
     private Cart cart;
 
-    @DBRef  // MongoDB uses DBRef to reference other documents (Cart and Food in this case)
+    @DBRef
     private Food food;
 
     private int quantity;

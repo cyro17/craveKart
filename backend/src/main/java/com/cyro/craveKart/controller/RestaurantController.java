@@ -6,6 +6,7 @@ import com.cyro.craveKart.exception.UserException;
 import com.cyro.craveKart.model.Restaurant;
 import com.cyro.craveKart.model.User;
 import com.cyro.craveKart.service.RestaurantService;
+import com.cyro.craveKart.service.RestaurantServiceImpl;
 import com.cyro.craveKart.service.UserServiceImpl;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.List;
 public class RestaurantController {
 
     @Autowired
-    private RestaurantService restaurantService;
+    private RestaurantServiceImpl restaurantService;
 
     @Autowired
     private UserServiceImpl userService;
@@ -37,7 +38,7 @@ public class RestaurantController {
     }
 
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Restaurant>> getAllRestaurants(){
         List<Restaurant> restaurants = restaurantService.getAllRestaurant();
         return ResponseEntity.ok(restaurants);

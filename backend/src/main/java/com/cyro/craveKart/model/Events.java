@@ -9,24 +9,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "events") // Specifies the MongoDB collection name
+@Document(collection = "events")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Events {
 
-	@Id // MongoDB uses @Id for the primary key
-	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if needed)
+	@Id
+	private ObjectId id;
 
 	private String image;
 
-	private String startedAt; // You can choose to store this as a String or Date. I kept it as String here.
+	private String startedAt;
 
-	private String endsAt; // Same as startedAt, you can store it as String or Date.
+	private String endsAt;
 
 	private String name;
 
-	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
+	@DBRef
 	private Restaurant restaurant;
 
 	private String location;

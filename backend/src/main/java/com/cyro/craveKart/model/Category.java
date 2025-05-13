@@ -11,18 +11,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "categories") // Specifies the MongoDB collection name
+@Document(collection = "categories")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
 
-    @Id // MongoDB uses @Id for primary key
-    private ObjectId id; // MongoDB IDs are typically Strings (not Long)
-
+    @Id
+    private ObjectId id;
     private String name;
 
-    @DBRef // MongoDB reference for restaurant (similar to @ManyToOne)
+    @DBRef
     @JsonIgnore
     private Restaurant restaurant;
 

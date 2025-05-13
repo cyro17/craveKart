@@ -10,6 +10,7 @@ import com.cyro.craveKart.response.ApiResponse;
 import com.cyro.craveKart.service.RestaurantService;
 import com.cyro.craveKart.service.RestaurantServiceImpl;
 import com.cyro.craveKart.service.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/restaurants")
 public class AdminRestaurantController {
@@ -38,11 +40,13 @@ public class AdminRestaurantController {
     }
 
     @GetMapping("/user")
-    public Restaurant findRestaurantByUserId(@RequestHeader("Authorization") String jwt)throws UserException, RestaurantException{
+    public ResponseEntity<?> findRestaurantByUserId(@RequestHeader("Authorization") String jwt)throws UserException, RestaurantException{
         User user = userService.findUserProfileByJwtToken(jwt);
-        return  restaurantService.findRestaurantByUserId(user.getId());
-    }
+//        log.error(String.valueOf(user));
+        Restaurant restaurantByUserId = restaurantService.findRestaurantByUserId(user.getId());
+        return new ResponseEntity<>(restaurantByUserId, HttpStatus.OK);
 
+    }
 
     @PostMapping
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody CreateRestaurantRequest req,

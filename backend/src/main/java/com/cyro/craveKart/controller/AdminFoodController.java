@@ -29,6 +29,15 @@ public class AdminFoodController {
     @Autowired
     private RestaurantServiceImpl restaurantService;
 
+    @GetMapping("/healthCheck")
+    public ResponseEntity<User> healthCheck(@RequestHeader("Authorization") String jwt)
+            throws UserException {
+        User user = userService.findUserProfileByJwtToken(jwt);
+        if(user != null)
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        else throw new UserException("User not authorized");
+    }
+
     @PostMapping
     public ResponseEntity<Food> createFood(@RequestBody CreateFoodRequest request,
                                            @RequestHeader("Authorization") String jwt)

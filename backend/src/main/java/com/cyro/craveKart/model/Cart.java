@@ -12,19 +12,19 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "carts") // This specifies the MongoDB collection name
+@Document(collection = "carts")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Cart {
 
-	@Id // MongoDB uses @Id for primary key
-	private ObjectId id; // MongoDB IDs are typically Strings (not Long)
+	@Id
+	private ObjectId id;
 
-	@DBRef // MongoDB reference for customer (similar to @OneToOne)
+	@DBRef
 	private User customer;
 
-	private List<CartItem> items = new ArrayList<>(); // MongoDB stores embedded objects
+	private List<CartItem> items = new ArrayList<>();
 
-	private Long total;
+	private Double total;
 }

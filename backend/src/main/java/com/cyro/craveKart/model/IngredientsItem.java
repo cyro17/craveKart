@@ -9,22 +9,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "ingredientsItems") // Specifies the MongoDB collection name
+@Document(collection = "ingredientsItems")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class IngredientsItem {
 
-	@Id // MongoDB uses @Id for primary key
-	private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
+	@Id
+	private ObjectId id;
 
 	private String name;
 
-	@DBRef // MongoDB reference for IngredientCategory (similar to @ManyToOne)
+	@DBRef
 	private IngredientCategory category;
 
-	@DBRef // MongoDB reference for Restaurant (similar to @ManyToOne)
+	@DBRef
 	private Restaurant restaurant;
 
-	private boolean inStoke = true;
+	private boolean inStock = true;
 }
