@@ -83,7 +83,7 @@ public class IngredientsServiceImpl implements IngredientsService {
             throw new Exception("ingredient not found with id "+item);
         }
         IngredientsItem ingredient=item.get();
-        ingredient.setInStoke(!ingredient.isInStoke());
+        ingredient.setInStock(!ingredient.isInStock());
         return ingredientsItemRepository.save(ingredient);
     }
 }

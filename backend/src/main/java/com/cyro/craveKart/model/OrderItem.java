@@ -11,16 +11,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Document(collection = "orderItems") // Specifies the MongoDB collection name
+@Document(collection = "orderItems")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class OrderItem {
 
-    @Id // MongoDB uses @Id for primary key
-    private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if preferred)
-
-    @DBRef // MongoDB reference for Food (similar to @ManyToOne in JPA)
+    @Id
+    private ObjectId id;
+    @DBRef
     private Food food;
 
     private int quantity;

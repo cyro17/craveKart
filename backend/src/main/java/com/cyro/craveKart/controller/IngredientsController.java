@@ -31,7 +31,8 @@ public class IngredientsController {
 
     @PostMapping()
     public ResponseEntity<IngredientsItem> createIngredient(@RequestBody CreateIngredientRequest request) throws Exception {
-        IngredientsItem ingredientsItem = ingredientsService.createIngredientsItem(request.getRestaurantId(), request.getName(), request.getIngredientCategoryId());
+        IngredientsItem ingredientsItem = ingredientsService.createIngredientsItem(request.getRestaurantId(), request.getName(),
+                request.getIngredientCategoryId());
         return  new ResponseEntity<>(ingredientsItem, HttpStatus.CREATED);
     }
 

@@ -38,7 +38,7 @@ public class FoodServiceImpl  implements FoodService {
         food.setFoodCategory(category);
         food.setCreationDate(new Date());
         food.setDescription(createFoodRequest.getDescription());
-        food.setImages(createFoodRequest.getImages());
+        food.setImages(createFoodRequest.   getImages());
         food.setName(createFoodRequest.getName());
         food.setPrice((long) createFoodRequest.getPrice());
         food.setSeasonal(createFoodRequest.isSeasonal());

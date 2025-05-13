@@ -13,34 +13,34 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "foods") // Specifies the MongoDB collection name
+@Document(collection = "foods")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Food {
 
-    @Id // MongoDB uses @Id for the primary key
-    private ObjectId id; // MongoDB typically uses String for the ID (you can use Long if needed)
+    @Id
+    private ObjectId id;
 
     private String name;
     private String description;
     private Long price;
 
-    @DBRef // MongoDB reference for Category (similar to @ManyToOne in JPA)
+    @DBRef
     private Category foodCategory;
 
-    private List<String> images = new ArrayList<>(); // MongoDB stores lists directly
+    private List<String> images = new ArrayList<>();
 
     private boolean available;
 
-    @DBRef // MongoDB reference for Restaurant (similar to @ManyToOne in JPA)
+    @DBRef
     private Restaurant restaurant;
 
     private boolean isVegetarian;
     private boolean isSeasonal;
 
-    @DBRef // MongoDB reference for IngredientsItem (similar to @ManyToMany in JPA)
+    @DBRef
     private List<IngredientsItem> ingredients = new ArrayList<>();
 
-    private Date creationDate; // MongoDB stores Date objects as is
+    private Date creationDate;
 }

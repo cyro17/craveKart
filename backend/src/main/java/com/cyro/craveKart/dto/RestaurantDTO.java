@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document(collection = "restaurants")  // Maps this class to the 'restaurants' collection in MongoDB
+@Document(collection = "restaurants")
 public class RestaurantDTO {
 
     private String title;
 
-    @Field("images")  // Specify the field name in MongoDB, if needed (optional)
+    @Field("images")
     private List<String> images = new ArrayList<>();
 
     private String description;
 
-    @Field("_id")  // MongoDB uses _id by default as the primary key
+    @Field("_id")
     private ObjectId id;
-
 }

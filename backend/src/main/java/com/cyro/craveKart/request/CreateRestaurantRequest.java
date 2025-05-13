@@ -18,6 +18,5 @@ public class CreateRestaurantRequest {
     private String openingHours;
     private String closingHours;
     private List<String> images;
-
     private LocalDateTime registrationDate;
 }
