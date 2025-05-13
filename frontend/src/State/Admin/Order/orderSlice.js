@@ -20,4 +20,4 @@ export const {
     getRestaurantsOrderFailure, updateOrderStatusFailure
 } = orderSlice.actions;
 
-export const orderReducer = orderSlice.reducer;
+export const restaurantsOrderReducer = orderSlice.reducer;

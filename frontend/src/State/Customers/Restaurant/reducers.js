@@ -34,6 +34,7 @@ export const reducers = {
     getAllRestaurantSuccess: (state, action) => {
         state.loading = false;
         state.restaurants = action.payload;
+
     },
     getRestaurantByIdSuccess: (state, action) => {
         state.loading = false;

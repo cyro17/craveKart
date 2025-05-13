@@ -7,13 +7,12 @@ export function getAllRestaurant(token) {
             const { data } = await api.get("/api/restaurants", {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                }
+                },
             });
             console.log(data);
             dispatch({ type: "restaurant/getAllRestaurantSuccess", payload: data });
-            console.log("all restaurant ", data);
         } catch (error) {
-            console.log(error);
+            dispatch({ type: "restaurant/getAllRestaurantFailure", payload: error });
         }
     }
 }
@@ -45,7 +44,7 @@ export function getRestaurantByUserId(jwt) {
                 }
             })
             console.log("get resraurant by user id: ", data);
-            dispatch({ type: "restaurant/getRestaurantByUserIdSuccess", payload: data })
+            dispatch({ type: "restaurant/getRestaurantByUserIdSuccess", payload: data ? data : null })
         } catch (error) {
             console.log(error);
             dispatch({
@@ -65,6 +64,7 @@ export function createRestaurant(reqData) {
                     Authorization: `Bearer ${reqData.token}`,
                 }
             });
+            console.log(data)
             dispatch({ type: "restaurant/createRestaurantSuccess", payload: data });
         } catch (error) {
             dispatch({ type: "restaurant/createRestaurantFailure", payload: error.message });

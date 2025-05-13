@@ -7,4 +7,13 @@
     z-index: 1000;    
   } */
 
+  .logo{
+    font-family: 'Mynerve', cursive ;
+    font-weight: bolder;
+    font-size: 30px;
   
+    
+    
+/* font-family: 'Playball', cursive; */
+/* font-family: 'Poppins', sans-serif; */
+}
