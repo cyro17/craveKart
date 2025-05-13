@@ -6,6 +6,7 @@ import { Outlet  } from 'react-router-dom';
 export default function Profile() {
     const [openSideBar, setOpenSideBar] = useState(false);
     return (
+        
         <div className="lg:flex lg:space-x-4 p-4">
             {/* Sidebar */}
             <div className="sticky top-0 h-[80vh] lg:w-[20%]">
@@ -16,7 +17,7 @@ export default function Profile() {
     
             {/* Main Content */}
             <div className="flex-1">
-            <Outlet /> {/* Renders orders, favourites, address, etc. */}
+                <Outlet /> {/* Renders orders, favourites, address, etc. */}
             </div>
       </div>
   )

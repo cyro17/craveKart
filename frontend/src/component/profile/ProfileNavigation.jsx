@@ -7,7 +7,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import BusinessIcon from '@mui/icons-material/Business';
 import {  Drawer, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../State/Admin/Authentication/actions';
+import { logout } from '../../State/Authentication/actions';
 import { useDispatch } from 'react-redux';
 
 const menu = [

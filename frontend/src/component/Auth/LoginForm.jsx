@@ -3,12 +3,14 @@ import { Button, TextField, Typography } from '@mui/material'
 import {  useNavigate } from 'react-router-dom'
 import { Field, Formik, Form } from 'formik'
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../../State/Admin/Authentication/actions';
+import { loginUser } from '../../State/Authentication/actions';
+import {motion} from 'motion/react'
 
 const initialValues = {
   email: "", 
   password: "",
 }
+// const MotionButton = motion.create(Button);
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -42,7 +44,14 @@ export default function LoginForm() {
               variant="outlined"
               margin="normal"
             />
-            <Button sx={{mt: 2, padding: "1rem "}} fullWidth type='submit' variant='contained'>
+          <Button sx={{ mt: 2, padding: "1rem " }}
+            onHoverStart={{
+              scale: 1.2
+            }}
+            fullWidth
+            type='submit'
+            variant='contained'
+          >
               Login
             </Button>
           </Form>

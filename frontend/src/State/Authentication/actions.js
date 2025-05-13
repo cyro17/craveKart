@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import { api, API_URL } from "../../../component/config/api";
+import { api, API_URL } from "../../component/config/api";
 
 export function registerUser(reqData) {
     return async function (dispatch) {
@@ -46,9 +46,8 @@ export function getUser(token) {
                     Authorization: `Bearer ${token}`,
                 }
             });
-            const user = response.data;
-            console.log("user", user);
-            dispatch({ type: "auth/getUserSuccess", payload: user })
+            console.log(response.data)
+            dispatch({ type: "auth/getUserSuccess", payload: response.data })
 
         } catch (error) {
             const errorMessage = error.message;

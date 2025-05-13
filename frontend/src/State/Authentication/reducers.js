@@ -48,7 +48,7 @@ export const reducers = {
     getUserSuccess: (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-
+        state.error = null;
     },
     requestResetPasswordSuccess: (state, action) => {
         state.isLoading = false;

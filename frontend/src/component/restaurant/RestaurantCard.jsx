@@ -14,18 +14,20 @@ export default function RestaurantCard({data, index}) {
   const navigate = useNavigate();
   console.log(data);
 
-  const navigateToRestaurant = () => {
-    if (data.open) navigate(`/restaurant/${data.address.city}/${data.name}/${data.id}`);
-  }
+  // const navigateToRestaurant = () => {
+  //   if (data.open) navigate(`/restaurant/${data.address.city}/${data.name}/${data.id}`);
+  // }
 
-  const handleAddToFavorites = () => {
-    if (data.open)
-      navigate(`/restaurant/${data.address.city}/${data.name}/${data.id}`);
-  }
+  // const handleAddToFavorites = () => {
+  //   if (data.open)
+  //     navigate(`/restaurant/${data.address.city}/${data.name}/${data.id}`);
+  // }
 
   return (
     <Card className='w-[18rem] mb-5 mx-1'>
-      <div onClick={navigateToRestaurant} className={`${data.open? 'cursor-pointer' : 'cursore-not-allowed'} relative`}>
+      <div
+        // onClick={navigateToRestaurant}
+        className={`${data.open ? 'cursor-pointer' : 'cursore-not-allowed'} relative`}>
         <img className='w-full h-[10rem] rounded-t-md'
           src={data.images[0]}
           alt="indian fast food" />
@@ -47,7 +49,9 @@ export default function RestaurantCard({data, index}) {
         </div>
 
         <div>
-          <IconButton onClick={handleAddToFavorites}>
+          <IconButton
+            // onClick={handleAddToFavorites}
+          >
             {true? <FavoriteIcon/> : <FavoriteBorderIcon/>}
           </IconButton>
         </div>
