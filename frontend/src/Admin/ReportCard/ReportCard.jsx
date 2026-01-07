@@ -10,8 +10,8 @@ const AvgCard = ({ title, icon, value,isGrow,growValue }) => {
         <p className="font-semibold text-gray-300 text-xl">{value}K</p>
         <div className={`${true?"text-green-600":"text-red-500"} 
         flex items-center space-x-3 mt-2`}>
-        <p className={` text-sm`}>{growValue}%</p>
-        <TrendingUpIcon/>
+<p className={` text-sm`}>{growValue}%</p>
+<TrendingUpIcon/>
         </div>
       </div>
       {icon}

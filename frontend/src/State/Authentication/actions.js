@@ -56,6 +56,42 @@ export function getUser(token) {
     }
 }
 
+export function addToFavorites(reqData) {
+    return async function (dispatch) {
+        dispatch({ type: "auth/addToFavouriteRequest" });
+        try {
+            const response = await api.put(`api/restaurant/${reqData.restaurantId}/add-favorites`, {}, {
+                headers: {
+                    Authorization: `Bearer ${reqData.jwt}`
+                }
+            });
+            console.log("Add to favorite", response.data);
+            dispatch({ type: "auth/addToFavoriteSuccess", payload: response.data });
+        } catch (error) {
+            console.log("catch error ", error);
+            dispatch({
+                type: "auth/addToFavorieFailure",
+                payload: error.message
+            });
+        }
+    }
+}
+
+
+export function resetPasswordRequest(reqData) {
+    return async function (dispatch) {
+        dispatch({ type: "auth/requestResetPasswordRequest" });
+        try {
+            const { data } = api.post(`${API_URL}/auth/reset-password-request?email=${reqData.email}`, {});
+            console.log(data);
+            dispatch({ type: "auth/requestResetPasswordSuccess", payload: data });
+        } catch (error) {
+            console.log("error ", error);
+            dispatch({ type: "auth/requestResetPasswordFailure" });
+        }
+    }
+}
+
 export function loginUser(reqData) {
     return async function (dispatch) {
         try {

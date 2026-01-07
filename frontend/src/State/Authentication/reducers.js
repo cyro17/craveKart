@@ -1,3 +1,5 @@
+import { isPresentInFavorites } from "../../config/logic";
+
 export const reducers = {
     healthCheck: (state, action) => {
         state.isLoading = true;
@@ -31,6 +33,16 @@ export const reducers = {
         state.error = null;
         state.success = null;
     },
+
+    addToFavouriteRequest: (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.success = null;
+    },
+
+
+
+
     registerSuccess: (state, action) => {
         state.isLoading = false;
         state.jwt = action?.payload;
@@ -54,6 +66,15 @@ export const reducers = {
         state.isLoading = false;
         state.success = action.payload.message;
     },
+
+    addToFavoriteSuccess: (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.favorites = isPresentInFavorites(state.favorites, action.payload) ?
+            state.favorites.filter((item) => item.id !== action.payload.id) :
+            [action.payload, ...state.favorites];
+    },
+
     registerFailure: (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
@@ -70,6 +91,9 @@ export const reducers = {
         state.isLoading = false;
         state.error = action.payload;
     },
+
+
+
     logout: (state) => {
         localStorage.removeItem("jwt");
         state.user = null;
