@@ -47,7 +47,5 @@ class CraveKartApplicationTests {
 		Optional<User> user = userRepository.findById(552L);
 		user.ifPresent(u-> userRepository.delete(u));
 
-
-
 	}
 }
