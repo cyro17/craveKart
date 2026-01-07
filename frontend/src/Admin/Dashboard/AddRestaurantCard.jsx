@@ -1,9 +1,9 @@
-import { Card } from '@mui/material'
-import React from 'react'
+import { Card } from "@mui/material";
+import React from "react";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-export default function AddRestaurantCard() {
+const AddRestaurantCard = () => {
   const navigate = useNavigate();
   return (
     <Card
@@ -20,4 +20,6 @@ export default function AddRestaurantCard() {
       </div>
     </Card>
   );
-}
+};
+
+export default AddRestaurantCard;

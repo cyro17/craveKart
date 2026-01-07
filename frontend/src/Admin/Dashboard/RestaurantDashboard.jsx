@@ -1,19 +1,36 @@
-import React from 'react'
-import AdminSidebar from '../AdminSidebar'
-import { Grid2 } from '@mui/material'
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { getMenuItemsByRestaurantId } from "../../State/Customers/Menu/menu.action";
+import { Grid } from "@mui/material";
+import OrdersTable from "../Orders/OrderTable";
+import MenuItemTable from "../Food/MenuItemTable";
 import AvgCard from "../ReportCard/ReportCard";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import SellIcon from "@mui/icons-material/Sell";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 
-export default function RestaurantDashboard() {
+const RestaurantDashboard = () => {
+  const { id } = useParams();
+  const {restaurant}=useSelector(store=>store);
+  console.log("restaurants id ", id);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(
+      getMenuItemsByRestaurantId({
+        restaurantId: id,
+        jwt: localStorage.getItem("jwt"),
+      })
+    );
+  }, []);
+
+  console.log("restaurant",restaurant)
   return (
-    <>
-    <div>
-      <div className="px-2">
+    <div className="px-2">
       
-      <Grid2 container spacing={1}>
-        <Grid2 item lg={3} xs={12}>
+      <Grid container spacing={1}>
+        {/* <Grid item lg={3} xs={12}>
           <AvgCard
             title={"Total Earnings"}
             value={`Rs. ${450}`}
@@ -21,25 +38,25 @@ export default function RestaurantDashboard() {
             icon={
               <CurrencyRupeeIcon sx={{ fontSize: "3rem", color: "gold" }} />
             }
-            />
-        </Grid2>
-        <Grid2 item lg={3} xs={12}>
+          />
+        </Grid>
+        <Grid item lg={3} xs={12}>
           <AvgCard
-            title={"Total Sales"}
+            title={"Total Selles"}
             value={`${390}`}
             growValue={35}
             icon={<SellIcon sx={{ fontSize: "3rem", color: "green" }} />}
-            />
-        </Grid2>
-        <Grid2 item lg={3} xs={12}>
+          />
+        </Grid>
+        <Grid item lg={3} xs={12}>
           <AvgCard
             title={"Sold Items"}
             value={`${299}`}
             growValue={30}
             icon={<FastfoodIcon sx={{ fontSize: "3rem", color: "blue" }} />}
-            />
-        </Grid2>
-        <Grid2 item lg={3} xs={12}>
+          />
+        </Grid>
+        <Grid item lg={3} xs={12}>
           <AvgCard
             title={"Left Items"}
             value={`${1}`}
@@ -48,11 +65,16 @@ export default function RestaurantDashboard() {
             
           }
           />
-        </Grid2>
-      </Grid2>
+        </Grid> */}
+        <Grid lg={6} xs={12} item>
+          <OrdersTable name={"Recent Order"} isDashboard={true} />
+        </Grid>
+        <Grid lg={6} xs={12} item>
+          <MenuItemTable isDashboard={true} name={"Recently Added Menu"} />
+        </Grid>
+      </Grid>
     </div>
-      <AdminSidebar />
-    </div>
-  </>
-  )
-}
+  );
+};
+
+export default RestaurantDashboard;

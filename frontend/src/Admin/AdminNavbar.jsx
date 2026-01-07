@@ -1,27 +1,41 @@
+import PersonIcon from "@mui/icons-material/Person";
 import MenuIcon from '@mui/icons-material/Menu';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SearchIcon from "@mui/icons-material/Search";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { pink } from "@mui/material/colors";
+import { useState } from "react";
+import { logout } from "../State/Authentication/Action";
+import Auth from "../customers/pages/Auth/Auth";
 import { IconButton } from "@mui/material";
-import { useContext } from 'react';
-import { SideBarContext } from '../State/Store/SideBarContext/SideBarContext';
-import { useNavigate } from 'react-router-dom';
-import SearchIcon from '@mui/icons-material/Search';
 
-export default function AdminNavbar(){
-  const { handleOpenSideBar } = useContext(SideBarContext);
+const AdminNavbar = ({handleOpenSideBar}) => {
   const navigate = useNavigate();
+  const { auth, cart } = useSelector((store) => store);
+  const dispatch = useDispatch();
+
+  
+
+
 
   return (
-    <div className="sticky top-[0] w-full z-50 h-[60px] px-5 py-[.8rem] bg-[#e91e63]  lg:px-20 flex justify-between">
+    <div className="lg:hidden px-5 z-50 py-[.8rem] bg-[#e91e63]  lg:px-20 flex justify-between">
       <div className="flex items-center space-x-4">
-        <div className='lg:mr-10 cursor-pointer logo flex items-center'>
-          <IconButton onClick={handleOpenSideBar}>
-            <MenuIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
-          <ul className='logo font-semibold text-gray-200 text-2xl'
-            onClick={() => navigate("/")}>
-            CraveKart
-          </ul>
+        <div
+          className="lg:mr-10 cursor-pointer flex items-center space-x-4"
+        >
+          <IconButton onClick={handleOpenSideBar}><MenuIcon/></IconButton>
+          <li className="logo font-semibold text-gray-300 text-2xl">
+            Zosh Food
+          </li>
         </div>
+        {/* <li className="font font-semibold">Home</li> */}
       </div>
+      
+
     </div>
   );
 };
+
+export default AdminNavbar;

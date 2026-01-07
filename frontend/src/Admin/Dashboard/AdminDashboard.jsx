@@ -1,29 +1,33 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom';
-import RestaurantCard from './RestaurantCard';
-import AddRestaurantCard from './AddRestaurantCard';
-import { getRestaurantByUserId } from '../../State/Customers/Restaurant/actions';
+import React, { useEffect } from "react";
+import RestaurantCard from "./RestaurantCard";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getRestaurantByUserId } from "../../State/Customers/Restaurant/restaurant.action";
+import AddressCard from "../../customers/components/Address/AddressCard";
+import AddRestaurantCard from "./AddRestaurantCard";
 
-export default function AdminDashboard() {
-  const { restaurant } = useSelector(store => store);
+
+const AdminDashboard = () => {
   const params = useParams();
+  const {restaurant}=useSelector(state=>state);
+  console.log("params", params);
   const dispatch = useDispatch();
-  console.log("restaurant", restaurant);
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     dispatch(getRestaurantByUserId());
-  }, [])
+  }, []);
 
   return (
-    <div className='lg: px-20'>
-      <div className='lg: flex flex-wrap justify-center'>
-        {restaurant.usersRestaurant?.map((item) => (
-          <RestaurantCard item={ item} />
+    <div className="lg:px-20">
+     
+      <div className="lg:flex flex-wrap justify-center">
+        {restaurant.usersRestaurant.map((item) => (
+          <RestaurantCard item={item}/>
         ))}
-        {restaurant.usersRestaurant.length < 1 &&
-          <AddRestaurantCard />}
+        {restaurant.usersRestaurant.length<1 && <AddRestaurantCard/>}
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default AdminDashboard;
