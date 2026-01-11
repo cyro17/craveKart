@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: cravekart
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cravekart
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 9091
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secretKey: Q1RrR3ZsU0Z3M2pQbFh6YlJZc0R5a2lKZ2xFNVZkR0pWc2p1dA==

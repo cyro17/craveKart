@@ -30,14 +30,6 @@ class CraveKartApplicationTests {
 	@Commit
 	void testCreateUser() {
 
-		User user1 = User.builder()
-				.fullName("Ronit Raj")
-				.email("ronraj@mail.com")
-				.password("ronit123")
-				.role(USER_ROLE.ADMIN)
-				.status("ACTIVE").build();
-
-		userRepository.save(user1);
 	}
 	
 	@Test

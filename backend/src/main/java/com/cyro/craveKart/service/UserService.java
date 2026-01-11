@@ -1,19 +1,19 @@
 package com.cyro.cravekart.service;
 
-import com.cyro.cravekart.repository.UserRepository;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.cyro.cravekart.exception.UserException;
+import com.cyro.cravekart.models.User;
 
-@Service
-@Data
-public class UserService {
+import java.util.List;
 
-  @Autowired
-  private UserRepository userRepository;
+public interface UserService {
+  public User findUserProfileByJwt(String jwt) throws UserException;
 
+  public User findUserByEmail(String email) throws UserException;
 
+  public List<User> findAllUsers();
 
+  public List<User> getPendingRestaurantOwner();
 
+  void updatePassword(User user, String newPassword);
 
 }
