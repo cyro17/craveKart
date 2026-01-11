@@ -26,7 +26,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    return request.getServletPath().startsWith("/api/v1/auth/");
+    return request.getServletPath().startsWith("/auth/");
   }
 
   @Override
@@ -37,18 +37,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       final String authorizationHeader = request.getHeader("Authorization");
       if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
         filterChain.doFilter(request, response);
+        return;
       }
 
       String token = authorizationHeader.substring(7);
-      String username = jwtUtil.gerUsernameFromToken(token);
+      String username = jwtUtil.getUsernameFromToken(token);
 
       if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-        Optional<User> user = userRepository.findByUsername(username);
-        if(user.isPresent()){
-          UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.get().getUsername(),
-              null, user.get().getAuthorities());
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+          UsernamePasswordAuthenticationToken authToken =
+              new UsernamePasswordAuthenticationToken(user,
+              null, user.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(authToken);
-        }
       }
       filterChain.doFilter(request, response);
     } catch (Exception e) {
