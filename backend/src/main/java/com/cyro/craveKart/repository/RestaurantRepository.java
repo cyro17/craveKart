@@ -11,9 +11,11 @@ import java.util.List;
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-  @Query("select r from Restaurant r where lower(r.name) LIKE  lower(concat('%', :query, '%')) or " +
+  @Query("select r from Restaurant r where" +
+      " lower(r.name) LIKE  lower(concat('%', :query, '%')) or " +
       "lower(r.cuisineType) LIKE lower(concat('%', :query, '%'))")
   List<Restaurant> findBySearchQuery(String query);
 
-  Restaurant findByOwnerId(Long userId);
+  List<Restaurant> findByOwnerId(Long userId);
+
 }

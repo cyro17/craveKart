@@ -12,7 +12,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -22,14 +24,22 @@ import java.util.List;
 public class Restaurant {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToOne
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "owner_id")
   private User owner;
+
+
   private String name;
   private String description;
   private String cuisineType;
+
+  @ManyToMany(mappedBy = "favorites")
+  @JsonIgnore
+  private Set<User> favoritedBy = new HashSet<>();
+
 
   @ManyToOne
   @JoinColumn(name = "address_id")
@@ -57,6 +67,7 @@ public class Restaurant {
   @JsonIgnore
   @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Food> foods = new ArrayList<>();
+
 
   @CreationTimestamp
   private LocalDateTime createdAt;

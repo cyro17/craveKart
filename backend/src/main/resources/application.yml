@@ -20,7 +20,7 @@ spring:
 server:
   port: 9091
   servlet:
-    context-path: /api/v1
+    context-path: /
 
 jwt:
   secretKey: Q1RrR3ZsU0Z3M2pQbFh6YlJZc0R5a2lKZ2xFNVZkR0pWc2p1dA==
