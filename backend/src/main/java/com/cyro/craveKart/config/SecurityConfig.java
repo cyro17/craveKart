@@ -27,10 +27,10 @@ public class SecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(request->
             request
-                .requestMatchers("/public/**", "/auth/**").permitAll()
-                .requestMatchers("/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
-                .requestMatchers("/**").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers("/api/public/**", "/api/auth/**", "/api/restaurant/**").permitAll()
+                .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
         )
         .csrf(csrf->csrf.disable())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

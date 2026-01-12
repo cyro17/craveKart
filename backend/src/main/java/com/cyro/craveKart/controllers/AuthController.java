@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
   private final AuthService authService;
