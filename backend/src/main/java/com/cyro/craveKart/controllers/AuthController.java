@@ -6,12 +6,15 @@ import com.cyro.cravekart.request.SignupRequestDTO;
 import com.cyro.cravekart.response.LoginResponseDTO;
 import com.cyro.cravekart.response.SignupReponse;
 import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,10 +27,18 @@ public class AuthController {
     return ResponseEntity.ok("OK");
   }
 
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponseDTO> login(
+      @RequestBody LoginRequestDTO loginRequestDTO){
+    LoginResponseDTO response = authService.login(loginRequestDTO);
+    return ResponseEntity.ok(response);
+  }
+
   @PostMapping("/signup")
   public ResponseEntity<SignupReponse> createUser(
       @Valid @RequestBody SignupRequestDTO reqeust
-  ) throws UserPrincipalNotFoundException {
+  ) {
     User registeredUser = authService.register(reqeust);
     SignupReponse response = SignupReponse.builder()
         .username(registeredUser.getUsername())
@@ -36,10 +47,4 @@ public class AuthController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/login")
-  public ResponseEntity<LoginResponseDTO> login(
-      @RequestBody LoginRequestDTO loginRequestDTO){
-    LoginResponseDTO response = authService.login(loginRequestDTO);
-    return ResponseEntity.ok(response);
-  }
 }

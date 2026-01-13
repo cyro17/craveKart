@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -80,6 +81,32 @@ public class AuthService {
   }
 
 
+  public boolean registerAll(List<SignupRequestDTO> requestDTOS) {
+    List<User> userList = new ArrayList<>();
+    for(SignupRequestDTO user : requestDTOS){
+      if(userRepository.existsByUsername(user.getUsername())){
+        throw new RuntimeException("Username already exists");
+      }
+
+      if(userRepository.existsByEmail(user.getEmail())){
+        throw new RuntimeException("Email already exists");
+      }
+
+      User newUser = User.builder()
+          .username(user.getUsername())
+          .firstName(user.getFirstName())
+          .lastName(user.getLastName())
+          .email(user.getEmail())
+          .password(passwordEncoder.encode(user.getPassword()))
+          .roles(List.of(user.getRole()))
+          .status(USER_STATUS.ACTIVE)
+          .build();
+
+      User savedUser = userRepository.save(newUser);
+
+    }
+    return true;
+  }
 }
 
 

@@ -22,7 +22,7 @@ public class SecurityConfig {
   private JwtAuthFilter jwtAuthFilter;
 
   @Bean
-  public  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+  public  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return  http.sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(request->

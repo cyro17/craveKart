@@ -1,21 +1,22 @@
 package com.cyro.cravekart.models;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"category", "restaurant", "ingredientItems"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class Food {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,30 +26,38 @@ public class Food {
   private String description;
   private Long price;
 
-  @ManyToOne
-  private Category foodcategory;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id", nullable = false)
+  private Category category;
 
   @ElementCollection
-  @Column(length = 1000)
-  private List<String> images;
+  @CollectionTable(
+      name = "food_images",
+      joinColumns = @JoinColumn(name = "food_id")
+  )
+  @Column(name = "image_url", length = 1000)
+  private List<String> images = new ArrayList<>();
 
-  private boolean is_Available;
+  private boolean available;
 
   @ManyToOne
-  @JoinColumn(name = "restaurant_id")
+  @JoinColumn(name = "restaurant_id", nullable = false)
   private Restaurant restaurant;
 
-  private boolean isVegetarian;
-  private boolean isSeasonal;
+  private boolean vegetarian;
+  private boolean seasonal;
 
-  @ManyToMany
-  private List<IngredientItem> ingredientItems = new ArrayList<>();
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "food_ingredients",
+      joinColumns = @JoinColumn(name = "food_id"),
+      inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+  )
+  private Set<IngredientItem> ingredientItems = new HashSet<>();
 
   @CreationTimestamp
   private LocalDateTime createdAt;
   @UpdateTimestamp
   private LocalDateTime updatedAt;
-
-
 
 }
