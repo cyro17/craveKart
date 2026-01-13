@@ -1,5 +1,6 @@
 package com.cyro.cravekart.request;
 
+import com.cyro.cravekart.models.customAnnotations.UniqueUsername;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class SignupRequestDTO {
 
   @NotBlank(message = "Username must not be blank")
+  @UniqueUsername
   private String username;
 
   private String firstName;

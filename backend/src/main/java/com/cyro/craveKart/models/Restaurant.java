@@ -40,7 +40,6 @@ public class Restaurant {
   @JsonIgnore
   private Set<User> favoritedBy = new HashSet<>();
 
-
   @ManyToOne
   @JoinColumn(name = "address_id")
   private Address address;
@@ -57,7 +56,11 @@ public class Restaurant {
   private int numRating;
 
   @ElementCollection
-  @Column(length = 1000)
+  @CollectionTable(
+      name = "restaurant_images",
+      joinColumns = @JoinColumn(name = "restaurant_id")
+  )
+  @Column(name = "image_url", length = 1000)
   private List<String> images;
 
   private LocalDateTime registrationDate;
@@ -65,7 +68,8 @@ public class Restaurant {
   private boolean open;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "restaurant",
+      cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Food> foods = new ArrayList<>();
 
 

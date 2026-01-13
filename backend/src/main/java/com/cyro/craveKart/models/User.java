@@ -1,10 +1,12 @@
 package com.cyro.cravekart.models;
 
-import com.cyro.cravekart.dto.RestaurantDto;
+import com.cyro.cravekart.models.customAnnotations.UniqueUsername;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.USER_STATUS;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,11 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "users")
+@Table(name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+    })
 @Builder
 public class User implements UserDetails {
     @Id
@@ -32,12 +38,23 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
 
+    @NotBlank
     private String username;
+
+    @Email
+    @NotBlank
     private String email;
+
     private String password;
 
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @CollectionTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "roles")
     private List<USER_ROLE> roles = new ArrayList<>();
 
     @JsonIgnore

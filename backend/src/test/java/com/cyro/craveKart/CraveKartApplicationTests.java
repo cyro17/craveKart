@@ -33,10 +33,7 @@ class CraveKartApplicationTests {
 
 	@Test
 	void contextLoads() {
-		List<Restaurant> restaurantsByUserId = restaurantService.getRestaurantsByUserId(2L);
-		for(Restaurant restaurant : restaurantsByUserId) {
-			System.out.println(restaurant.getName());
-		}
+
 	}
 }
 
