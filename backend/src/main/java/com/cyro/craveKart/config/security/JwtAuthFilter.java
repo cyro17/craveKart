@@ -1,6 +1,5 @@
 package com.cyro.cravekart.config.security;
 
-import com.cyro.cravekart.config.SecurityConfig;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -12,11 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

@@ -1,18 +1,15 @@
 package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.exception.FoodException;
-import com.cyro.cravekart.models.Category;
 import com.cyro.cravekart.models.Food;
-import com.cyro.cravekart.models.Restaurant;
+import com.cyro.cravekart.request.AdminCreateFoodRequest;
 import com.cyro.cravekart.request.CreateFoodRequest;
 
 import java.util.List;
 
 public interface FoodService {
 
-  public Food createFood(CreateFoodRequest req,
-                         Category category,
-                         Restaurant restaurant) throws FoodException;
+  public Food createFood(CreateFoodRequest req) throws FoodException;
 
   void deleteFood(Long foodId);
 

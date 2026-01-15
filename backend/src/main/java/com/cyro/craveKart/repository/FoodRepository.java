@@ -1,6 +1,8 @@
 package com.cyro.cravekart.repository;
 
 import com.cyro.cravekart.models.Food;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,4 +18,6 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
       "f.category.name like %:keyword and " +
       "f.restaurant !=null")
   List<Food> searchByNameOrCategory(String keyword);
+
+  boolean existsByRestaurantIdAndNameIgnoreCase(Long restaurantId, String name);
 }

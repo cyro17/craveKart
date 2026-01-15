@@ -1,32 +1,28 @@
 package com.cyro.cravekart.request;
 
-
-import com.cyro.cravekart.models.Category;
-import com.cyro.cravekart.models.IngredientItem;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Column;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreateFoodRequest {
 
   private String name;
   private String description;
-  private Long price;
-
-  private Category category;
-  private List<String> images = new ArrayList<>();
+  private BigDecimal price;
 
   private Long restaurant_id;
-  private boolean vegetarian;
-  private boolean seasonal;
+  private Long FoodCategoryId;
 
-  private Set<IngredientItem> ingredientItems = new HashSet<>();
+  private Boolean seasonal;
+  private Boolean vegetarian;
+  private Boolean available;
+
+  private Set<Long> ingredientItemsIds = new HashSet<>();
+  private List<String> images;
+
 }

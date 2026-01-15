@@ -17,4 +17,6 @@ public interface UserService {
   void updatePassword(User user, String newPassword);
 
   List<User> saveAll(List<User> users);
+
+  boolean removeByUserId(Long userId);
 }

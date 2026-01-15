@@ -1,7 +1,6 @@
 package com.cyro.cravekart.config;
 
 import com.cyro.cravekart.config.security.JwtAuthFilter;
-import com.cyro.cravekart.config.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +26,12 @@ public class SecurityConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(request->
             request
-                .requestMatchers("/api/public/**", "/api/auth/**", "/api/restaurant/**").permitAll()
-                .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/api/public/**", "/api/auth/**", "/api/restaurant/**")
+                  .permitAll()
+                .requestMatchers("/api/admin/**")
+                  .hasAnyRole("RESTAURANT_OWNER","ADMIN")
+                .requestMatchers("/api/**")
+                  .authenticated()
                 .anyRequest().authenticated()
         )
         .csrf(csrf->csrf.disable())

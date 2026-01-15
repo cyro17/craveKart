@@ -1,47 +1,81 @@
 package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.exception.FoodException;
-import com.cyro.cravekart.models.Category;
+import com.cyro.cravekart.models.FoodCategory;
 import com.cyro.cravekart.models.Food;
+import com.cyro.cravekart.models.IngredientItem;
 import com.cyro.cravekart.models.Restaurant;
+import com.cyro.cravekart.repository.FoodCategoryRepository;
 import com.cyro.cravekart.repository.FoodRepository;
+import com.cyro.cravekart.repository.IngredientItemRepository;
+import com.cyro.cravekart.repository.RestaurantRepository;
+import com.cyro.cravekart.request.AdminCreateFoodRequest;
 import com.cyro.cravekart.request.CreateFoodRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FoodServiceImpl implements FoodService {
 
   private final FoodRepository foodRepository;
+  private final RestaurantRepository restaurantRepository;
+  private final FoodCategoryRepository foodCategoryRepository;
+  private final IngredientItemRepository ingredientItemRepository;
 
   @Override
-  public Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant)
-  throws FoodException{
+  public Food createFood(CreateFoodRequest req) throws FoodException {
+
+    // if food already exist
+    if(foodRepository.existsByRestaurantIdAndNameIgnoreCase(
+        req.getRestaurant_id(), req.getName()))
+      throw new FoodException("Food already exists");
+
+    Restaurant restaurant = restaurantRepository.findById(
+        req.getRestaurant_id()).orElseThrow(
+        () -> new FoodException("Restaurant not found")
+    );
+
+    FoodCategory foodCategory = foodCategoryRepository.findById(
+        req.getFoodCategoryId()).orElseThrow(
+        () -> new FoodException("Food category not found")
+    );
+
+    Set<IngredientItem> ingredients = new HashSet<>();
+
+    if(req.getIngredientItemsIds() != null &&
+        req.getIngredientItemsIds().isEmpty()) {
+      ingredients.addAll(ingredientItemRepository.findAllById(
+          req.getIngredientItemsIds()
+      ));
+    }
+
     Food food = Food.builder()
-        .category(category)
+        .category(foodCategory)
         .restaurant(restaurant)
         .description(req.getDescription())
-        .images(req.getImages())
+        .images(req.getImages() != null ? req.getImages() : new  ArrayList<>())
         .name(req.getName())
         .price(req.getPrice())
-        .seasonal(req.isSeasonal())
-        .vegetarian(req.isVegetarian())
-        .ingredientItems(req.getIngredientItems())
+        .seasonal(req.getSeasonal())
+        .vegetarian(req.getVegetarian())
+        .available(req.getAvailable())
+        .ingredientItems(ingredients)
         .build();
 
-    foodRepository.save(food);
-    return  restaurant.getFoods().add(food) ? food : null;
+    return foodRepository.save(food);
+
   }
 
   @Override
   public void deleteFood(Long foodId) {
-    Food food = foodRepository.findById(foodId).orElseThrow(() -> new RuntimeException());
+    Food food = foodRepository.findById(foodId).orElseThrow(
+        () -> new RuntimeException());
     food.setRestaurant(null);
     foodRepository.delete(food);
   }
@@ -74,13 +108,13 @@ public class FoodServiceImpl implements FoodService {
 
   private List<Food> filterByVeg(List<Food> foods, boolean isveg) {
     return foods.stream()
-        .filter(food-> food.isVegetarian() == isveg)
+        .filter(food-> food.getVegetarian() == isveg)
         .collect(Collectors.toList());
   }
 
   private List<Food> filterBySeasonal(List<Food> foods, boolean isSeasonal) {
     return foods.stream()
-        .filter(food -> food.isSeasonal() == isSeasonal)
+        .filter(food -> food.getSeasonal() == isSeasonal)
         .collect(Collectors.toList());
   }
 
@@ -111,7 +145,7 @@ public class FoodServiceImpl implements FoodService {
   @Override
   public Food updateAvailibilityStatus(Long foodId) throws FoodException {
     Food food = findFoodById(foodId);
-    food.setAvailable(!food.isAvailable());
+    food.setAvailable(!food.getAvailable());
     foodRepository.save(food);
     return food;
   }

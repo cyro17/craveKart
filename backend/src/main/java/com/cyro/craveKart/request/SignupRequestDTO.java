@@ -1,5 +1,6 @@
 package com.cyro.cravekart.request;
 
+import com.cyro.cravekart.models.customAnnotations.UniqueEmail;
 import com.cyro.cravekart.models.customAnnotations.UniqueUsername;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import jakarta.validation.constraints.Email;
@@ -24,6 +25,7 @@ public class SignupRequestDTO {
 
   @Email(message = "Invalid email format")
   @NotBlank(message = "Email must not be blank")
+  @UniqueEmail
   private String email;
 
   @NotBlank(message = "Password must not be blank")

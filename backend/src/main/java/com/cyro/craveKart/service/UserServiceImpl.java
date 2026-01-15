@@ -4,10 +4,8 @@ import com.cyro.cravekart.config.security.JwtUtil;
 import com.cyro.cravekart.exception.UserException;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,6 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final JwtUtil jwtUtil;
   private final PasswordEncoder passwordEncoder;
-
 
   @Override
   public List<User> findAllUsers() {
@@ -61,5 +58,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> saveAll(List<User> users) {
     return userRepository.saveAll(users);
+  }
+
+  @Override
+  public boolean removeByUserId(Long userId) {
+    userRepository.deleteById(userId);
+    return true;
   }
 }

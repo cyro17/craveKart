@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,8 +55,9 @@ public class RestaurantController {
   public ResponseEntity<RestaurantDto> addToFavorite (
       @PathVariable Long restaurantId) throws RestaurantException {
 
-    Long userId = authService.ifAuthenticated();
-    User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    User user = authService.getCurrentAuthUser();
+    if(user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
     RestaurantDto restaurant = restaurantService.addToFavorites(restaurantId, user);
     return new ResponseEntity<>(restaurant, HttpStatus.OK);
   }

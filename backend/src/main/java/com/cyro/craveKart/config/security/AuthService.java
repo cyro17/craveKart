@@ -9,6 +9,7 @@ import com.cyro.cravekart.request.USER_STATUS;
 import com.cyro.cravekart.response.LoginResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -69,16 +70,6 @@ public class AuthService {
     }
   }
 
-  public Long ifAuthenticated(){
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if(authentication != null &&  authentication.isAuthenticated()
-      && authentication.getPrincipal() instanceof User
-    ){
-      User user = (User) authentication.getPrincipal();
-      return user.getId();
-    }
-    return -1L;
-  }
 
 
   public boolean registerAll(List<SignupRequestDTO> requestDTOS) {
@@ -107,7 +98,18 @@ public class AuthService {
     }
     return true;
   }
+
+  public User getCurrentAuthUser(){
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    if (authentication == null || !authentication.isAuthenticated()
+        || authentication instanceof AnonymousAuthenticationToken) {
+      return null;
+    }
+    return (User) authentication.getPrincipal();
+    }
 }
+
 
 
 

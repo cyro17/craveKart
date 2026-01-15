@@ -2,28 +2,36 @@ package com.cyro.cravekart.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongFunction;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+@ToString(exclude = {"foods"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"restaurant_id", "name"})
+    }
+)
+public class FoodCategory {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @EqualsAndHashCode.Include
   private Long id;
 
   private String name;
+
   @ManyToOne
   @JsonIgnore
   @JoinColumn(name = "restaurant_id")
@@ -31,7 +39,6 @@ public class Category {
 
   @OneToMany(mappedBy = "category",
       fetch = FetchType.LAZY,
-      cascade = CascadeType.ALL,
       orphanRemoval = true )
   @JsonIgnore
   private List<Food> foods = new ArrayList<>();

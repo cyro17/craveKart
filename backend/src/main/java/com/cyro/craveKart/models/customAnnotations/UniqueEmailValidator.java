@@ -8,15 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UniqueUsernameValidator implements
-    ConstraintValidator<UniqueUsername, String> {
-  private final UserRepository userRepository;
+public class UniqueEmailValidator implements
+    ConstraintValidator<UniqueEmail, String> {
+    private final UserRepository userRepository;
 
   @Override
-  public boolean isValid(String username, ConstraintValidatorContext constraintValidatorContext) {
-    if(username == null) {
-      return true;
-    }
-    return !userRepository.existsByUsername(username);
+  public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
+    if(email == null)
+      return false;
+    return  !userRepository.existsByEmail(email);
   }
 }

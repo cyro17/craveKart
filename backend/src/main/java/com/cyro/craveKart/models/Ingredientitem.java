@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,6 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class IngredientItem {
 
   @Id
@@ -29,6 +31,7 @@ public class IngredientItem {
   private String name;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id",  nullable = false)
   private IngredientCategory category;
 
   @JsonIgnore
@@ -39,7 +42,7 @@ public class IngredientItem {
   @JsonIgnore
   private Set<Food> foods = new HashSet<>();
 
-  private boolean inStock=true;
+  private boolean inStock =true;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

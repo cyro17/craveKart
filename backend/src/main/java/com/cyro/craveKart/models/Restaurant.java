@@ -3,10 +3,7 @@ package com.cyro.cravekart.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,18 +16,21 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"foods", "orders", "favoritedBy"})
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Restaurant {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @EqualsAndHashCode.Include
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "owner_id")
+  @JoinColumn(name = "owner_id", nullable = false)
   private User owner;
-
 
   private String name;
   private String description;
@@ -51,7 +51,7 @@ public class Restaurant {
 
   @JsonIgnore
   @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Order> orders;
+  private List<Order> orders = new ArrayList<>();
 
   private int numRating;
 
