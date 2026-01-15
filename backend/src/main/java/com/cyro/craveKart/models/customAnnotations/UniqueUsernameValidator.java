@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String> {
+public class UniqueUsernameValidator implements
+    ConstraintValidator<UniqueUsername, String> {
   private final UserRepository userRepository;
 
   @Override

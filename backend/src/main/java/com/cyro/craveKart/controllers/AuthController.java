@@ -6,15 +6,10 @@ import com.cyro.cravekart.request.SignupRequestDTO;
 import com.cyro.cravekart.response.LoginResponseDTO;
 import com.cyro.cravekart.response.SignupReponse;
 import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,5 +41,6 @@ public class AuthController {
         .build();
     return ResponseEntity.ok(response);
   }
+
 
 }
