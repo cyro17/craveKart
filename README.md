@@ -1,2 +1,5 @@
-DB Schema 
-![image] ([craveKart.jpeg](https://github.com/cyro17/craveKart/blob/main/craveKart.jpeg))
+# CraveKart 🍔
+
+## Database Schema
+
+![DB Schema](./craveKart.jpeg)
