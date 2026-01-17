@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginResponseDTO {
+public class LoginResponse {
   String jwt;
   Long id;
 }

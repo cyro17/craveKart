@@ -6,7 +6,7 @@ import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.LoginRequestDTO;
 import com.cyro.cravekart.request.SignupRequestDTO;
 import com.cyro.cravekart.request.USER_STATUS;
-import com.cyro.cravekart.response.LoginResponseDTO;
+import com.cyro.cravekart.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -53,7 +53,7 @@ public class AuthService {
     return  userRepository.save(user);
   }
 
-  public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+  public LoginResponse login(LoginRequestDTO loginRequestDTO) {
     try {
       Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -62,7 +62,7 @@ public class AuthService {
         User user = (User) authentication.getPrincipal();
         log.info("User: " + user.getUsername());
         String token = jwtUtil.generateToken(user);
-        return LoginResponseDTO.builder().jwt(token).id(user.getId()).build();
+        return LoginResponse.builder().jwt(token).id(user.getId()).build();
 
     } catch (Exception e) {
       log.error("Login failed", e);

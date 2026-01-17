@@ -18,7 +18,8 @@ public class Address {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String fullName;
+  private String firstName;
+  private String lastName;
 
   private String streetAddress;
 
