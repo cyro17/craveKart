@@ -1,1 +1,1 @@
-![image alt] (craveKart.jpeg)
+![image] (craveKart.jpeg)
