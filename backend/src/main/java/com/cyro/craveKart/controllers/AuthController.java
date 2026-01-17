@@ -3,7 +3,7 @@ package com.cyro.cravekart.controllers;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.request.LoginRequestDTO;
 import com.cyro.cravekart.request.SignupRequestDTO;
-import com.cyro.cravekart.response.LoginResponseDTO;
+import com.cyro.cravekart.response.LoginResponse;
 import com.cyro.cravekart.response.SignupReponse;
 import com.cyro.cravekart.config.security.AuthService;
 import jakarta.validation.Valid;
@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private final AuthService authService;
 
-  @GetMapping("/health-check")
+  @GetMapping("/check")
   public ResponseEntity<String> healthCheck() {
     return ResponseEntity.ok("OK");
   }
 
 
   @PostMapping("/login")
-  public ResponseEntity<LoginResponseDTO> login(
+  public ResponseEntity<LoginResponse> login(
       @RequestBody LoginRequestDTO loginRequestDTO){
-    LoginResponseDTO response = authService.login(loginRequestDTO);
+    LoginResponse response = authService.login(loginRequestDTO);
     return ResponseEntity.ok(response);
   }
 

@@ -45,6 +45,7 @@ public class User implements UserDetails {
     @NotBlank
     private String email;
 
+    @JsonIgnore
     private String password;
 
 
@@ -58,7 +59,7 @@ public class User implements UserDetails {
     private List<USER_ROLE> roles = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -74,6 +75,7 @@ public class User implements UserDetails {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "owner")
+    @JsonIgnore
     private List<Restaurant> restaurants = new ArrayList<>();
 
     @ManyToMany

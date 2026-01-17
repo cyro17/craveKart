@@ -1,6 +1,7 @@
 package com.cyro.cravekart.models;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,18 +24,19 @@ public class CartItem {
   private Long id;
 
   @JsonIgnore
-  @ManyToOne
-  @JoinColumn(name = "cart_id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "cart_id", nullable = false)
   private Cart cart;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "food_id", nullable = false)
   private Food food;
 
-  private int quantity;
+  @Column(nullable = false)
+  private Integer quantity;
 
-  private List<String> ingredients;
-
-  private Long totalPrice;
+  @Column(precision = 10, scale = 2)
+  private BigDecimal totalPrice;
 
   @CreationTimestamp
   private LocalDateTime createdAt;

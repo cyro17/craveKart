@@ -44,11 +44,11 @@ public class Food {
   @Column(name = "image_url", length = 1000)
   private List<String> images = new ArrayList<>();
 
-  private Boolean available;
+  private Boolean available = true;
   private Boolean vegetarian;
   private Boolean seasonal;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "restaurant_id", nullable = false)
   private Restaurant restaurant;
 
