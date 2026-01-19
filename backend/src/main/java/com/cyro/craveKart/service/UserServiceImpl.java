@@ -33,32 +33,41 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  @Cacheable(value = "allUsers")
-  public List<User> findAllUsers() {
-    return userRepository.findAll();
+//  @Cacheable(value = "allUsers")
+//  @Transactional
+  public List<UserResponse> findAllUsers() {
+    List<User> users = userRepository.findAll();
+    List<UserResponse> userResponseList = new ArrayList<>();
+    for (User user : users) {
+      userResponseList.add(UserResponse.from(user));
+    }
+    return userResponseList;
   }
 
 
   @Override
   @Cacheable(value = "usersById", key = "#userId")
-  public User getByUserId(Long userId) {
+  public UserResponse getByUserId(Long userId) {
     log.warn("🚨 DB HIT userId={}", userId);
-    return userRepository.findById(userId).orElseThrow(() ->
-        new RuntimeException("User with id " + userId + " not found"));
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+    return  UserResponse.from(user);
   }
 
   @Override
   @Cacheable(value = "usersByEmail", key = "#email")
-  public User getUserByEmail(String email) {
-  return  userRepository.findByEmail(email)
+  public UserResponse getUserByEmail(String email) {
+    log.warn("🚨 DB HIT userId={}", email);
+    User user =  userRepository.findByEmail(email)
         .orElseThrow(()-> new RuntimeException("User with email " + email + " not found"));
+    return   UserResponse.from(user);
   }
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "usersById", key= "#user.id"),
       @CacheEvict(value = "usersByEmail", key = "#user.email"),
-      @CacheEvict(value = "allUsers", allEntries = true)
+//      @CacheEvict(value = "allUsers", allEntries = true)
   })
   public void updatePassword(User user, String newPassword) {
     user.setPassword(passwordEncoder.encode(newPassword));
@@ -68,9 +77,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Caching(evict = {
-      @CacheEvict(value = "usersById", key= "#user.id"),
-      @CacheEvict(value = "usersByEmail", key = "#user.email"),
-      @CacheEvict(value = "allUsers", allEntries = true)
+      @CacheEvict(value = "usersById", key= "#userId"),
+//      @CacheEvict(value = "allUsers", allEntries = true)
   })
   public boolean removeByUserId(Long userId) {
     userRepository.deleteById(userId);

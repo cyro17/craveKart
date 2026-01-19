@@ -25,18 +25,18 @@ public class AdminControllers {
   }
 
   @GetMapping("/users")
-  public ResponseEntity<List<User>> getAllUsers(){
-    List<User> users = userService.findAllUsers();
+  public ResponseEntity<List<UserResponse>> getAllUsers(){
+    List<UserResponse> users = userService.findAllUsers();
     return  new  ResponseEntity<>(users, HttpStatus.CREATED);
   }
 
   @GetMapping("/users/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable long id){
+  public ResponseEntity<UserResponse> getUserById(@PathVariable long id){
     return  new ResponseEntity<>(userService.getByUserId(id),  HttpStatus.OK);
   }
 
   @GetMapping("/users/email")
-  public ResponseEntity<User> getUserByEmail(@RequestParam String email){
+  public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email){
     return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
   }
 
