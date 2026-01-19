@@ -84,7 +84,7 @@ public class User implements UserDetails {
     @JoinTable(
         name = "user_favorites",
         joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "restaurant_id")
+        inverseJoinColumns = @JoinColumn(name = "rcaestaurant_id")
     )
     private Set<Restaurant> favorites = new HashSet<>();
 

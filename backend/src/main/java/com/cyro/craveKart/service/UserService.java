@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface UserService {
 
-  public List<User> findAllUsers();
-  public User getByUserId(Long userId);
-  public User getUserByEmail(String email);
+  public List<UserResponse> findAllUsers();
+  public UserResponse getByUserId(Long userId);
+  public UserResponse getUserByEmail(String email);
   void updatePassword(User user, String newPassword);
   boolean removeByUserId(Long userId);
 
