@@ -62,7 +62,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
     private List<Address> addresses;
 
     @Enumerated(EnumType.STRING)
@@ -112,7 +114,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return status == USER_STATUS.ACTIVE;
     }
-
-
 
 }

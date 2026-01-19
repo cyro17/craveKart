@@ -12,15 +12,31 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+
+  cache:
+    type: redis
+  data:
+    redis:
+      host: redis-16039.crce217.ap-south-1-1.ec2.cloud.redislabs.com
+      port: 16039
+      password: 72XTMQWwnOkM7A0EXcp1XSN0k6aBcQU4
+
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
 
 server:
   port: 9091
   servlet:
     context-path: /
+
 
 jwt:
   secretKey: Q1RrR3ZsU0Z3M2pQbFh6YlJZc0R5a2lKZ2xFNVZkR0pWc2p1dA==

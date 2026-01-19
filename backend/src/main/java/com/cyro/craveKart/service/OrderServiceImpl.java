@@ -46,7 +46,6 @@ public class OrderServiceImpl implements OrderService {
 
     List<OrderItem> orderItems = new ArrayList<>();
 
-
     for(CartItem cartItem : cart.getItems()) {
       System.out.println(cartItem.getFood().getName());
       OrderItem orderItem = new  OrderItem();
@@ -56,11 +55,14 @@ public class OrderServiceImpl implements OrderService {
       orderItem.setFoodPrice(cartItem.getFood().getPrice());
       orderItem.setQuantity(cartItem.getQuantity());
       orderItem.setTotalPrice(cartItem.getTotalPrice());
+      // get the food , fetch restaurant details from it
+
       orderItems.add(orderItem);
     }
 
     order.setOrderItems(orderItems);
     order.setTotalItem(orderItems.size());
+
 
     order.setTotalAmount(
         orderItems.stream()

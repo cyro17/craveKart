@@ -3,18 +3,29 @@ package com.cyro.cravekart.service;
 import com.cyro.cravekart.config.security.JwtUtil;
 import com.cyro.cravekart.exception.UserException;
 import com.cyro.cravekart.models.User;
+import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.repository.UserRepository;
+import com.cyro.cravekart.response.UserResponse;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
@@ -22,47 +33,78 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
+  @Cacheable(value = "allUsers")
   public List<User> findAllUsers() {
     return userRepository.findAll();
   }
 
 
   @Override
-  public User findUserProfileByJwt(String jwt) throws UserException {
-    String username = jwtUtil.getUsernameFromToken(jwt);
-    return userRepository.findByUsername(username).orElseThrow(
-        () -> new UsernameNotFoundException("Username not found")
-    );
+  @Cacheable(value = "usersById", key = "#userId")
+  public User getByUserId(Long userId) {
+    log.warn("🚨 DB HIT userId={}", userId);
+    return userRepository.findById(userId).orElseThrow(() ->
+        new RuntimeException("User with id " + userId + " not found"));
   }
 
   @Override
-  public User findUserByEmail(String email) throws UserException {
-    User user = userRepository.findByEmail(email);
-    if(user != null) {
-      return user;
-    }
-    throw new UserException("User not found with email :  " + email);
+  @Cacheable(value = "usersByEmail", key = "#email")
+  public User getUserByEmail(String email) {
+  return  userRepository.findByEmail(email)
+        .orElseThrow(()-> new RuntimeException("User with email " + email + " not found"));
   }
 
   @Override
-  public List<User> getPendingRestaurantOwner() {
-    return null;
-  }
-
-  @Override
+  @Caching(evict = {
+      @CacheEvict(value = "usersById", key= "#user.id"),
+      @CacheEvict(value = "usersByEmail", key = "#user.email"),
+      @CacheEvict(value = "allUsers", allEntries = true)
+  })
   public void updatePassword(User user, String newPassword) {
     user.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(user);
   }
 
-  @Override
-  public List<User> saveAll(List<User> users) {
-    return userRepository.saveAll(users);
-  }
 
   @Override
+  @Caching(evict = {
+      @CacheEvict(value = "usersById", key= "#user.id"),
+      @CacheEvict(value = "usersByEmail", key = "#user.email"),
+      @CacheEvict(value = "allUsers", allEntries = true)
+  })
   public boolean removeByUserId(Long userId) {
     userRepository.deleteById(userId);
     return true;
   }
+
+
+//  @Override
+//  @Cacheable(value = "usersByEmail", key = "#email")
+//  public User getByEmail(String email) {
+//    return userRepository.findByEmail(email);
+//  }
+//
+//  @Override
+//  public User findUserProfileByJwt(String jwt) throws UserException {
+//    String username = jwtUtil.getUsernameFromToken(jwt);
+//    return userRepository.findByUsername(username).orElseThrow(
+//        () -> new UsernameNotFoundException("Username not found")
+//    );
+//  }
+
+
+
+//  @Override
+//  public List<User> getPendingRestaurantOwner() {
+//    return null;
+//  }
+
+
+
+//  @Override
+//  public List<User> saveAll(List<User> users) {
+//    return userRepository.saveAll(users);
+//  }
+
+
 }

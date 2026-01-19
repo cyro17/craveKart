@@ -56,6 +56,12 @@ public class Order {
     @Column(precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
+
+    private String paymentGateway;
+    private String paymentOrderId;
+    private String paymentId;
+
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
