@@ -28,11 +28,22 @@ public class OrderItem {
 
   private String foodName;
 
-  @Column(precision = 10, scale = 2)
+  // snapshots
+
+  // restaurant details
+  @Column(name = "Restaurant ID")
+  private Long restaurantId;
+  @Column(name = "Restaurant Name")
+  private String restaurantName;
+
+  // order item price and qty
+  @Column(precision = 10, scale = 2, name = "Price")
   private BigDecimal foodPrice;
+
+  @Column(name = "Quantity")
   private Integer quantity;
 
-  @Column(precision = 10, scale = 2)
+  @Column(precision = 10, scale = 2, name = "Total")
   private BigDecimal totalPrice;
 
 
