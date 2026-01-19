@@ -25,6 +25,23 @@ spring:
       port: 16039
       password: 72XTMQWwnOkM7A0EXcp1XSN0k6aBcQU4
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: cyrodev17@gmail.com
+    password: bvzg umqy bxhx jozy
+
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
+            required: true
+
+    default-encoding: UTF-8
+
 
 
 logging:
@@ -36,6 +53,7 @@ server:
   port: 9091
   servlet:
     context-path: /
+
 
 
 jwt:

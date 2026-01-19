@@ -13,7 +13,7 @@ public interface UserService {
   public UserResponse getUserByEmail(String email);
   void updatePassword(User user, String newPassword);
   boolean removeByUserId(Long userId);
-
+  public void sendPasswordResetEmail(User user);
 
 //  public User findUserProfileByJwt(String jwt) throws UserException;
 

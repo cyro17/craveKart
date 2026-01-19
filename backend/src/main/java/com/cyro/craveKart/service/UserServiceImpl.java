@@ -6,6 +6,7 @@ import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.UserResponse;
+import com.cyro.cravekart.service.utils.UserServiceUtil;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,14 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +35,9 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final JwtUtil jwtUtil;
   private final PasswordEncoder passwordEncoder;
+  private final JavaMailSender  javaMailSender;
+  private final UserServiceUtil userServiceUtil;
+
 
   @Override
 //  @Cacheable(value = "allUsers")
@@ -83,6 +90,13 @@ public class UserServiceImpl implements UserService {
   public boolean removeByUserId(Long userId) {
     userRepository.deleteById(userId);
     return true;
+  }
+
+  @Override
+  public void sendPasswordResetEmail(User user) {
+    String token = userServiceUtil.generateRandomToken();
+    Date date = userServiceUtil.calculateExpiryDate();
+    
   }
 
 
