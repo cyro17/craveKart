@@ -6,7 +6,6 @@ export const reducers = {
         state.error = null;
         state.success = null;
         state.success = action.payload;
-
     },
     registerRequest: (state) => {
         state.isLoading = true;

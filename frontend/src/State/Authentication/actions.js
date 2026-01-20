@@ -70,7 +70,7 @@ export function addToFavorites(reqData) {
         } catch (error) {
             console.log("catch error ", error);
             dispatch({
-                type: "auth/addToFavorieFailure",
+                type: "auth/addToFavoriteFailure",
                 payload: error.message
             });
         }
@@ -82,7 +82,7 @@ export function resetPasswordRequest(reqData) {
     return async function (dispatch) {
         dispatch({ type: "auth/requestResetPasswordRequest" });
         try {
-            const { data } = api.post(`${API_URL}/auth/reset-password-request?email=${reqData.email}`, {});
+            const { data } = await api.post(`${API_URL}/auth/reset-password-request?email=${reqData.email}`, {});
             console.log(data);
             dispatch({ type: "auth/requestResetPasswordSuccess", payload: data });
         } catch (error) {
@@ -96,7 +96,7 @@ export function loginUser(reqData) {
     return async function (dispatch) {
         try {
             dispatch({ type: "auth/loginRequest" });
-            const { data } = await axios.post(`${API_URL}/auth/signin`, reqData.data);
+            const { data } = await axios.post(`${API_URL}/auth/login`, reqData.data);
             console.log("data : ", data);
 
             if (data.jwt) localStorage.setItem("jwt", data.jwt);
