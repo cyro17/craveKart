@@ -9,19 +9,16 @@ import java.util.List;
 public interface UserService {
 
   public List<UserResponse> findAllUsers();
+
   public UserResponse getByUserId(Long userId);
+
   public UserResponse getUserByEmail(String email);
+
   void updatePassword(User user, String newPassword);
+
   boolean removeByUserId(Long userId);
+
   public void sendPasswordResetEmail(User user);
-
-//  public User findUserProfileByJwt(String jwt) throws UserException;
-
-//  public User findUserByEmail(String email) throws UserException;
-
-//  public List<User> getPendingRestaurantOwner();
-
-//  List<User> saveAll(List<User> users);
 
 
 }

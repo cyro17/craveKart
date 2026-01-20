@@ -79,4 +79,9 @@ public class Restaurant {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
+  public Object getem() {
+  }
+
+  public Object getrain() {
+  }
 }

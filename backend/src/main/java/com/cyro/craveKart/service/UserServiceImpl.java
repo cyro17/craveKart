@@ -43,17 +43,14 @@ public class UserServiceImpl implements UserService {
 //  @Cacheable(value = "allUsers")
 //  @Transactional
   public List<UserResponse> findAllUsers() {
-    List<User> users = userRepository.findAll();
-    List<UserResponse> userResponseList = new ArrayList<>();
-    for (User user : users) {
-      userResponseList.add(UserResponse.from(user));
-    }
-    return userResponseList;
+    return  userRepository.findAll().stream()
+        .map(UserResponse::from)
+        .toList();
   }
 
 
   @Override
-  @Cacheable(value = "usersById", key = "#userId")
+  @Cacheable(key = "#userId", value = "usersById")
   public UserResponse getByUserId(Long userId) {
     log.warn("🚨 DB HIT userId={}", userId);
     User user = userRepository.findById(userId)
@@ -62,7 +59,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Cacheable(value = "usersByEmail", key = "#email")
+  @Cacheable(key = "#email", value = "usersByEmail")
   public UserResponse getUserByEmail(String email) {
     log.warn("🚨 DB HIT userId={}", email);
     User user =  userRepository.findByEmail(email)
@@ -72,15 +69,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Caching(evict = {
-      @CacheEvict(value = "usersById", key= "#user.id"),
-      @CacheEvict(value = "usersByEmail", key = "#user.email"),
+      @CacheEvict(key= "#user.id", value = "usersById"),
+      @CacheEvict( key = "#user.email", value = "usersByEmail"),
 //      @CacheEvict(value = "allUsers", allEntries = true)
   })
   public void updatePassword(User user, String newPassword) {
     user.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(user);
   }
-
 
   @Override
   @Caching(evict = {
@@ -92,11 +88,13 @@ public class UserServiceImpl implements UserService {
     return true;
   }
 
+
+
   @Override
   public void sendPasswordResetEmail(User user) {
     String token = userServiceUtil.generateRandomToken();
     Date date = userServiceUtil.calculateExpiryDate();
-    
+
   }
 
 
