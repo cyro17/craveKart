@@ -1,18 +1,16 @@
 package com.cyro.cravekart.response;
 
-import com.cyro.cravekart.models.Address;
-import com.cyro.cravekart.models.ContactInfo;
 import com.cyro.cravekart.models.Restaurant;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class RestaurantResponse implements Serializable {
 
   private String name;
@@ -30,20 +28,29 @@ public class RestaurantResponse implements Serializable {
 
 
   public static RestaurantResponse from(Restaurant restaurant) {
-
-    return  new RestaurantResponse(
-      restaurant.getName(),
-        restaurant.getDescription(),
-        restaurant.getCuisineType(),
-        restaurant.getAddress().getFullAddress(),
-        restaurant.getContactInfo().getEmail(),
-        restaurant.getContactInfo().getMobile(),
-        restaurant.getOpeningHours(),
-        restaurant.getNumRating(),
-        restaurant.getImages(),
-        restaurant.getCreatedAt(),
-        restaurant.isOpen()
-    );
+    return RestaurantResponse.builder()
+        .name(restaurant.getName())
+        .description(restaurant.getDescription())
+        .cuisineType(restaurant.getCuisineType())
+        .fullAddress(
+            restaurant.getAddress() != null ?
+                restaurant.getAddress().getFullAddress(): null
+        )
+        .email(
+            restaurant.getContactInfo() != null
+                ? restaurant.getContactInfo().getEmail()
+                : null
+        )
+        .phone(
+            restaurant.getContactInfo() != null
+                ? restaurant.getContactInfo().getMobile()
+                : null)
+        .openingHours(restaurant.getOpeningHours())
+        .ratings(restaurant.getNumRating())
+        .images(restaurant.getImages())
+        .registeredAt(restaurant.getCreatedAt())
+        .open(restaurant.isOpen())
+        .build();
   }
 
 

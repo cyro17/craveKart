@@ -24,12 +24,14 @@ public interface RestaurantService {
 
   public List<RestaurantResponse>searchRestaurant(String keyword);
 
-  public RestaurantResponse findRestaurantById(Long id) throws RestaurantException;
+  public RestaurantResponse getRestaurantById(Long id) throws RestaurantException;
 
-  public List<RestaurantResponse> getRestaurantsByUserId(Long userId) throws RestaurantException;
+  public List<Restaurant> getRestaurantsByUserId(Long userId) throws RestaurantException;
 
   public RestaurantDto addToFavorites(Long restaurantId, User user) throws RestaurantException;
 
   public RestaurantResponse updateRestaurantStatus(Long id)throws RestaurantException;
+
+  public Restaurant getRestaurantById_util(Long id);
 
 }

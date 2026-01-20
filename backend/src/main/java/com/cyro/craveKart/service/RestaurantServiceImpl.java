@@ -11,12 +11,10 @@ import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
-import com.cyro.cravekart.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.keyvalue.repository.KeyValueRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +25,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class RestaurantServiceImpl implements RestaurantService {
-  private final KeyValueRepository keyValueRepository;
 
   private final AddressRepository addressRepository;
   private final  RestaurantRepository restaurantRepository;
@@ -66,6 +63,42 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
+  @Cacheable(value = "restaurants")
+  public List<RestaurantResponse> getAllRestaurant() {
+    List<Restaurant> restaurants = restaurantRepository.findAll();
+    return  restaurants.stream()
+        .map(RestaurantResponse::from)
+        .toList();
+  }
+
+
+  @Override
+  @Cacheable(key = "#id", value = "restaurantById")
+  public RestaurantResponse getRestaurantById(Long id)
+      throws RestaurantException {
+    log.info("get request for restaurant {}", restaurantRepository.findById(id).get().getName());
+    Restaurant restaurant = restaurantRepository.findById(id)
+        .orElseThrow(() -> new RestaurantException("Restaurant not found with id : " + id));
+
+    return RestaurantResponse.from(restaurant);
+  }
+
+  @Override
+  public List<Restaurant> getRestaurantsByUserId(Long userId) throws RestaurantException {
+    return  restaurantRepository.findByOwnerId(userId);
+  }
+
+  @Override
+  @Cacheable(key = "#keyword", value = "restaurantByKeyword")
+  public List<RestaurantResponse> searchRestaurant(String keyword) {
+
+    return  restaurantRepository.findBySearchQuery(keyword).stream()
+        .map(RestaurantResponse::from)
+        .toList();
+  }
+
+
+  @Override
   public RestaurantResponse updateRestaurant(Long restaurantId,
                                      CreateRestaurantRequest updatedRestaurant) throws RestaurantException {
     Restaurant restaurantById = restaurantRepository
@@ -83,51 +116,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
     Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
     return  RestaurantResponse.from(savedRestaurant);
-  }
-
-  @Override
-  public void deleteRestaurant(Long restaurantId) throws RestaurantException {
-    Restaurant restaurant = restaurantRepository
-            .findById(restaurantId).orElseThrow(
-        () -> new RestaurantException
-            ("Restaurant not found with id :" + restaurantId)
-    );
-    restaurantRepository.delete(restaurant);
-  }
-
-  @Override
-  public List<RestaurantResponse> getAllRestaurant() {
-    List<Restaurant> restaurants = restaurantRepository.findAll();
-    return  restaurants.stream()
-        .map(RestaurantResponse::from)
-        .toList();
-  }
-
-  @Override
-  public List<RestaurantResponse> searchRestaurant(String keyword) {
-
-    return  restaurantRepository.findBySearchQuery(keyword).stream()
-        .map(RestaurantResponse::from)
-        .toList();
-  }
-
-  @Override
-  @Cacheable(key =  "#restaurantID", value = "restaurantById")
-  public RestaurantResponse findRestaurantById(Long restaurantID)
-      throws RestaurantException {
-    Restaurant restaurant = restaurantRepository.findById(restaurantID)
-        .orElseThrow(() -> new RestaurantException("Restaurant not found with id : " + restaurantID));
-
-    return RestaurantResponse.from(restaurant);
-  }
-
-  @Override
-  @Cacheable(value = "")
-  public List<RestaurantResponse> getRestaurantsByUserId(Long userId) throws RestaurantException {
-    List<Restaurant> restaurants = restaurantRepository.findByOwnerId(userId);
-    return restaurants.stream()
-        .map(RestaurantResponse::from)
-        .toList();
   }
 
   @Override
@@ -165,5 +153,33 @@ public class RestaurantServiceImpl implements RestaurantService {
     Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
 
     return  RestaurantResponse.from(savedRestaurant);
+  }
+
+  @Override
+  public void deleteRestaurant(Long restaurantId) throws RestaurantException {
+    Restaurant restaurant = restaurantRepository
+        .findById(restaurantId).orElseThrow(
+            () -> new RestaurantException
+                ("Restaurant not found with id :" + restaurantId)
+        );
+    restaurantRepository.delete(restaurant);
+  }
+
+
+//  @Override
+//  @Cacheable(key = "#id", value = "restaurantById")
+//  public RestaurantResponse getRestaurantById(Long restaurantId) throws RestaurantException {
+//    Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
+//        () -> new RestaurantException("Restaurant not found with id : " + restaurantId)
+//    );
+//    return  RestaurantResponse.from(restaurant);
+//
+//  }
+
+
+  public Restaurant getRestaurantById_util(Long id) throws RestaurantException {
+    return   restaurantRepository.findById(id).orElseThrow(
+        ()->  new RestaurantException("Restaurant not found with id : " + id)
+    );
   }
 }

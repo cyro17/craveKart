@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
 
 
   @Override
-//  @Cacheable(value = "allUsers")
+  @Cacheable(value = "allUsers")
 //  @Transactional
   public List<UserResponse> findAllUsers() {
-    return  userRepository.findAll().stream()
+    return  userRepository.findAll()  .stream()
         .map(UserResponse::from)
         .toList();
   }

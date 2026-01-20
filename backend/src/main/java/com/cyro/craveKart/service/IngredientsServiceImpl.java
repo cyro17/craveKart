@@ -70,7 +70,7 @@ public class IngredientsServiceImpl implements IngredientsService {
       return existingItem;
     }
 
-    Restaurant restaurantById = restaurantService.findRestaurantById(request.getRestaurantId());
+    Restaurant restaurantById = restaurantService.getRestaurantById_util(request.getRestaurantId());
     IngredientItem item = IngredientItem.builder()
         .name(request.getName())
         .restaurant(restaurantById)
