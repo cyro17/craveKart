@@ -11,9 +11,9 @@ import Auth from "../customers/pages/Auth/Auth";
 import { IconButton } from "@mui/material";
 
 const AdminNavbar = ({handleOpenSideBar}) => {
-  const navigate = useNavigate();
-  const { auth, cart } = useSelector((store) => store);
-  const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const { auth, cart } = useSelector((store) => store);
+  // const dispatch = useDispatch();
 
   
 
