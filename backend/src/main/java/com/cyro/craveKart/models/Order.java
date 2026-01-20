@@ -20,7 +20,17 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-@Table(name = "orders")
+@Table(
+    name = "orders",
+    indexes = {
+        @Index(name = "idx_orders_customer_id", columnList = "customer_id"),
+        @Index(name = "idx_orders_order_status", columnList = "orderStatus"),
+        @Index(name = "idx_orders_restaurant_id", columnList = "restaurantId"),
+        @Index(name = "idx_orders_created_at", columnList = "createdAt"),
+        @Index(name = "idx_orders_customer_status", columnList = "customer_id,orderStatus"),
+        @Index(name = "idx_orders_restaurant_status", columnList = "restaurantId,orderStatus")
+    }
+)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

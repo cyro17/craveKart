@@ -21,6 +21,17 @@ import java.util.Set;
 @ToString(exclude = {"foods", "orders", "favoritedBy"})
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(
+    name = "restaurant",
+    indexes = {
+        @Index(name = "idx_restaurant_owner", columnList = "owner_id"),
+        @Index(name = "idx_restaurant_open", columnList = "open"),
+        @Index(name = "idx_restaurant_cuisine", columnList = "cuisineType"),
+        @Index(name = "idx_restaurant_created", columnList = "createdAt"),
+        @Index(name = "idx_restaurant_open_cuisine", columnList = "open,cuisineType"),
+        @Index(name = "idx_restaurant_open_created", columnList = "open,createdAt")
+    }
+)
 public class Restaurant {
 
   @Id
@@ -55,7 +66,10 @@ public class Restaurant {
   @ElementCollection
   @CollectionTable(
       name = "restaurant_images",
-      joinColumns = @JoinColumn(name = "restaurant_id")
+      joinColumns = @JoinColumn(name = "restaurant_id"),
+      indexes = {
+          @Index(name = "idx_restaurant_images_restaurant_id", columnList = "restaurant_id")
+      }
   )
   @Column(name = "image_url", length = 1000)
   private List<String> images;
