@@ -1,12 +1,14 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.Restaurant;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.RestaurantRepository;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
+import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantService;
 import com.cyro.cravekart.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,20 @@ public class RestaurantAdminController {
     return new ResponseEntity<>( "OK", HttpStatus.OK);
   }
 
+  @GetMapping("/{restaurantId}")
+  public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable Long restaurantId) throws RestaurantException {
+    Restaurant restaurant = restaurantService.getRestaurantById_util(restaurantId);
+    RestaurantResponse resp = RestaurantResponse.from(restaurant);
+    return new ResponseEntity(resp, HttpStatus.OK);
+  }
+
+  @GetMapping("/getall")
+  public ResponseEntity<RestaurantResponse> getAll() throws RestaurantException {
+    List<RestaurantResponse> res = restaurantService.getAllRestaurant();
+    return new ResponseEntity(res, HttpStatus.OK);
+  }
+
+
   @PostMapping
   public ResponseEntity<CreateRestaurantResponse> createRestaurant(
       @RequestBody CreateRestaurantRequest request,
@@ -51,14 +67,14 @@ public class RestaurantAdminController {
   }
 
   @PutMapping("/{restaurantId}")
-  public ResponseEntity<Restaurant> updateRestaurant(
+  public ResponseEntity<RestaurantResponse> updateRestaurant(
       @PathVariable Long restaurantId,
       @RequestBody CreateRestaurantRequest request){
 
     if(authService.getCurrentAuthUser() != null) {
 
-      Restaurant updatedRestaurant = restaurantService.updateRestaurant(restaurantId, request);
-      return  new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
+      RestaurantResponse restaurantResponse = restaurantService.updateRestaurant(restaurantId, request);
+      return  new ResponseEntity(restaurantResponse, HttpStatus.OK);
     }
     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
   }

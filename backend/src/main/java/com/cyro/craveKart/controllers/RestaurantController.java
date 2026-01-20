@@ -6,6 +6,7 @@ import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.Restaurant;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
+import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,24 +32,21 @@ public class RestaurantController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<List<Restaurant>> findRestaurantByName(
+  public ResponseEntity<List<RestaurantResponse>> findRestaurantByName(
       @RequestParam String restaurantName) {
-    List<Restaurant> restaurants = restaurantService.searchRestaurant(restaurantName);
-    for(Restaurant restaurant : restaurants){
-      log.info(restaurant.getName());
-    }
+    List<RestaurantResponse> restaurants = restaurantService.searchRestaurant(restaurantName);
     return ResponseEntity.ok(restaurants);
   }
 
-  @GetMapping()
-  public ResponseEntity<List<Restaurant>> getAllRestaurants(){
+  @GetMapping
+  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(){
     return ResponseEntity.ok(restaurantService.getAllRestaurant());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Restaurant> findRestaurantById(@PathVariable Long id)
+  public ResponseEntity<RestaurantResponse> findRestaurantById(@PathVariable Long id)
       throws RestaurantException {
-    return ResponseEntity.ok(restaurantService.findRestaurantById(id));
+    return ResponseEntity.ok(restaurantService.getRestaurantById(id));
   }
 
   @PutMapping("/addFav/{restaurantId}")

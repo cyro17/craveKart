@@ -49,9 +49,6 @@ public class Restaurant {
 
   private String openingHours;
 
-//  @JsonIgnore
-//  @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Order> orders = new ArrayList<>();
 
   private int numRating;
 
@@ -79,9 +76,4 @@ public class Restaurant {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
-  public Object getem() {
-  }
-
-  public Object getrain() {
-  }
 }

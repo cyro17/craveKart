@@ -41,6 +41,6 @@ public class Address {
   private LocalDateTime updatedAt;
 
   public String getFullAddress() {
-    return String.join(", ", streetAddress, city, state, pinCode);
+    return String.join(", ", streetAddress, city, state, postalCode);
   }
 }
