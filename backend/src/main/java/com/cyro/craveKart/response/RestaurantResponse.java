@@ -47,7 +47,13 @@ public class RestaurantResponse implements Serializable {
                 : null)
         .openingHours(restaurant.getOpeningHours())
         .ratings(restaurant.getNumRating())
-        .images(restaurant.getImages())
+        .images(
+            restaurant.getImages() == null
+                ? List.of()
+                : restaurant.getImages().stream()
+                .map(String::valueOf) // or getUrl()
+                .toList()
+        )
         .registeredAt(restaurant.getCreatedAt())
         .open(restaurant.isOpen())
         .build();

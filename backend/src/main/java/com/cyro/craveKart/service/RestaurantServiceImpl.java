@@ -14,7 +14,9 @@ import com.cyro.cravekart.response.RestaurantResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +35,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
   @Override
+  @Caching(evict = {
+      @CacheEvict(value = "restaurantsAll", allEntries = true),
+      @CacheEvict(value = "restaurantByKeyword", allEntries = true)
+  })
   public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req, User user) {
     Address address=new Address();
     address.setCity(req.getAddress().getCity());
@@ -73,7 +79,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
   @Override
-  @Cacheable(key = "#id", value = "restaurantById")
+  @Cacheable(value = "restaurantById", key = "#id")
   public RestaurantResponse getRestaurantById(Long id)
       throws RestaurantException {
     log.info("get request for restaurant {}", restaurantRepository.findById(id).get().getName());
@@ -89,7 +95,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
-  @Cacheable(key = "#keyword", value = "restaurantByKeyword")
+  @Cacheable(value = "restaurantByKeyword", key = "#keyword")
   public List<RestaurantResponse> searchRestaurant(String keyword) {
 
     return  restaurantRepository.findBySearchQuery(keyword).stream()
