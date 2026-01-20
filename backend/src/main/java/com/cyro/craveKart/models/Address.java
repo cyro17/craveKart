@@ -39,4 +39,8 @@ public class Address {
   private LocalDateTime createdAt;
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  public String getFullAddress() {
+    return String.join(", ", streetAddress, city, state, pinCode);
+  }
 }

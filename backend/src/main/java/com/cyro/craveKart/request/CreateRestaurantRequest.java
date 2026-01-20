@@ -23,4 +23,5 @@
     private ContactInfo contactInfo;
     private String openingHours;
     private List<String> images;
+
   }

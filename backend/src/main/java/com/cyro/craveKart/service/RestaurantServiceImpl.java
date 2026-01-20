@@ -10,12 +10,14 @@ import com.cyro.cravekart.repository.RestaurantRepository;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
+import com.cyro.cravekart.response.RestaurantResponse;
+import com.cyro.cravekart.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.keyvalue.repository.KeyValueRepository;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class RestaurantServiceImpl implements RestaurantService {
+  private final KeyValueRepository keyValueRepository;
 
   private final AddressRepository addressRepository;
   private final  RestaurantRepository restaurantRepository;
@@ -63,58 +66,76 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
-  public Restaurant updateRestaurant(Long restaurantId,
+  public RestaurantResponse updateRestaurant(Long restaurantId,
                                      CreateRestaurantRequest updatedRestaurant) throws RestaurantException {
-    Restaurant restaurantById = findRestaurantById(restaurantId);
-    log.info("delete request for restaurant",  restaurantById.getName());
+    Restaurant restaurantById = restaurantRepository
+        .findById(restaurantId).orElseThrow(
+            ()-> new RestaurantException("Restaurant with id " + restaurantId + " not found")
+        );
+
+    log.info("udpate request for restaurant",  restaurantById.getName());
+
     if(restaurantById.getCuisineType() != null ){
       restaurantById.setCuisineType(updatedRestaurant.getCuisineType());
     }
     if(restaurantById.getDescription() != null ){
       restaurantById.setDescription(updatedRestaurant.getDescription());
     }
-    return restaurantRepository.save(restaurantById);
+    Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
+    return  RestaurantResponse.from(savedRestaurant);
   }
 
   @Override
   public void deleteRestaurant(Long restaurantId) throws RestaurantException {
-    Restaurant restaurantById = findRestaurantById(restaurantId);
-    if(restaurantById != null) {
-      restaurantRepository.delete(restaurantById);
-      return;
-    }
-    throw new RestaurantException("Restaurant not found with id :" + restaurantId);
+    Restaurant restaurant = restaurantRepository
+            .findById(restaurantId).orElseThrow(
+        () -> new RestaurantException
+            ("Restaurant not found with id :" + restaurantId)
+    );
+    restaurantRepository.delete(restaurant);
   }
 
   @Override
-  public List<Restaurant> getAllRestaurant() {
-    return restaurantRepository.findAll();
+  public List<RestaurantResponse> getAllRestaurant() {
+    List<Restaurant> restaurants = restaurantRepository.findAll();
+    return  restaurants.stream()
+        .map(RestaurantResponse::from)
+        .toList();
   }
 
   @Override
-  public List<Restaurant> searchRestaurant(String keyword) {
-    return restaurantRepository.findBySearchQuery(keyword);
+  public List<RestaurantResponse> searchRestaurant(String keyword) {
+
+    return  restaurantRepository.findBySearchQuery(keyword).stream()
+        .map(RestaurantResponse::from)
+        .toList();
   }
 
   @Override
-  public Restaurant findRestaurantById(Long id) throws RestaurantException {
-    Restaurant restaurant = restaurantRepository.findById(id)
-        .orElseThrow(() -> new RestaurantException("Restaurant not found with id : " + id));
-    return restaurant;
+  @Cacheable(key =  "#restaurantID", value = "restaurantById")
+  public RestaurantResponse findRestaurantById(Long restaurantID)
+      throws RestaurantException {
+    Restaurant restaurant = restaurantRepository.findById(restaurantID)
+        .orElseThrow(() -> new RestaurantException("Restaurant not found with id : " + restaurantID));
+
+    return RestaurantResponse.from(restaurant);
   }
 
   @Override
-  public List<Restaurant> getRestaurantsByUserId(Long userId) throws RestaurantException {
-    return restaurantRepository.findByOwnerId(userId);
+  @Cacheable(value = "")
+  public List<RestaurantResponse> getRestaurantsByUserId(Long userId) throws RestaurantException {
+    List<Restaurant> restaurants = restaurantRepository.findByOwnerId(userId);
+    return restaurants.stream()
+        .map(RestaurantResponse::from)
+        .toList();
   }
 
   @Override
   public RestaurantDto addToFavorites(Long restaurantId,
                                       User user) throws RestaurantException {
-    Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
-    if(restaurant == null) {
-      throw new RestaurantException("Restaurant not found with id : " + restaurantId);
-    }
+    Restaurant restaurant = restaurantRepository
+        .findById(restaurantId).orElseThrow(() ->
+            new RestaurantException("Restaurant not found with id : " + restaurantId));
 
     Set<Restaurant> favorites = user.getFavorites();
     boolean isFavoured  = favorites.contains(restaurant);
@@ -136,9 +157,13 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
   @Override
-  public Restaurant updateRestaurantStatus(Long id) throws RestaurantException {
-    Restaurant restaurantById = findRestaurantById(id);
+  public RestaurantResponse updateRestaurantStatus(Long id) throws RestaurantException {
+    Restaurant restaurantById = restaurantRepository.findById(id).orElseThrow(
+        ()->  new RestaurantException("Restaurant not found with id : " + id)
+    );
     restaurantById.setOpen(!restaurantById.isOpen());
-    return restaurantRepository.save(restaurantById);
+    Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
+
+    return  RestaurantResponse.from(savedRestaurant);
   }
 }
