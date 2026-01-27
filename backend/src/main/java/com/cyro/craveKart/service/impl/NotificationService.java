@@ -1,7 +1,5 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
-import com.cyro.cravekart.models.Notification;
-import com.cyro.cravekart.models.Order;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,28 +1,21 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.JwtUtil;
-import com.cyro.cravekart.exception.UserException;
 import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.UserResponse;
+import com.cyro.cravekart.service.UserService;
 import com.cyro.cravekart.service.utils.UserServiceUtil;
-import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.cache.interceptor.SimpleKey;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

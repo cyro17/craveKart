@@ -5,6 +5,7 @@ import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.service.CartService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,8 @@ public class CartController {
   }
 
   @DeleteMapping("/item/{cartItemId}")
-  public void removeItem(@PathVariable Long cartItemId){
-    cartService.removeItem(cartItemId);
+  public void removeItem(@PathVariable Long cartItemId) throws BadRequestException {
+    cartService.removeCartItem(cartItemId);
   }
 
   @DeleteMapping("/clear")

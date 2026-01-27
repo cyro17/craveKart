@@ -42,5 +42,14 @@ public class AuthController {
     return ResponseEntity.ok(response);
   }
 
+//  @PutMapping
+//  public ResponseEntity<String> updatePassword(
+//      @RequestBody LoginRequestDTO loginRequestDTO
+//  ){
+//    authService.updatePassword()
+//
+//
+//  }
+
 
 }

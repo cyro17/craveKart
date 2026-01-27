@@ -5,6 +5,7 @@ import com.cyro.cravekart.models.IngredientItem;
 import com.cyro.cravekart.repository.IngredientItemRepository;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.CreateIngredientItemRequest;
+import com.cyro.cravekart.service.OrderService;
 import com.cyro.cravekart.service.RestaurantService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,12 @@ class CraveKartApplicationTests {
 	@Autowired
 	private IngredientItemRepository  ingredientItemRepository;
 
+	@Autowired
+	private OrderService orderService;
+
 	@Test
+	@Transactional
+	@Commit
 	void contextLoads() {
 
 

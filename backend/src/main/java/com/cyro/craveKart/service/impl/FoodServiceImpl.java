@@ -1,4 +1,4 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.exception.FoodException;
 import com.cyro.cravekart.models.FoodCategory;
@@ -9,8 +9,8 @@ import com.cyro.cravekart.repository.FoodCategoryRepository;
 import com.cyro.cravekart.repository.FoodRepository;
 import com.cyro.cravekart.repository.IngredientItemRepository;
 import com.cyro.cravekart.repository.RestaurantRepository;
-import com.cyro.cravekart.request.AdminCreateFoodRequest;
 import com.cyro.cravekart.request.CreateFoodRequest;
+import com.cyro.cravekart.service.FoodService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -108,13 +108,13 @@ public class FoodServiceImpl implements FoodService {
 
   private List<Food> filterByVeg(List<Food> foods, boolean isveg) {
     return foods.stream()
-        .filter(food-> food.getVegetarian() == isveg)
+        .filter(food-> food.isVegetarian() == isveg)
         .collect(Collectors.toList());
   }
 
   private List<Food> filterBySeasonal(List<Food> foods, boolean isSeasonal) {
     return foods.stream()
-        .filter(food -> food.getSeasonal() == isSeasonal)
+        .filter(food -> food.isSeasonal() == isSeasonal)
         .collect(Collectors.toList());
   }
 
@@ -145,7 +145,7 @@ public class FoodServiceImpl implements FoodService {
   @Override
   public Food updateAvailibilityStatus(Long foodId) throws FoodException {
     Food food = findFoodById(foodId);
-    food.setAvailable(!food.getAvailable());
+    food.setAvailable(!food.isAvailable());
     foodRepository.save(food);
     return food;
   }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PlaceOrder {
+public class PlaceOrderResponse {
 
   private Long orderId;
   private OrderStatus orderStatus;

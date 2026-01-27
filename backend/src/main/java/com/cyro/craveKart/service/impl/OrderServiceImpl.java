@@ -1,4 +1,4 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.exception.OrderException;
@@ -6,11 +6,15 @@ import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.models.enums.OrderStatus;
 import com.cyro.cravekart.repository.*;
-import com.cyro.cravekart.response.PlaceOrder;
+import com.cyro.cravekart.response.OrderResponse;
+import com.cyro.cravekart.response.PlaceOrderResponse;
+import com.cyro.cravekart.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
 
 
   @Override
-  public PlaceOrder placeOrder()  {
+  public PlaceOrderResponse placeOrder()  {
 
     User user = authService.getCurrentAuthUser();
 
@@ -73,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
     orderRepository.save(order);
 
     cartRepository.deleteByCustomerId(user.getId());
-    return  PlaceOrder.builder()
+    return  PlaceOrderResponse.builder()
         .orderId(order.getId())
         .orderStatus(OrderStatus.CREATED)
         .totalPrice(order.getTotalAmount()).build();
@@ -85,13 +89,27 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public void cancelOrder(Long orderId) {
+  public void cancelOrder(Long orderId) throws AccessDeniedException, BadRequestException {
+    User currentAuthUser = authService.getCurrentAuthUser();
+    Order order = orderRepository.findById(orderId).get();
+    if( !order.getCustomer().getId().equals(currentAuthUser.getId())) {
+      throw new AccessDeniedException("This order request does not belong to the customer with id :" + currentAuthUser.getId());
+    }
 
+    if(order.getOrderStatus().equals((OrderStatus.PENDING))){
+      throw new BadRequestException("Order request cannot be Cancelled");
+    }
+
+     updateOrderStatus(orderId, OrderStatus.CANCELLED);
+  }
+
+  private boolean updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+    return false;
   }
 
   @Override
-  public List<Order> getUserOrders(Long id) {
-    return List.of();
+  public List<Order> getUserOrders(Long customerId) {
+    return orderRepository.findByCustomerId(customerId);
   }
 
   @Override

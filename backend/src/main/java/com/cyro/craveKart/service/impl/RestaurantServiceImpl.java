@@ -1,4 +1,4 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.exception.RestaurantException;
@@ -11,6 +11,7 @@ import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
+import com.cyro.cravekart.service.RestaurantService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -144,7 +145,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     RestaurantDto dto = new RestaurantDto();
     dto.setId(restaurant.getId());
-    dto.setTitle(restaurant.getName());
+    dto.setName(restaurant.getName());
     dto.setDescription(restaurant.getDescription());
     dto.setImages(restaurant.getImages());
     return dto;

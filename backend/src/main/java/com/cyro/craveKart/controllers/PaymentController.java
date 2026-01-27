@@ -2,7 +2,7 @@ package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.models.PaymentResponse;
 import com.cyro.cravekart.request.PaymentRequest;
-import com.cyro.cravekart.service.PaymentService;
+import com.cyro.cravekart.service.impl.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

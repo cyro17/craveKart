@@ -44,9 +44,9 @@ public class Food {
   @Column(name = "image_url", length = 1000)
   private List<String> images = new ArrayList<>();
 
-  private Boolean available = true;
-  private Boolean vegetarian;
-  private Boolean seasonal;
+  private boolean available = true;
+  private boolean vegetarian;
+  private boolean seasonal;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "restaurant_id", nullable = false)

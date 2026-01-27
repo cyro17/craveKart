@@ -1,4 +1,4 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.FoodCategory;
@@ -8,9 +8,9 @@ import com.cyro.cravekart.repository.FoodRepository;
 import com.cyro.cravekart.repository.RestaurantRepository;
 import com.cyro.cravekart.request.CreateCategoryRequest;
 import com.cyro.cravekart.response.CreateCategoryResponse;
+import com.cyro.cravekart.service.FoodCategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

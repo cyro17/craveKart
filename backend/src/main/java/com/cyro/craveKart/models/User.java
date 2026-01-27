@@ -51,10 +51,6 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id")
-    )
     @Column(name = "roles")
     private List<USER_ROLE> roles = new ArrayList<>();
 
@@ -76,9 +72,9 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "owner")
-    @JsonIgnore
-    private List<Restaurant> restaurants = new ArrayList<>();
+//    @OneToMany(mappedBy = "owner")
+//    @JsonIgnore
+//    private List<Restaurant> restaurants = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

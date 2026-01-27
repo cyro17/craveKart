@@ -1,6 +1,7 @@
-package com.cyro.cravekart.service;
+package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.models.Event;
+import com.cyro.cravekart.service.EventService;
 
 import java.util.List;
 
