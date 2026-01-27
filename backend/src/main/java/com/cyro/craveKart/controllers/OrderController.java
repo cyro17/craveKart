@@ -1,20 +1,15 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.exception.OrderException;
 import com.cyro.cravekart.models.Order;
-import com.cyro.cravekart.models.PaymentResponse;
 import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.request.CreateOrderRequest;
-import com.cyro.cravekart.response.PlaceOrder;
+import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
-import com.cyro.cravekart.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 @RestController
@@ -26,8 +21,8 @@ public class OrderController {
   private final AuthService  authService;
 
   @PostMapping("/place")
-  public ResponseEntity<PlaceOrder> createOrder(){
-      PlaceOrder response = orderService.placeOrder();
+  public ResponseEntity<PlaceOrderResponse> createOrder(){
+      PlaceOrderResponse response = orderService.placeOrder();
       return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

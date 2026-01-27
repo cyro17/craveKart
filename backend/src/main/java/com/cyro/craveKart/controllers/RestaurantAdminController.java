@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/api/admin/restaurant")
 @RequiredArgsConstructor
 @Slf4j
+@Secured("ROLE_RESTAURANT_OWNER")
 public class RestaurantAdminController {
   private final RestaurantRepository restaurantRepository;
   private final RestaurantService restaurantService;
@@ -30,10 +32,15 @@ public class RestaurantAdminController {
   private final AuthService authService;
   private final UserRepository userRepository;
 
+//  @PostMapping("/acceptOrderRequest/{orderRequestID}")
+//  public
+
   @GetMapping("/check")
   public ResponseEntity<String> getHealth() {
     return new ResponseEntity<>( "OK", HttpStatus.OK);
   }
+
+
 
   @GetMapping("/{restaurantId}")
   public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable Long restaurantId) throws RestaurantException {

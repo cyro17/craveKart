@@ -17,7 +17,8 @@ const authSlice = createSlice({
     reducers: reducers
 })
 
-export const { registerRequest, loginRequest, getUserRequest, resetPasswordRequest, requestResetPasswordRequest,
+export const { registerRequest,
+    loginRequest, getUserRequest, resetPasswordRequest, requestResetPasswordRequest,
     registerSuccess, loginSuccess, logout } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

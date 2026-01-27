@@ -40,11 +40,6 @@ public class Order {
     @JoinColumn(name = "customer_id",  nullable = false)
     private User customer;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnore
-//    @JoinColumn(name = "restaurant_id", nullable = false)
-//    private Restaurant restaurant;
-
     private Long restaurantId;
     private String restaurantName;
 

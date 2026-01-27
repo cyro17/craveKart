@@ -82,7 +82,9 @@ export function resetPasswordRequest(reqData) {
     return async function (dispatch) {
         dispatch({ type: "auth/requestResetPasswordRequest" });
         try {
-            const { data } = await api.post(`${API_URL}/auth/reset-password-request?email=${reqData.email}`, {});
+            const { data } = await api.post(
+                `${API_URL}/auth/reset-password-request?email=${reqData.email}`, {}
+            );
             console.log(data);
             dispatch({ type: "auth/requestResetPasswordSuccess", payload: data });
         } catch (error) {
