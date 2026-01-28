@@ -61,7 +61,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         .images(req.getImages())
         .address(address)
         .restaurantPartner(partner)
-        .registrationDate(LocalDateTime.now())
         .open(true)
         .build();
 

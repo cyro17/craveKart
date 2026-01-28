@@ -1,4 +1,4 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.exception.RestaurantException;

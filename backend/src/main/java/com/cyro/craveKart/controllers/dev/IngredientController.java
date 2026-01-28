@@ -1,4 +1,4 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.models.IngredientCategory;
 import com.cyro.cravekart.models.IngredientItem;

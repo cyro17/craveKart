@@ -24,7 +24,7 @@ public class Admin {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @OneToMany(mappedBy = "")
+  @OneToMany(mappedBy = "onboardingAdmin")
   private List<RestaurantPartner> restaurantPartners = new ArrayList<>();
 
   @CreationTimestamp
