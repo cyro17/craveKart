@@ -11,14 +11,14 @@ import { restaurantsOrderReducer } from "../Admin/Order/orderSlice";
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    restaurant: restaurantReducer,
-    order: orderReducer,
-    menu: menuReducer,
-    cart: cartReducer,
+    // restaurant: restaurantReducer,
+    // order: orderReducer,
+    // menu: menuReducer,
+    // cart: cartReducer,
 
-    // admin
-    restaurantsOrder: restaurantsOrderReducer,
-    ingredients: ingredientsReducer,
+    // // admin
+    // restaurantsOrder: restaurantsOrderReducer,
+    // ingredients: ingredientsReducer,
 
     //super admin
 

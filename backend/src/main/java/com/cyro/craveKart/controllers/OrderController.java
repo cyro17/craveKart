@@ -1,6 +1,8 @@
 package com.cyro.cravekart.controllers;
 
+import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.response.PlaceOrderResponse;
@@ -18,7 +20,7 @@ import java.util.List;
 public class OrderController {
 
   private final OrderService orderService;
-  private final AuthService  authService;
+  private final AuthContextService authService;
 
   @PostMapping("/place")
   public ResponseEntity<PlaceOrderResponse> createOrder(){
@@ -28,9 +30,10 @@ public class OrderController {
 
   @GetMapping("/user")
   public ResponseEntity<List<Order>> getAllUsersOrders(){
-    User user = authService.getCurrentAuthUser();
-    if(user.getId() != null){
-      List<Order> userOrders = orderService.getUserOrders(user.getId());
+
+    Customer customer = authService.getCustomer();
+    if(customer.getId() != null){
+      List<Order> userOrders = orderService.getCustomerOrders(customer.getId());
       return new ResponseEntity<>(userOrders, HttpStatus.OK);
     } else return  new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
   }

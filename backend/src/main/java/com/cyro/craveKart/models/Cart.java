@@ -23,7 +23,7 @@ public class Cart {
 
   @OneToOne
   @JoinColumn(name = "customer_id", nullable = false, unique = true)
-  private User customer;
+  private Customer customer;
 
   @ManyToOne
   private Restaurant restaurant;

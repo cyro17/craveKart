@@ -1,8 +1,7 @@
 package com.cyro.cravekart.config.security;
 
-import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.repository.RestaurantRepository;
-import com.cyro.cravekart.repository.UserRepository;
+import com.cyro.cravekart.models.*;
+import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.LoginRequestDTO;
 import com.cyro.cravekart.request.SignupRequestDTO;
 import com.cyro.cravekart.request.USER_STATUS;
@@ -25,6 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
+  private final DeliveryPartnerRepository deliveryPartnerRepository;
+  private final DeliveryRepository deliveryRepository;
+  private final RestaurantPartnerRepository restaurantPartnerRepository;
+  private final CustomerRepository customerRepository;
+  private final AdminRepository adminRepository;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -50,7 +54,32 @@ public class AuthService {
         .roles(List.of(request.getRole()))
         .status(USER_STATUS.ACTIVE)
         .build();
-    return  userRepository.save(user);
+    User savedUser = userRepository.save(user);
+
+    switch (request.getRole()) {
+      case ADMIN:
+        Admin admin = new Admin();
+        admin.setUser(user);
+        adminRepository.save(admin);
+        break;
+      case RESTAURANT_PARTNER:
+        RestaurantPartner restaurantPartner = new RestaurantPartner();
+        restaurantPartner.setUser(user);
+        restaurantPartnerRepository.save(restaurantPartner);
+        break;
+      case DELIVERY_PARTNER:
+        DeliveryPartner deliveryPartner = new DeliveryPartner();
+        deliveryPartner.setUser(user);
+        deliveryPartnerRepository.save(deliveryPartner);
+        break;
+      default:
+        Customer customer = new Customer();
+        customer.setUser(user);
+        customerRepository.save(customer);
+        break;
+    }
+
+    return  savedUser;
   }
 
   public LoginResponse login(LoginRequestDTO loginRequestDTO) {
@@ -99,15 +128,15 @@ public class AuthService {
     return true;
   }
 
-  public User getCurrentAuthUser(){
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication == null || !authentication.isAuthenticated()
-        || authentication instanceof AnonymousAuthenticationToken) {
-      return null;
-    }
-    return (User) authentication.getPrincipal();
-    }
+//  public User getCurrentAuthUser(){
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//    if (authentication == null || !authentication.isAuthenticated()
+//        || authentication instanceof AnonymousAuthenticationToken) {
+//      return null;
+//    }
+//    return (User) authentication.getPrincipal();
+//    }
 }
 
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getMenuItemsByRestaurantId } from "../../State/Customers/Menu/menu.action";
+// import { getMenuItemsByRestaurantId } from "../../State/Customers/Menu/menu.action";
 import { Grid } from "@mui/material";
 import OrdersTable from "../Orders/OrderTable";
 import MenuItemTable from "../Food/MenuItemTable";
@@ -12,20 +12,20 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 const RestaurantDashboard = () => {
   const { id } = useParams();
-  const {restaurant}=useSelector(store=>store);
+  // const {restaurant}=useSelector(store=>store);
   console.log("restaurants id ", id);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(
-      getMenuItemsByRestaurantId({
-        restaurantId: id,
-        jwt: localStorage.getItem("jwt"),
-      })
-    );
+    // dispatch(
+    //   getMenuItemsByRestaurantId({
+    //     restaurantId: id,
+    //     jwt: localStorage.getItem("jwt"),
+    //   })
+    // );
   }, []);
 
-  console.log("restaurant",restaurant)
+  // console.log("restaurant",restaurant)
   return (
     <div className="px-2">
       

@@ -39,19 +39,18 @@ public class Restaurant {
   @EqualsAndHashCode.Include
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "owner_id", nullable = false)
-  private User owner;
-
   private String name;
   private String description;
   private String cuisineType;
 
-  @ManyToMany(mappedBy = "favorites")
-  @JsonIgnore
-  private Set<User> favoritedBy = new HashSet<>();
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "partner_id", nullable = false)
+  private RestaurantPartner restaurantPartner;
 
-  @ManyToOne
+  @ManyToMany(mappedBy = "favoriteRestaurants")
+  private Set<Customer> favoritedBy = new HashSet<>();
+
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "address_id")
   private Address address;
 

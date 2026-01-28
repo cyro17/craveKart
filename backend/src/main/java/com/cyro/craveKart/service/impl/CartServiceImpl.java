@@ -1,10 +1,8 @@
 package com.cyro.cravekart.service.impl;
 
+import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.models.Cart;
-import com.cyro.cravekart.models.CartItem;
-import com.cyro.cravekart.models.Food;
-import com.cyro.cravekart.models.User;
+import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.CartItemRepository;
 import com.cyro.cravekart.repository.CartRepository;
 import com.cyro.cravekart.repository.FoodRepository;
@@ -28,25 +26,21 @@ import java.util.Optional;
 public class CartServiceImpl implements CartService {
 
   private final CartRepository cartRepository;
-  private final AuthService authService;
+  private final AuthContextService authService;
   private final FoodRepository foodRepository;
   private final CartItemRepository cartItemRepository;
   private final CartItemService cartItemService;
 
   @Override
   public CartResponse getCart() {
-    Cart cart = cartRepository
-        .findByCustomerId(authService.getCurrentAuthUser().getId())
-        .orElseGet(this::createNewCart);
-
+    Cart cart = getCartOrCreateNew();
     return mapToCartResponse(cart);
   }
 
   @Override
   public CartResponse addItem(AddCartItemRequest request) {
-    Cart cart = cartRepository.findByCustomerId(
-        authService.getCurrentAuthUser().getId())
-        .orElseGet(this::createNewCart);
+    Customer user = authService.getCustomer();
+    Cart cart = getCartOrCreateNew();
 
     Food food = foodRepository.findById(request.getFoodId())
         .orElseThrow(() -> new RuntimeException("Food not found"));
@@ -81,7 +75,8 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public void clearCart() {
-    cartRepository.deleteByCustomerId(authService.getCurrentAuthUser().getId());
+    Customer user = authService.getCustomer();
+    cartRepository.deleteByCustomerId(user.getId());
   }
 
   @Override
@@ -91,16 +86,16 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public void removeCartItem(Long cartItemId) throws BadRequestException {
-    User user = authService.getCurrentAuthUser();
-    Cart cart = cartRepository.findByCustomerId(user.getId()).orElseThrow(
-        ()->  new BadRequestException("Cart not found"));
+    Customer user = authService.getCustomer();
+
+    Cart cart = getCartorThrow();
     CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(() -> new BadRequestException("Item not found"));
     cart.getItems().remove(cartItem);
     cartRepository.save(cart);
   }
 
   @Override
-  public Cart getCartByUserId(Long userId) {
+  public Cart getCartByCustomerId(Long userId) {
     return cartRepository.findByCustomerId(userId).orElseThrow(
         () -> new RuntimeException("Cart is not present")
     );
@@ -112,8 +107,10 @@ public class CartServiceImpl implements CartService {
 
 
   private Cart createNewCart() {
+    Customer user = authService.getCustomer();
+
     Cart cart = new Cart();
-    cart.setCustomer(authService.getCurrentAuthUser());
+    cart.setCustomer(user);
     cart.setCartTotal(BigDecimal.ZERO);
     return cartRepository.save(cart);
   }
@@ -139,5 +136,18 @@ public class CartServiceImpl implements CartService {
         cart.getId(), items, cart.getCartTotal()
     );
 
+  }
+
+  private Cart getCartOrCreateNew(){
+    Customer user = authService.getCustomer();
+    return cartRepository.findByCustomerId(
+            user.getId())
+        .orElseGet(this::createNewCart);
+  }
+
+  private Cart getCartorThrow() throws BadRequestException {
+    Customer user = authService.getCustomer();
+    return cartRepository.findByCustomerId(user.getId()).orElseThrow(
+        ()->  new BadRequestException("Cart not found"));
   }
 }

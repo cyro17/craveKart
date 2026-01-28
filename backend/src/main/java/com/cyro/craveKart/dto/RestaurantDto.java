@@ -1,5 +1,6 @@
 package com.cyro.cravekart.dto;
 
+import com.cyro.cravekart.models.Restaurant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
@@ -22,5 +23,8 @@ public class RestaurantDto {
 
     private String description;
 
+    public  static RestaurantDto from(Restaurant restaurant){
+        return  null;
+    }
 
 }

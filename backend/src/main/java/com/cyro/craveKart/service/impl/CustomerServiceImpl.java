@@ -20,7 +20,7 @@ import javax.naming.ServiceUnavailableException;
 
 @Service
 @RequiredArgsConstructor
-public class CutomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerService {
   private final FoodService foodService;
   private final RestaurantService restaurantService;
   private final AuthService authService;
@@ -36,7 +36,7 @@ public class CutomerServiceImpl implements CustomerService {
 
   @Override
   public CartItemDto incrementCartItemQuantity(Long cartItemId, Long cartId, Integer quantity) {
-    authService.getCurrentAuthUser();
+
     return  null;
   }
 

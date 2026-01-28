@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getRestaurantById, getRestaurantsCategory } from '../../State/Customers/Restaurant/restaurant.action';
+// import { useDispatch, useSelector } from 'react-redux'
+// import { getRestaurantById, getRestaurantsCategory } from '../../State/Customers/Restaurant/restaurant.action';
 import { Box, Card, CardHeader, IconButton, Modal, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { Create } from '@mui/icons-material';
 import CreateCategory from './CreateCategory';
@@ -18,8 +18,8 @@ const style = {
   };
 
 const Category = () => {
-    const dispatch=useDispatch();
-    const {auth,restaurant}=useSelector(store=>store)
+    // const dispatch=useDispatch();
+    // const {auth,restaurant}=useSelector(store=>store)
     const jwt = localStorage.getItem("jwt")
     const [openCreateCategory, setOpenCreateCategory] = React.useState(false);
     const handleOpenCreateCategory = () => setOpenCreateCategory(true);
@@ -52,7 +52,7 @@ const Category = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {restaurant.categories.map((item, index) => (
+              {/* {restaurant.categories.map((item, index) => (
                   <TableRow
                     className="cursor-pointer"
                     hover
@@ -70,7 +70,7 @@ const Category = () => {
           
                     
                   </TableRow>
-                ))}
+                ))} */}
             </TableBody>
           </Table>
         </TableContainer>

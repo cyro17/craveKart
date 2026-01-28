@@ -14,9 +14,7 @@ public interface CartService {
   CartResponse updateQuantity(Long cartItemId, Integer quantity);
 
   void removeCartItem(Long cartItemId) throws BadRequestException;
-
-  public Cart getCartByUserId(Long userId);
-
+  public Cart getCartByCustomerId(Long userId);
   void clearCart();
 
 

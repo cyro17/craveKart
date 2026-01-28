@@ -38,7 +38,7 @@ public class RestaurantResponse implements Serializable {
         )
         .email(
             restaurant.getContactInfo() != null
-                ? restaurant.getContactInfo().getEmail()
+                ? restaurant.getContactInfo().getMail()
                 : null
         )
         .phone(

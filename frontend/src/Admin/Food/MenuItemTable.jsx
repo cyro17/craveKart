@@ -25,6 +25,7 @@ import {
   getMenuItemsByRestaurantId,
   updateMenuItemsAvailability,
 } from "../../State/Customers/Menu/menu.action";
+
 import { updateStockOfIngredient } from "../../State/Admin/Ingredients/Action";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import { categorizedIngredients } from "../../customers/util/CategorizeIngredients";
@@ -61,7 +62,6 @@ const MenuItemTable = ({ isDashboard, name }) => {
   //   categorizedIngredients(menu.menuItems[1].ingredients)
   // );
 
-  
 
   const handleFoodAvialability = (foodId) => {
     dispatch(updateMenuItemsAvailability({foodId,jwt:auth.jwt || jwt}));

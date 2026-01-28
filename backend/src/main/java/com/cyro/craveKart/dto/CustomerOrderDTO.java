@@ -1,7 +1,7 @@
 package com.cyro.cravekart.dto;
 
 import com.cyro.cravekart.models.Payment;
-import com.cyro.cravekart.models.enums.CustomerOrderStatus;
+import com.cyro.cravekart.models.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class CustomerOrderDTO {
 
   private Long orderId;
-  private CustomerOrderStatus customerOrderStatus;
+  private OrderStatus customerOrderStatus;
 
   private CartDto cart;
   private Double totalAmount;

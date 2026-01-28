@@ -26,15 +26,17 @@ public class OrderItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "food_name", nullable = false)
   private String foodName;
 
   // snapshots
 
   // restaurant details
-  @Column(name = "Restaurant ID")
+  @Column(name = "restaurant_id")
   private Long restaurantId;
-  @Column(name = "Restaurant Name")
+  @Column(name = "restaurant_name")
   private String restaurantName;
+
 
   // order item price and qty
   @Column(precision = 10, scale = 2, name = "Price")
@@ -60,8 +62,11 @@ public class OrderItem {
   private Order order;
 
   @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
+
   @UpdateTimestamp
+  @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
 }

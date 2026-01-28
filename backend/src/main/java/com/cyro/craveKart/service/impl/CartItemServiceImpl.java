@@ -1,9 +1,11 @@
 package com.cyro.cravekart.service.impl;
 
+import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.dto.CartItemDto;
 import com.cyro.cravekart.models.Cart;
 import com.cyro.cravekart.models.CartItem;
+import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.CartItemRepository;
 import com.cyro.cravekart.response.CartItemResponse;
@@ -20,7 +22,7 @@ public class CartItemServiceImpl implements CartItemService {
 
   private final CartItemRepository cartItemRepository;
   private final ModelMapper modelMapper;
-  private final AuthService authService;
+  private final AuthContextService authContextService;
 
   @Override
   public CartItem getCartItemById(Long cartItemId) {
@@ -50,7 +52,7 @@ public class CartItemServiceImpl implements CartItemService {
   @Override
   public void removeCartItemFromCart(CartItem cartItem) throws BadRequestException {
 
-    User customer = authService.getCurrentAuthUser();
+    Customer customer = authContextService.getCustomer();
 
     Cart cart = cartItem.getCart();
     if(!cart.getItems().contains(cartItem)) {

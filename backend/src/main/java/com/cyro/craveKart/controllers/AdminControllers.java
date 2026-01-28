@@ -8,6 +8,7 @@ import com.cyro.cravekart.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Secured("ROLE_ADMIN")
 public class AdminControllers {
   private final UserService userService;
   private final UserRepository userRepository;

@@ -39,6 +39,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @NotBlank
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Email
@@ -50,21 +51,19 @@ public class User implements UserDetails {
 
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
     @Enumerated(EnumType.STRING)
     @Column(name = "roles")
     private List<USER_ROLE> roles = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private List<Order> orders;
-
-    @OneToMany(mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
-    private List<Address> addresses;
-
     @Enumerated(EnumType.STRING)
     private USER_STATUS status;
+
+    @Embedded
+    private ContactInfo contact;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -72,17 +71,6 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-//    @OneToMany(mappedBy = "owner")
-//    @JsonIgnore
-//    private List<Restaurant> restaurants = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-        name = "user_favorites",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "restaurant_id")
-    )
-    private Set<Restaurant> favorites = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -90,6 +78,7 @@ public class User implements UserDetails {
             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
             .toList();
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

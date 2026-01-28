@@ -49,14 +49,15 @@ public class RestaurantController {
     return ResponseEntity.ok(restaurantService.getRestaurantById(id));
   }
 
-  @PutMapping("/addFav/{restaurantId}")
-  public ResponseEntity<RestaurantDto> addToFavorite (
-      @PathVariable Long restaurantId) throws RestaurantException {
-
-    User user = authService.getCurrentAuthUser();
-    if(user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-    RestaurantDto restaurant = restaurantService.addToFavorites(restaurantId, user);
-    return new ResponseEntity<>(restaurant, HttpStatus.OK);
-  }
+//  @PutMapping("/addFav/{restaurantId}")
+//  public ResponseEntity<RestaurantDto> addToFavorite (
+//      @PathVariable Long restaurantId) throws RestaurantException {
+//
+//    User user = authService.getCurrentAuthUser();
+//
+//    if(user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//
+//    RestaurantDto restaurant = restaurantService.addToFavorites(restaurantId, user);
+//    return new ResponseEntity<>(restaurant, HttpStatus.OK);
+//  }
 }
