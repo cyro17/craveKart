@@ -1,4 +1,4 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.models.PaymentResponse;
 import com.cyro.cravekart.request.PaymentRequest;

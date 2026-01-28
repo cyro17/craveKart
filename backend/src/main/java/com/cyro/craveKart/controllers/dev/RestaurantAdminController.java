@@ -1,7 +1,9 @@
 //package com.cyro.cravekart.controllers;
 //
+//import com.cyro.cravekart.config.security.AuthContextService;
 //import com.cyro.cravekart.config.security.AuthService;
 //import com.cyro.cravekart.exception.RestaurantException;
+//import com.cyro.cravekart.models.Admin;
 //import com.cyro.cravekart.models.Restaurant;
 //import com.cyro.cravekart.models.User;
 //import com.cyro.cravekart.repository.RestaurantRepository;
@@ -25,12 +27,12 @@
 //@RequestMapping("/api/admin/restaurant")
 //@RequiredArgsConstructor
 //@Slf4j
-//@Secured("ROLE_RESTAURANT_PARTNER")
-//public class RestaurantPartnerController {
+//@Secured("ROLE_ADMIN")
+//public class RestaurantAdminController {
 //  private final RestaurantRepository restaurantRepository;
 //  private final RestaurantService restaurantService;
 //  private final UserService userService;
-//  private final AuthService authService;
+//  private final AuthContextService authService;
 //  private final UserRepository userRepository;
 //  private final RestaurantPartnerService restaurantPartnerService;
 //
@@ -63,12 +65,12 @@
 //      @RequestBody CreateRestaurantRequest request,
 //      @RequestHeader("Authorization") String jwtToken) {
 //
-//    User user = authService.getCurrentAuthUser();
-//    if (user == null) {
+//    Admin admin = authService.getAdmin();
+//    if (admin == null) {
 //      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 //    }
 //
-//    log.info("username while creating restaurant :{}", user.getUsername());
+//    log.info("username while creating restaurant :{}", admin.getUser().getUsername());
 //    com.cyro.cravekart.response.CreateRestaurantResponse restaurantResponse = restaurantService.createRestaurant(request, user);
 //
 //    return new ResponseEntity<>(restaurantResponse

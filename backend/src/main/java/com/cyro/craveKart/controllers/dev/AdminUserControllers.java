@@ -1,7 +1,6 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 
-import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.UserResponse;
 import com.cyro.cravekart.service.UserService;
@@ -17,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Secured("ROLE_ADMIN")
-public class AdminControllers {
+public class AdminUserControllers {
   private final UserService userService;
   private final UserRepository userRepository;
 

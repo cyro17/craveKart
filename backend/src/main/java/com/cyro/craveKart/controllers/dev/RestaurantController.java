@@ -1,10 +1,7 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.exception.RestaurantException;
-import com.cyro.cravekart.models.Restaurant;
-import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantService;

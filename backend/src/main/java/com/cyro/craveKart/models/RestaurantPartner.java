@@ -26,7 +26,12 @@ public class RestaurantPartner {
   private User user;
 
   @OneToOne(mappedBy = "restaurantPartner", fetch = FetchType.LAZY)
+  @JoinColumn(nullable = false)
   private Restaurant restaurant;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @Column(name = "onboarding_admin")
+  private Admin onboardingAdmin;
 
   private boolean active = false;
   private boolean verified = false;

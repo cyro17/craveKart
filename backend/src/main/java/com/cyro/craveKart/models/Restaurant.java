@@ -24,7 +24,7 @@ import java.util.Set;
 @Table(
     name = "restaurant",
     indexes = {
-        @Index(name = "idx_restaurant_owner", columnList = "owner_id"),
+        @Index(name = "idx_restaurant_partner", columnList = "partner_id"),
         @Index(name = "idx_restaurant_open", columnList = "open"),
         @Index(name = "idx_restaurant_cuisine", columnList = "cuisineType"),
         @Index(name = "idx_restaurant_created", columnList = "createdAt"),
@@ -39,18 +39,22 @@ public class Restaurant {
   @EqualsAndHashCode.Include
   private Long id;
 
+  @Column(nullable = false)
   private String name;
+
   private String description;
+
+  @Column(nullable = false)
   private String cuisineType;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "partner_id", nullable = false)
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "partner_id", nullable = false, unique = true)
   private RestaurantPartner restaurantPartner;
 
   @ManyToMany(mappedBy = "favoriteRestaurants")
   private Set<Customer> favoritedBy = new HashSet<>();
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "address_id")
   private Address address;
 
@@ -59,23 +63,20 @@ public class Restaurant {
 
   private String openingHours;
 
-
-  private int numRating;
+  private int ratingCount;
 
   @ElementCollection
   @CollectionTable(
       name = "restaurant_images",
       joinColumns = @JoinColumn(name = "restaurant_id"),
       indexes = {
-          @Index(name = "idx_restaurant_images_restaurant_id", columnList = "restaurant_id")
+          @Index(name = "idx_restaurant_images_restaurant", columnList = "restaurant_id")
       }
   )
   @Column(name = "image_url", length = 1000)
-  private List<String> images;
+  private List<String> images = new ArrayList<>();
 
-  private LocalDateTime registrationDate;
-
-  private boolean open;
+  private boolean open = false;
 
   @JsonIgnore
   @OneToMany(mappedBy = "restaurant",

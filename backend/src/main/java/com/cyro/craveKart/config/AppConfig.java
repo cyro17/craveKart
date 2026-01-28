@@ -34,14 +34,15 @@ public class AppConfig {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(request->
             request
-                .requestMatchers("/api/public/**",
+                .requestMatchers(
+                    "/api/public/**",
                     "/api/auth/**", "/api/restaurant/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**")
                   .permitAll()
                 .requestMatchers("/api/admin/**")
-                  .hasAnyRole("RESTAURANT_OWNER","ADMIN")
+                  .hasAnyRole("RESTAURANT_PARTNER","ADMIN")
                 .requestMatchers("/api/**")
                   .authenticated()
                 .anyRequest().authenticated()

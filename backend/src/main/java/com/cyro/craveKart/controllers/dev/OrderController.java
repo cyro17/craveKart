@@ -1,10 +1,8 @@
-package com.cyro.cravekart.controllers;
+package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.Order;
-import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
 import lombok.RequiredArgsConstructor;

@@ -15,22 +15,29 @@ import java.util.List;
 
 public interface RestaurantService {
 
+  // ADMIN
   public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req, RestaurantPartner partner) throws RestaurantException;
+
+  public List<RestaurantResponse> getAllRestaurant();
 
   public RestaurantResponse updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurant)
       throws RestaurantException;
 
   public void deleteRestaurant(Long restaurantId) throws RestaurantException;
 
-  public List<RestaurantResponse> getAllRestaurant();
+  void assignPartner(Long restaurantId, Long partnerId) throws RestaurantException;
 
+  // partner
+  public Restaurant getRestaurantByPartnerId(Long partnerId) throws RestaurantException;
+
+
+  // customer
   public List<RestaurantResponse>searchRestaurant(String keyword);
 
   public RestaurantResponse getRestaurantById(Long id) throws RestaurantException;
 
-  public Restaurant getRestaurantByPartnerId(Long partnerId) throws RestaurantException;
-
   public RestaurantDto addToFavorites(Long restaurantId, Customer customer) throws RestaurantException;
+
 
   public RestaurantResponse updateRestaurantStatus(Long id)throws RestaurantException;
 
