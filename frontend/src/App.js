@@ -12,7 +12,7 @@ export default function App() {
 
   const { auth } = useSelector(store => store);
   const jwt = localStorage.getItem("jwt");
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (jwt) {

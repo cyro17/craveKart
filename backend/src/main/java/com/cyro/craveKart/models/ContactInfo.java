@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactInfo{
-  private String email;
+  private String mail;
   private String mobile;
   private String twitter;
   private String instagram;

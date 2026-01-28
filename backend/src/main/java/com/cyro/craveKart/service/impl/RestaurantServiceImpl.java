@@ -2,23 +2,23 @@ package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.exception.RestaurantException;
-import com.cyro.cravekart.models.Address;
-import com.cyro.cravekart.models.Restaurant;
-import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.repository.AddressRepository;
-import com.cyro.cravekart.repository.RestaurantRepository;
-import com.cyro.cravekart.repository.UserRepository;
+import com.cyro.cravekart.models.*;
+import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
+import com.cyro.cravekart.service.RestaurantPartnerService;
 import com.cyro.cravekart.service.RestaurantService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -28,111 +28,124 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class RestaurantServiceImpl implements RestaurantService {
+  private final CustomerRepository customerRepository;
+  private final RestaurantPartnerRepository restaurantPartnerRepository;
 
   private final AddressRepository addressRepository;
   private final  RestaurantRepository restaurantRepository;
   private final UserRepository userRepository;
+  private final RestaurantPartnerService restaurantPartnerService;
+  private final ModelMapper modelMapper;
 
 
+  // ======================= CREATE ====================================
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "restaurantsAll", allEntries = true),
       @CacheEvict(value = "restaurantByKeyword", allEntries = true)
   })
-  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req, User user) {
-    Address address=new Address();
-    address.setCity(req.getAddress().getCity());
-    address.setCountry(req.getAddress().getCountry());
-    address.setPostalCode(req.getAddress().getPostalCode());
-    address.setState(req.getAddress().getState());
-    address.setStreetAddress(req.getAddress().getStreetAddress());
-    Address savedAddress = addressRepository.save(address);
+  public CreateRestaurantResponse createRestaurant(
+      CreateRestaurantRequest req, RestaurantPartner partner) {
+    // restaurant partner
+    // save address
+    Address address = mapAddress(req);
 
-    Restaurant restaurant=new Restaurant();
-    restaurant.setAddress(savedAddress);
-    restaurant.setName(req.getName());
-    restaurant.setOpeningHours(req.getOpeningHours());
-    restaurant.setContactInfo(req.getContactInfo());
-    restaurant.setCuisineType(req.getCuisineType());
-    restaurant.setDescription(req.getDescription());
-    restaurant.setOwner(user);
-    restaurant.setImages(req.getImages());
-    restaurant.setRegistrationDate(LocalDateTime.now());
-    restaurant.setOpen(true);
+    // create restaurant
+    Restaurant restaurant = Restaurant.builder()
+        .name(req.getName())
+        .description(req.getDescription())
+        .cuisineType(req.getCuisineType())
+        .openingHours(req.getOpeningHours())
+        .contactInfo(req.getContactInfo())
+        .images(req.getImages())
+        .address(address)
+        .restaurantPartner(partner)
+        .registrationDate(LocalDateTime.now())
+        .open(true)
+        .build();
+
     Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
     return CreateRestaurantResponse.builder()
         .id(savedRestaurant.getId())
-        .username(user.getUsername())
-        .name(savedRestaurant.getName())
+        .partnerName(partner.getUser().getUsername())
+        .name(restaurant.getName())
         .build();
   }
+
+
+//  ===========================READ ===========================================
 
   @Override
   @Cacheable(value = "restaurants")
   public List<RestaurantResponse> getAllRestaurant() {
-    List<Restaurant> restaurants = restaurantRepository.findAll();
-    return  restaurants.stream()
+    return  restaurantRepository.findAll()
+        .stream()
         .map(RestaurantResponse::from)
         .toList();
   }
-
 
   @Override
   @Cacheable(value = "restaurantById", key = "#id")
   public RestaurantResponse getRestaurantById(Long id)
       throws RestaurantException {
-    log.info("get request for restaurant {}", restaurantRepository.findById(id).get().getName());
-    Restaurant restaurant = restaurantRepository.findById(id)
-        .orElseThrow(() -> new RestaurantException("Restaurant not found with id : " + id));
 
+    Restaurant restaurant = getRestaurantOrThrow(id);
+    log.info("getRestaurantById restaurant {}", restaurant.getName());
     return RestaurantResponse.from(restaurant);
   }
 
   @Override
-  public List<Restaurant> getRestaurantsByUserId(Long userId) throws RestaurantException {
-    return  restaurantRepository.findByOwnerId(userId);
+  public Restaurant getRestaurantByPartnerId(Long partnerId) throws RestaurantException {
+    return  restaurantRepository.findByRestaurantPartner(partnerId);
   }
 
   @Override
   @Cacheable(value = "restaurantByKeyword", key = "#keyword")
   public List<RestaurantResponse> searchRestaurant(String keyword) {
-
-    return  restaurantRepository.findBySearchQuery(keyword).stream()
+    return restaurantRepository
+        .findBySearchQuery(keyword)
+        .stream()
         .map(RestaurantResponse::from)
         .toList();
   }
 
+//  ===================== update ========================
 
   @Override
-  public RestaurantResponse updateRestaurant(Long restaurantId,
-                                     CreateRestaurantRequest updatedRestaurant) throws RestaurantException {
-    Restaurant restaurantById = restaurantRepository
-        .findById(restaurantId).orElseThrow(
-            ()-> new RestaurantException("Restaurant with id " + restaurantId + " not found")
-        );
+  public RestaurantResponse updateRestaurant(
+      Long restaurantId, CreateRestaurantRequest req)
+      throws RestaurantException {
 
-    log.info("udpate request for restaurant",  restaurantById.getName());
+    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
 
-    if(restaurantById.getCuisineType() != null ){
-      restaurantById.setCuisineType(updatedRestaurant.getCuisineType());
+    log.info("udpate request for restaurant",  restaurant.getName());
+
+    if (req.getCuisineType() != null) {
+      restaurant.setCuisineType(req.getCuisineType());
     }
-    if(restaurantById.getDescription() != null ){
-      restaurantById.setDescription(updatedRestaurant.getDescription());
+    if (req.getDescription() != null) {
+      restaurant.setDescription(req.getDescription());
     }
-    Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
-    return  RestaurantResponse.from(savedRestaurant);
+    if (req.getOpeningHours() != null) {
+      restaurant.setOpeningHours(req.getOpeningHours());
+    }
+    if (req.getContactInfo() != null) {
+      restaurant.setContactInfo(req.getContactInfo());
+    }
+
+    return  RestaurantResponse.from(restaurantRepository.save(restaurant));
   }
+
 
   @Override
   public RestaurantDto addToFavorites(Long restaurantId,
-                                      User user) throws RestaurantException {
-    Restaurant restaurant = restaurantRepository
-        .findById(restaurantId).orElseThrow(() ->
-            new RestaurantException("Restaurant not found with id : " + restaurantId));
+                                      Customer customer)
+      throws RestaurantException {
 
-    Set<Restaurant> favorites = user.getFavorites();
+    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
+    Set<Restaurant> favorites = customer.getFavoriteRestaurants();
     boolean isFavoured  = favorites.contains(restaurant);
 
     if(isFavoured) {
@@ -141,47 +154,35 @@ public class RestaurantServiceImpl implements RestaurantService {
       favorites.add(restaurant);
     }
 
-    userRepository.save(user);
+    customerRepository.save(customer);
 
-    RestaurantDto dto = new RestaurantDto();
-    dto.setId(restaurant.getId());
-    dto.setName(restaurant.getName());
-    dto.setDescription(restaurant.getDescription());
-    dto.setImages(restaurant.getImages());
-    return dto;
+    return modelMapper.map(restaurant,  RestaurantDto.class);
   }
 
   @Override
   public RestaurantResponse updateRestaurantStatus(Long id) throws RestaurantException {
-    Restaurant restaurantById = restaurantRepository.findById(id).orElseThrow(
-        ()->  new RestaurantException("Restaurant not found with id : " + id)
-    );
-    restaurantById.setOpen(!restaurantById.isOpen());
-    Restaurant savedRestaurant = restaurantRepository.save(restaurantById);
+    Restaurant restaurant = getRestaurantOrThrow(id);
+    restaurant.setOpen(!restaurant.isOpen());
 
-    return  RestaurantResponse.from(savedRestaurant);
+    restaurantRepository.save(restaurant);
+
+    return  RestaurantResponse.from(restaurant);
   }
+
+
+  // ================= DELETE =================
 
   @Override
   public void deleteRestaurant(Long restaurantId) throws RestaurantException {
-    Restaurant restaurant = restaurantRepository
-        .findById(restaurantId).orElseThrow(
-            () -> new RestaurantException
-                ("Restaurant not found with id :" + restaurantId)
-        );
+    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
     restaurantRepository.delete(restaurant);
   }
 
 
-//  @Override
-//  @Cacheable(key = "#id", value = "restaurantById")
-//  public RestaurantResponse getRestaurantById(Long restaurantId) throws RestaurantException {
-//    Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
-//        () -> new RestaurantException("Restaurant not found with id : " + restaurantId)
-//    );
-//    return  RestaurantResponse.from(restaurant);
-//
-//  }
+
+
+
+//  ============================ UTIL ===================================
 
 
   public Restaurant getRestaurantById_util(Long id) throws RestaurantException {
@@ -189,4 +190,21 @@ public class RestaurantServiceImpl implements RestaurantService {
         ()->  new RestaurantException("Restaurant not found with id : " + id)
     );
   }
+
+  private Restaurant getRestaurantOrThrow(Long id) {
+    return restaurantRepository.findById(id)
+        .orElseThrow(() ->
+            new RestaurantException("Restaurant not found with id : " + id));
+  }
+
+  private Address mapAddress(CreateRestaurantRequest req) {
+    Address address = new Address();
+    address.setCity(req.getAddress().getCity());
+    address.setCountry(req.getAddress().getCountry());
+    address.setPostalCode(req.getAddress().getPostalCode());
+    address.setState(req.getAddress().getState());
+    address.setStreetAddress(req.getAddress().getStreetAddress());
+    return addressRepository.save(address);
+  }
+
 }

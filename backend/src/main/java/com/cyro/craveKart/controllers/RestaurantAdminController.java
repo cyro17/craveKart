@@ -1,107 +1,110 @@
-package com.cyro.cravekart.controllers;
-
-import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.exception.RestaurantException;
-import com.cyro.cravekart.models.Restaurant;
-import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.repository.RestaurantRepository;
-import com.cyro.cravekart.repository.UserRepository;
-import com.cyro.cravekart.request.CreateRestaurantRequest;
-import com.cyro.cravekart.response.CreateRestaurantResponse;
-import com.cyro.cravekart.response.RestaurantResponse;
-import com.cyro.cravekart.service.RestaurantService;
-import com.cyro.cravekart.service.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/admin/restaurant")
-@RequiredArgsConstructor
-@Slf4j
-@Secured("ROLE_RESTAURANT_OWNER")
-public class RestaurantAdminController {
-  private final RestaurantRepository restaurantRepository;
-  private final RestaurantService restaurantService;
-  private final UserService userService;
-  private final AuthService authService;
-  private final UserRepository userRepository;
-
-//  @PostMapping("/acceptOrderRequest/{orderRequestID}")
-//  public
-
-  @GetMapping("/check")
-  public ResponseEntity<String> getHealth() {
-    return new ResponseEntity<>( "OK", HttpStatus.OK);
-  }
-
-
-
-  @GetMapping("/{restaurantId}")
-  public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable Long restaurantId) throws RestaurantException {
-    Restaurant restaurant = restaurantService.getRestaurantById_util(restaurantId);
-    RestaurantResponse resp = RestaurantResponse.from(restaurant);
-    return new ResponseEntity(resp, HttpStatus.OK);
-  }
-
-  @GetMapping("/getall")
-  public ResponseEntity<RestaurantResponse> getAll() throws RestaurantException {
-    List<RestaurantResponse> res = restaurantService.getAllRestaurant();
-    return new ResponseEntity(res, HttpStatus.OK);
-  }
-
-
-  @PostMapping
-  public ResponseEntity<CreateRestaurantResponse> createRestaurant(
-      @RequestBody CreateRestaurantRequest request,
-      @RequestHeader("Authorization") String jwtToken) {
-
-    User user = authService.getCurrentAuthUser();
-    if (user == null) {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
-
-    log.info("username while creating restaurant :{}", user.getUsername());
-    com.cyro.cravekart.response.CreateRestaurantResponse restaurantResponse = restaurantService.createRestaurant(request, user);
-
-    return new ResponseEntity<>(restaurantResponse
-        , HttpStatus.CREATED);
-  }
-
-  @PutMapping("/{restaurantId}")
-  public ResponseEntity<RestaurantResponse> updateRestaurant(
-      @PathVariable Long restaurantId,
-      @RequestBody CreateRestaurantRequest request){
-
-    if(authService.getCurrentAuthUser() != null) {
-
-      RestaurantResponse restaurantResponse = restaurantService.updateRestaurant(restaurantId, request);
-      return  new ResponseEntity(restaurantResponse, HttpStatus.OK);
-    }
-    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-  }
-
-  @DeleteMapping("/{restaurantId}")
-  public ResponseEntity<String> deleteRestaurant(@PathVariable Long restaurantId){
-
-    User user = authService.getCurrentAuthUser();
-    if( user == null )
-      return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-    List<Restaurant> restaurantsByUserId =
-        restaurantService.getRestaurantsByUserId(user.getId());
-
-    for(Restaurant restaurant : restaurantsByUserId) {
-        if(restaurant!= null && restaurant.getId().equals(restaurantId)) {
-          restaurantService.deleteRestaurant(restaurant.getId());
-          return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
-        }
-      }
-    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-  }
+//package com.cyro.cravekart.controllers;
+//
+//import com.cyro.cravekart.config.security.AuthService;
+//import com.cyro.cravekart.exception.RestaurantException;
+//import com.cyro.cravekart.models.Restaurant;
+//import com.cyro.cravekart.models.User;
+//import com.cyro.cravekart.repository.RestaurantRepository;
+//import com.cyro.cravekart.repository.UserRepository;
+//import com.cyro.cravekart.request.CreateRestaurantRequest;
+//import com.cyro.cravekart.response.CreateRestaurantResponse;
+//import com.cyro.cravekart.response.RestaurantResponse;
+//import com.cyro.cravekart.service.RestaurantPartnerService;
+//import com.cyro.cravekart.service.RestaurantService;
+//import com.cyro.cravekart.service.UserService;
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.annotation.Secured;
+//import org.springframework.web.bind.annotation.*;
+//
+//import java.util.List;
+//
+//@RestController
+//@RequestMapping("/api/admin/restaurant")
+//@RequiredArgsConstructor
+//@Slf4j
+//@Secured("ROLE_RESTAURANT_PARTNER")
+//public class RestaurantPartnerController {
+//  private final RestaurantRepository restaurantRepository;
+//  private final RestaurantService restaurantService;
+//  private final UserService userService;
+//  private final AuthService authService;
+//  private final UserRepository userRepository;
+//  private final RestaurantPartnerService restaurantPartnerService;
+//
+////  @PostMapping("/acceptOrderRequest/{orderRequestID}")
+////  public
+//
+//  @GetMapping("/check")
+//  public ResponseEntity<String> getHealth() {
+//    return new ResponseEntity<>( "OK", HttpStatus.OK);
+//  }
+//
+//
+//
+//  @GetMapping("/{restaurantId}")
+//  public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable Long restaurantId) throws RestaurantException {
+//    Restaurant restaurant = restaurantService.getRestaurantById_util(restaurantId);
+//    RestaurantResponse resp = RestaurantResponse.from(restaurant);
+//    return new ResponseEntity(resp, HttpStatus.OK);
+//  }
+//
+//  @GetMapping("/getall")
+//  public ResponseEntity<RestaurantResponse> getAll() throws RestaurantException {
+//    List<RestaurantResponse> res = restaurantService.getAllRestaurant();
+//    return new ResponseEntity(res, HttpStatus.OK);
+//  }
+//
+//
+//  @PostMapping
+//  public ResponseEntity<CreateRestaurantResponse> createRestaurant(
+//      @RequestBody CreateRestaurantRequest request,
+//      @RequestHeader("Authorization") String jwtToken) {
+//
+//    User user = authService.getCurrentAuthUser();
+//    if (user == null) {
+//      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//    }
+//
+//    log.info("username while creating restaurant :{}", user.getUsername());
+//    com.cyro.cravekart.response.CreateRestaurantResponse restaurantResponse = restaurantService.createRestaurant(request, user);
+//
+//    return new ResponseEntity<>(restaurantResponse
+//        , HttpStatus.CREATED);
+//  }
+//
+//  @PutMapping("/{restaurantId}")
+//  public ResponseEntity<RestaurantResponse> updateRestaurant(
+//      @PathVariable Long restaurantId,
+//      @RequestBody CreateRestaurantRequest request){
+//
+//    if(authService.getCurrentAuthUser() != null) {
+//
+//      RestaurantResponse restaurantResponse = restaurantService.updateRestaurant(restaurantId, request);
+//      return  new ResponseEntity(restaurantResponse, HttpStatus.OK);
+//    }
+//    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//  }
+//
+//  @DeleteMapping("/{restaurantId}")
+//  public ResponseEntity<String> deleteRestaurant(@PathVariable Long restaurantId){
+//
+//    User user = authService.getCurrentAuthUser();
+//    if( user == null )
+//      return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//    restaurantPartnerService.
+//
+//
+//        restaurantService.getRestaurantByPartnerId(partnerId);
+//
+//    for(Restaurant restaurant : restaurantsByUserId) {
+//        if(restaurant!= null && restaurant.getId().equals(restaurantId)) {
+//          restaurantService.deleteRestaurant(restaurant.getId());
+//          return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
+//        }
+//      }
+//    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
+//  }

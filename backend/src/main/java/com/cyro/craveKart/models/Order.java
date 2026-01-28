@@ -36,19 +36,43 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id",  nullable = false)
-    private User customer;
+    // customer snapshot
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
+    @Column(name = "customer_name", nullable = false)
+    private String customerName;
+    @Column(name = "customer_phone", nullable = false)
+    private String customerPhone;
 
+    // restaurant snapshot
+    @Column(name = "restaurant_id", nullable = false)
     private Long restaurantId;
+    @Column(name = "restaurant_name",  nullable = false)
     private String restaurantName;
+    @Column(name = "restaurant_address", nullable = false)
+    private String restaurantAddress;
+
+    // delivery partner
+    @Column(name = "delivery_partner_id")
+    private Long deliveryPartnerId;
+    @Column(name = "delivery_partner_name")
+    private String deliveryPartnerName;
+
+    // delivery snapshot
+    @Column(name = "delivery_address_line",  nullable = false)
+    private String deliveryAddressLine;
+    @Column(name = "delivery_city",   nullable = false)
+    private String deliveryCity;
+    @Column(name = "delivery_pincode",   nullable = false)
+    private String deliveryPinCode;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deliveryAddress_id")
-    private Address deliveryAddress;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "deliveryAddress_id")
+//    private Address deliveryAddress;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -56,16 +80,17 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
-    private Integer totalItem;
+    @Column(name = "total_items",  nullable = false)
+    private Integer totalItems;
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
-
-    private String paymentGateway;
-    private String paymentOrderId;
-    private String paymentId;
-
+    private LocalDateTime acceptedAt;
+    private LocalDateTime preparedAt;
+    private LocalDateTime pickedUpAt;
+    private LocalDateTime deliveredAt;
+    private LocalDateTime cancelledAt;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -73,5 +98,9 @@ public class Order {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
+//    @PrePersist
+//    public void onCreate(){
+//        this.createdAt = LocalDateTime.now();
+//        this.orderStatus = OrderStatus.CREATED;
+//    }
 }

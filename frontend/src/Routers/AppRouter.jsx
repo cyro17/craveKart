@@ -55,37 +55,37 @@ const rootRouter =
                 }
             ]
         },
-        {
-            path: "admin/restaurants",
-            element:  <AdminLayout/>, 
-            children: [
-                {
-                    index: true, 
-                    element: <RestaurantDashboard />, 
-                },{
-                    path: "orders", 
-                    element: <RestaurantOrder/>
-                }, {
-                    path: "menu", 
-                    element: <RestaurantMenu/>
-                }, {
-                    path: "add-menu", 
-                    element: <CreateRestaurantForm/>
-                }, {
-                    path: "event", 
-                    element: <Home/>
-                }, {
-                    path: "ingredients", 
-                    element: <Ingredients/>
-                }, {
-                    path: "category", 
-                    element: <Category/>
-                }, {
-                    path: "details", 
-                    element: <Details/>
-                }
-            ]
-        }, 
+        // {
+        //     path: "admin/restaurants",
+        //     element:  <AdminLayout/>, 
+        //     children: [
+        //         {
+        //             index: true, 
+        //             element: <RestaurantDashboard />, 
+        //         },{
+        //             path: "orders", 
+        //             element: <RestaurantOrder/>
+        //         }, {
+        //             path: "menu", 
+        //             element: <RestaurantMenu/>
+        //         }, {
+        //             path: "add-menu", 
+        //             element: <CreateRestaurantForm/>
+        //         }, {
+        //             path: "event", 
+        //             element: <Home/>
+        //         }, {
+        //             path: "ingredients", 
+        //             element: <Ingredients/>
+        //         }, {
+        //             path: "category", 
+        //             element: <Category/>
+        //         }, {
+        //             path: "details", 
+        //             element: <Details/>
+        //         }
+        //     ]
+        // }, 
 
     ]);
 

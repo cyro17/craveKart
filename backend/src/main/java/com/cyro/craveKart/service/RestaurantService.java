@@ -3,7 +3,9 @@ package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.exception.RestaurantException;
+import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.Restaurant;
+import com.cyro.cravekart.models.RestaurantPartner;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
@@ -13,7 +15,7 @@ import java.util.List;
 
 public interface RestaurantService {
 
-  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req, User user);
+  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req, RestaurantPartner partner) throws RestaurantException;
 
   public RestaurantResponse updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurant)
       throws RestaurantException;
@@ -26,9 +28,9 @@ public interface RestaurantService {
 
   public RestaurantResponse getRestaurantById(Long id) throws RestaurantException;
 
-  public List<Restaurant> getRestaurantsByUserId(Long userId) throws RestaurantException;
+  public Restaurant getRestaurantByPartnerId(Long partnerId) throws RestaurantException;
 
-  public RestaurantDto addToFavorites(Long restaurantId, User user) throws RestaurantException;
+  public RestaurantDto addToFavorites(Long restaurantId, Customer customer) throws RestaurantException;
 
   public RestaurantResponse updateRestaurantStatus(Long id)throws RestaurantException;
 

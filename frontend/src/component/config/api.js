@@ -8,3 +8,9 @@ export const api = axios.create({
         "Content-Type": "application/json",
     }
 })
+
+// api.post('/auth/health-check').then(response => {
+//     console.log("API Health Check:", response.data);
+// }).catch(error => {
+//     console.error("API Health Check Failed:", error);
+// });

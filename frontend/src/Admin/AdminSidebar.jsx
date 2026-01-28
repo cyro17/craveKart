@@ -11,7 +11,7 @@ import { Dashboard } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
 import ShopTwoIcon from "@mui/icons-material/ShopTwo";
-import { logout } from "../State/Authentication/Action";
+import { logout } from "../State/Authentication/actions";
 import EventIcon from "@mui/icons-material/Event";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -32,7 +32,7 @@ export default function AdminSidebar({ handleClose, open }) {
   const isSmallScreen = useMediaQuery("(max-width:1080px)");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {restaurant}=useSelector(store=>store);
+  const {restaurant} = useSelector(store=>store);
 
 
   const handleNavigate = (item) => {
