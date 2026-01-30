@@ -30,11 +30,13 @@ public class AuthContextService {
     return (User) authentication.getPrincipal();
   }
 
+
   public Customer getCustomer(){
     User user = getUser();
-    return  customerRepository.findByUserId(user.getId())
+    return  customerRepository.findById(user.getId())
         .orElseThrow(()-> new IllegalStateException("Customer not found"));
   }
+
 
   public Admin getAdmin() {
     User user = getUser();

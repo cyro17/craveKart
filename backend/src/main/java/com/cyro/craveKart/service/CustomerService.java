@@ -2,6 +2,8 @@ package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.dto.*;
 import com.cyro.cravekart.exception.FoodException;
+import com.cyro.cravekart.models.Address;
+import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.OrderResponse;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,8 @@ public interface CustomerService {
   CartDto getCartById(Long cartId);
 
   Page<RestaurantDto> getAllNearByRestaurants(PageRequest pageRequest);
+
+  Address saveAddress(CreateAddressRequest createAddressRequest);
 
 
 

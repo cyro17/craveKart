@@ -1,5 +1,6 @@
 package com.cyro.cravekart.repository;
 
+import com.cyro.cravekart.models.DeliveryPartner;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
   List<Order> findByRestaurantIdAndOrderStatus(
       Long restaurantId, OrderStatus orderStatus);
 
+  boolean existsByDeliveryPartnerIdAndOrderStatusNot(
+      Long deliveryPartnerId, OrderStatus orderStatus
+  );
 
 }

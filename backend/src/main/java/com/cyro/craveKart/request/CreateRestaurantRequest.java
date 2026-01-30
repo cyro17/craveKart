@@ -2,6 +2,7 @@
 
   import com.cyro.cravekart.models.Address;
   import com.cyro.cravekart.models.ContactInfo;
+  import jakarta.validation.Valid;
   import lombok.AllArgsConstructor;
   import lombok.Builder;
   import lombok.Data;
@@ -19,9 +20,10 @@
     private String name;
     private String description;
     private String cuisineType;
-    private Address address;
+    @Valid
     private ContactInfo contactInfo;
     private String openingHours;
+    private AddressRequest addressRequest;
     private List<String> images;
 
   }

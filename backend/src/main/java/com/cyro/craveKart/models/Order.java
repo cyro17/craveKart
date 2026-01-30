@@ -61,10 +61,10 @@ public class Order {
     // delivery snapshot
     @Column(name = "delivery_address_line",  nullable = false)
     private String deliveryAddressLine;
-    @Column(name = "delivery_city",   nullable = false)
-    private String deliveryCity;
-    @Column(name = "delivery_pincode",   nullable = false)
-    private String deliveryPinCode;
+//    @Column(name = "delivery_city",   nullable = false)
+//    private String deliveryCity;
+//    @Column(name = "delivery_pincode",   nullable = false)
+//    private String deliveryPinCode;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)

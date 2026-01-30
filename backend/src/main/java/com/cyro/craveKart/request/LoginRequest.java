@@ -4,7 +4,7 @@ package com.cyro.cravekart.request;
 import lombok.Data;
 
 @Data
-public class LoginRequestDTO {
+public class LoginRequest {
   private String username;
   private String password;
 }

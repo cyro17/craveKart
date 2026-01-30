@@ -30,7 +30,7 @@ public class RestaurantPartner {
   private Restaurant restaurant;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @Column(name = "onboarding_admin")
+  @JoinColumn(name = "onboarding_admin")
   private Admin onboardingAdmin;
 
   private boolean active = false;

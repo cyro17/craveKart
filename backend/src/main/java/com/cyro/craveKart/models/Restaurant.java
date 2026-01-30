@@ -47,8 +47,8 @@ public class Restaurant {
   @Column(nullable = false)
   private String cuisineType;
 
-  @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "partner_id", nullable = false, unique = true)
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "partner_id", unique = true)
   private RestaurantPartner restaurantPartner;
 
   @ManyToMany(mappedBy = "favoriteRestaurants")

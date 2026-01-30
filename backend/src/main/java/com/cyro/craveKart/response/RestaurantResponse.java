@@ -46,7 +46,7 @@ public class RestaurantResponse implements Serializable {
                 ? restaurant.getContactInfo().getMobile()
                 : null)
         .openingHours(restaurant.getOpeningHours())
-        .ratings(restaurant.getNumRating())
+        .ratings(restaurant.getRatingCount())
         .images(
             restaurant.getImages() == null
                 ? List.of()

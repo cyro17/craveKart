@@ -1,7 +1,9 @@
 package com.cyro.cravekart.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(name = "addresses")
 public class Address {
   @Id
@@ -33,11 +36,12 @@ public class Address {
   private String country;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "customer_id", nullable = false)
+  @JoinColumn(name = "customer_id")
+  @JsonIgnore
   private Customer customer;
 
-  @OneToOne(fetch = FetchType.LAZY,
-      mappedBy = "address")
+  @JsonIgnore
+  @OneToOne(fetch = FetchType.LAZY)
   private Restaurant restaurant;
 
   @CreationTimestamp
