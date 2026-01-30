@@ -6,11 +6,13 @@ import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.dto.CartItemDto;
 import com.cyro.cravekart.dto.CartItemQuantityDto;
 import com.cyro.cravekart.dto.RestaurantDto;
+import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.CartItem;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
+import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.request.CreateOrderRequest;
 import com.cyro.cravekart.response.CartItemResponse;
 import com.cyro.cravekart.response.CartResponse;
@@ -34,7 +36,6 @@ import java.util.List;
 @RequestMapping("/api/customer")
 @RequiredArgsConstructor
 @Slf4j
-@Secured("ROLE_CUSTOMER")
 public class CustomerController {
   public final RestaurantService restaurantService;
   private final CustomerService customerService;
@@ -126,6 +127,12 @@ public class CustomerController {
     }
     return new ResponseEntity<>(HttpStatus.OK);
 
+  }
+
+  @PostMapping("/address")
+  public ResponseEntity<Address> saveAddress(@RequestBody CreateAddressRequest createAddressRequest){
+    Address address = customerService.saveAddress(createAddressRequest);
+    return new ResponseEntity<>(address, HttpStatus.CREATED);
   }
 
 

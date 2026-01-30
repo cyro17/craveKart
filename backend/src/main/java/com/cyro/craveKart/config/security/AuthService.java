@@ -2,18 +2,19 @@ package com.cyro.cravekart.config.security;
 
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
-import com.cyro.cravekart.request.LoginRequestDTO;
-import com.cyro.cravekart.request.SignupRequestDTO;
+import com.cyro.cravekart.request.CreateAddressRequest;
+import com.cyro.cravekart.request.LoginRequest;
+import com.cyro.cravekart.request.SignupRequest;
 import com.cyro.cravekart.request.USER_STATUS;
 import com.cyro.cravekart.response.LoginResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AuthService {
+  private final AddressRepository addressRepository;
   private final DeliveryPartnerRepository deliveryPartnerRepository;
   private final DeliveryRepository deliveryRepository;
   private final RestaurantPartnerRepository restaurantPartnerRepository;
@@ -34,8 +37,10 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final RestaurantRepository restaurantRepository;
   private final JwtUtil jwtUtil;
+  private final ModelMapper modelMapper;
+  private final AuthContextService authContextService;
 
-  public User register(SignupRequestDTO request) {
+  public User register(SignupRequest request) {
 
     if(userRepository.existsByUsername(request.getUsername())){
       throw new RuntimeException("Username already exists");
@@ -45,15 +50,13 @@ public class AuthService {
       throw new RuntimeException("Email already exists");
     }
 
-    User user = User.builder()
-        .username(request.getUsername())
-        .firstName(request.getFirstName())
-        .lastName(request.getLastName())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .roles(List.of(request.getRole()))
-        .status(USER_STATUS.ACTIVE)
-        .build();
+
+    User user = modelMapper.map(request, User.class);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    user.setRoles(List.of(request.getRole()));
+    user.setStatus(USER_STATUS.ACTIVE);
+    user.setContact(request.getContactInfo());
+
     User savedUser = userRepository.save(user);
 
     switch (request.getRole()) {
@@ -82,7 +85,9 @@ public class AuthService {
     return  savedUser;
   }
 
-  public LoginResponse login(LoginRequestDTO loginRequestDTO) {
+
+
+  public LoginResponse login(LoginRequest loginRequestDTO) {
     try {
       Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -101,9 +106,9 @@ public class AuthService {
 
 
 
-  public boolean registerAll(List<SignupRequestDTO> requestDTOS) {
+  public boolean registerAll(List<SignupRequest> requestDTOS) {
     List<User> userList = new ArrayList<>();
-    for(SignupRequestDTO user : requestDTOS){
+    for(SignupRequest user : requestDTOS){
       if(userRepository.existsByUsername(user.getUsername())){
         throw new RuntimeException("Username already exists");
       }

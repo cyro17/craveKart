@@ -1,9 +1,14 @@
 package com.cyro.cravekart.service.impl;
 
-import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.*;
 import com.cyro.cravekart.exception.FoodException;
+import com.cyro.cravekart.models.Address;
+import com.cyro.cravekart.models.Customer;
+import com.cyro.cravekart.repository.AddressRepository;
+import com.cyro.cravekart.repository.CustomerRepository;
 import com.cyro.cravekart.request.AddCartItemRequest;
+import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.OrderResponse;
 import com.cyro.cravekart.service.CartService;
@@ -12,22 +17,29 @@ import com.cyro.cravekart.service.FoodService;
 import com.cyro.cravekart.service.RestaurantService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.naming.ServiceUnavailableException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
+  private final AddressRepository addressRepository;
+  private final CustomerRepository customerRepository;
   private final FoodService foodService;
   private final RestaurantService restaurantService;
-  private final AuthService authService;
+  private final AuthContextService authService;
   private final CartService cartService;
+  private final ModelMapper modelMapper;
 
   @Override
-  @Transactional
   public CartResponse addFoodToCart(Long foodId) throws FoodException, ServiceUnavailableException {
     AddCartItemRequest cartItemRequest = AddCartItemRequest.builder().foodId(foodId)
         .quantity(1).build();
@@ -83,5 +95,20 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   public Page<RestaurantDto> getAllNearByRestaurants(PageRequest pageRequest) {
     return null;
+  }
+
+  @Override
+  public Address saveAddress(CreateAddressRequest createAddressRequest) {
+    Customer user = authService.getCustomer();
+
+    Customer customer = customerRepository.findById(user.getId()).orElseThrow(
+        ()-> new IllegalStateException("Customer with id " + user.getId() + " not found")
+    );
+
+    Address address = modelMapper.map(createAddressRequest, Address.class);
+    customer.addAddress(address);
+    customerRepository.save(customer);
+
+    return address;
   }
 }

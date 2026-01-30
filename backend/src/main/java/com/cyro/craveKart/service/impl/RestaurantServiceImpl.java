@@ -1,11 +1,14 @@
 package com.cyro.cravekart.service.impl;
 
+import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
+import com.cyro.cravekart.request.OnboardRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
+import com.cyro.cravekart.response.OnboardRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantPartnerService;
 import com.cyro.cravekart.service.RestaurantService;
@@ -16,10 +19,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -32,45 +34,98 @@ public class RestaurantServiceImpl implements RestaurantService {
   private final RestaurantPartnerRepository restaurantPartnerRepository;
 
   private final AddressRepository addressRepository;
-  private final  RestaurantRepository restaurantRepository;
+  private final RestaurantRepository restaurantRepository;
   private final UserRepository userRepository;
   private final RestaurantPartnerService restaurantPartnerService;
   private final ModelMapper modelMapper;
+  private final AuthContextService authContextService;
 
 
   // ======================= CREATE ====================================
+
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "restaurantsAll", allEntries = true),
       @CacheEvict(value = "restaurantByKeyword", allEntries = true)
   })
-  public CreateRestaurantResponse createRestaurant(
-      CreateRestaurantRequest req, RestaurantPartner partner) {
+  public OnboardRestaurantResponse onboardRestaurant(
+      OnboardRestaurantRequest req, Long restaurantPartnerId) {
+
     // restaurant partner
-    // save address
+    RestaurantPartner partner = restaurantPartnerRepository.findById(restaurantPartnerId).orElseThrow(
+        () -> new RestaurantException("Restaurant partner not found")
+    );
+
+    if(partner.getRestaurant() != null) {
+      throw new RestaurantException("Partner already has a restaurant");
+    }
+
     Address address = mapAddress(req);
 
-    // create restaurant
-    Restaurant restaurant = Restaurant.builder()
-        .name(req.getName())
-        .description(req.getDescription())
-        .cuisineType(req.getCuisineType())
-        .openingHours(req.getOpeningHours())
-        .contactInfo(req.getContactInfo())
-        .images(req.getImages())
-        .address(address)
-        .restaurantPartner(partner)
-        .open(true)
+    Restaurant restaurant = modelMapper.map(req, Restaurant.class);
+    restaurant.setAddress(address);
+    restaurant.setRestaurantPartner(partner);
+    restaurant.setOpen(true);
+
+    Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+
+    partner.setRestaurant(savedRestaurant);
+    partner.setVerified(true);
+    partner.setActive(true);
+
+    restaurantPartnerRepository.save(partner);
+
+    return OnboardRestaurantResponse.builder()
+        .id(savedRestaurant.getId())
+        .partnerName(partner.getUser().getUsername())
+        .name(restaurant.getName())
         .build();
+  }
+
+
+  @Override
+  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) throws RestaurantException {
+
+    // check if restaurant exists
+    boolean exists = restaurantRepository.existsByNameIgnoreCase(req.getName());
+    if(exists) throw new RestaurantException("Restaurant already exists");
+
+    Address address = modelMapper.map(req.getAddressRequest(), Address.class);
+    addressRepository.save(address);
+
+    Restaurant restaurant = modelMapper.map(req, Restaurant.class);
+    restaurant.setAddress(address);
 
     Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
     return CreateRestaurantResponse.builder()
         .id(savedRestaurant.getId())
-        .partnerName(partner.getUser().getUsername())
-        .name(restaurant.getName())
+        .name(savedRestaurant.getName())
+        .assigned(false)
         .build();
+  }
+
+  public boolean assignPartner(Long restaurantId, Long partnerId) throws RestaurantException {
+    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
+    if(restaurant.getRestaurantPartner() != null) throw   new RestaurantException("Restaurant already assigned");
+
+    RestaurantPartner partner = restaurantPartnerRepository.findById(partnerId).orElseThrow(
+        () -> new RestaurantException("Partner not found")
+    );
+
+    restaurant.setRestaurantPartner(partner);
+    restaurant.setOpen(true);
+
+    partner.setRestaurant(restaurant);
+    partner.setActive(true);
+    partner.setVerified(true);
+
+    restaurantRepository.save(restaurant);
+    RestaurantPartner savedPartner = restaurantPartnerRepository.save(partner);
+    if(savedPartner != null) {return true;}
+    return  false;
+
   }
 
 
@@ -196,13 +251,13 @@ public class RestaurantServiceImpl implements RestaurantService {
             new RestaurantException("Restaurant not found with id : " + id));
   }
 
-  private Address mapAddress(CreateRestaurantRequest req) {
+  private Address mapAddress(OnboardRestaurantRequest req) {
     Address address = new Address();
-    address.setCity(req.getAddress().getCity());
-    address.setCountry(req.getAddress().getCountry());
-    address.setPostalCode(req.getAddress().getPostalCode());
-    address.setState(req.getAddress().getState());
-    address.setStreetAddress(req.getAddress().getStreetAddress());
+    address.setCity(req.getAddressRequest().getCity());
+    address.setCountry(req.getAddressRequest().getCountry());
+    address.setPostalCode(req.getAddressRequest().getPostalCode());
+    address.setState(req.getAddressRequest().getState());
+    address.setStreetAddress(req.getAddressRequest().getStreetAddress());
     return addressRepository.save(address);
   }
 

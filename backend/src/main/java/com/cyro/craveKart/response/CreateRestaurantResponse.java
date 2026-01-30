@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateRestaurantResponse {
   private Long id;
-  private String partnerName;
+//  private String partnerName;
   private String name;
+  private boolean assigned;
 }

@@ -7,5 +7,6 @@ public enum USER_STATUS {
 
   ACTIVE,
   EXPIRED,
-  INACTIVE
+  INACTIVE,
+  SUSPENDED,
 }

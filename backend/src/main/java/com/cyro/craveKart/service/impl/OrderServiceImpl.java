@@ -11,6 +11,7 @@ import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderServiceImpl implements OrderService {
   private final FoodRepository foodRepository;
   private final RestaurantRepository restaurantRepository;
@@ -39,6 +41,11 @@ public class OrderServiceImpl implements OrderService {
   public PlaceOrderResponse placeOrder()  {
 
     Customer customer = authService.getCustomer();
+
+    log.info(String.valueOf(customer.getUser().getId()));
+
+    Address address = customer.getAddresses().get(0);
+
     Cart cart = cartRepository.findByCustomerId(
         customer.getId()).orElseThrow(
         () -> new RuntimeException("User does not exist")
@@ -53,13 +60,16 @@ public class OrderServiceImpl implements OrderService {
         .customerId(customer.getId())
         .customerName(customer.getUser().getUsername())
         .customerPhone(customer.getUser().getContact().getMobile())
-
+        .deliveryAddressLine(address.getFullAddress())
+//        .deliveryCity(customer.getAddresses().get(0).getCity())
+//        .deliveryPinCode(customer.getAddresses().get(0).getPostalCode())
         .restaurantId(restaurant.getId())
         .restaurantName(restaurant.getName())
         .restaurantAddress(restaurant.getAddress().getStreetAddress())
         .orderStatus(OrderStatus.CREATED)
-
         .build();
+
+
 
     List<OrderItem> orderItems = new ArrayList<>();
 

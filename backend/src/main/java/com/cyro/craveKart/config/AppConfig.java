@@ -3,6 +3,9 @@ package com.cyro.cravekart.config;
 import com.cyro.cravekart.config.security.JwtAuthFilter;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -43,6 +46,8 @@ public class AppConfig {
                   .permitAll()
                 .requestMatchers("/api/admin/**")
                   .hasAnyRole("RESTAURANT_PARTNER","ADMIN")
+                .requestMatchers("/api/customer/**")
+                  .hasRole("CUSTOMER")
                 .requestMatchers("/api/**")
                   .authenticated()
                 .anyRequest().authenticated()
@@ -65,6 +70,10 @@ public class AppConfig {
 
   @Bean
   public ModelMapper modelMapper() {
-    return new ModelMapper();
+    ModelMapper modelMapper = new ModelMapper();
+    modelMapper.getConfiguration()
+        .setMatchingStrategy(MatchingStrategies.STRICT)
+        .setFieldMatchingEnabled(true);
+    return modelMapper;
   }
 }

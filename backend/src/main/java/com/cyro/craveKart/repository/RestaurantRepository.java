@@ -18,4 +18,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
   Restaurant findByRestaurantPartner(Long userId);
 
+  boolean existsByNameIgnoreCase(String name);
+
+  @Query("select r from Restaurant r " +
+      "join r.restaurantPartner rp " +
+      "where r.open = true and rp.active = true and rp.verified = true")
+  List<Restaurant> findLiveRestaurants();
+
 }

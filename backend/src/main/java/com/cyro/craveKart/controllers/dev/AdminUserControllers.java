@@ -1,6 +1,8 @@
 package com.cyro.cravekart.controllers.dev;
 
 
+import com.cyro.cravekart.config.security.AuthContextService;
+import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.UserResponse;
 import com.cyro.cravekart.service.UserService;
@@ -19,9 +21,13 @@ import java.util.List;
 public class AdminUserControllers {
   private final UserService userService;
   private final UserRepository userRepository;
+  private final AuthContextService authService;
 
   @GetMapping("/check")
   public ResponseEntity<String> healthCheck(){
+    for (USER_ROLE role : authService.getCustomer().getUser().getRoles()) {
+      System.out.println(role);
+    }
     return ResponseEntity.ok("OK");
   }
 
