@@ -2,8 +2,9 @@ import { Box, Modal } from '@mui/material'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { style } from '../cart/Cart';
-import LoginForm from "./LoginForm"
+import LoginForm from "./Login/LoginForm"
 import RegisterForm from "./RegisterForm"
+// import SignIn from "../sign-in/SignIn";
 
 export default function Auth() {
     const location = useLocation();

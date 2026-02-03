@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { api, API_URL } from "../../component/config/api";
 
@@ -7,7 +6,7 @@ export function healthCheck() {
     return async function (dispatch) {
         dispatch({ type: "auth/check" })
         try {
-            const { data } = api.get(`${API_URL}/auth/check`);
+            const { data } = await api.get(`${API_URL}/auth/check`);
             console.log("get data : ", data)
             dispatch({ type: "auth/healthCheck", payload: data });
 
@@ -16,7 +15,6 @@ export function healthCheck() {
         }
     }
 }
-
 
 export function registerUser(reqData) {
     return async function (dispatch) {
@@ -43,12 +41,13 @@ export function loginUser(reqData) {
     return async function (dispatch) {
         try {
             dispatch({ type: "auth/loginRequest" });
-            const { data } = await api.post(`${API_URL}/auth/login`, reqData.data);
-            console.log("data : ", data);
+            const { data } = await api.post(`${API_URL}/auth/signin`, reqData.values);
+            console.log("login data : ", data);
 
             if (data.jwt) localStorage.setItem("jwt", data.jwt);
             dispatch({ type: "auth/loginSuccess", payload: data });
             reqData.navigate("/");
+
         } catch (error) {
             dispatch({
                 type: "auth/loginFailure", payload:

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import './Home.css';
 import MultiItemCarousel from './MultiItemCarousel';
 import Auth from '../Auth/Auth';
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllRestaurant } from '../../State/Customers/Restaurant/actions';
 import RestaurantCard from '../restaurant/RestaurantCard';
 import { Button } from '@mui/material';
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion } from "motion/react";
 
 const MotionButton = motion(Button);
 
@@ -16,10 +16,10 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (auth.user) {
+
       dispatch(getAllRestaurant(localStorage.getItem("jwt")));
-    }
-  }, [auth.user]);
+      console.log("fetched restaurants : ", restaurant);
+    }, []);
 
 
     return (
@@ -75,6 +75,8 @@ export default function Home() {
           <MultiItemCarousel />
         </section>
 
+        {/* restaurant card section */}
+
         <section className='px-5 lg:px-20'>
           <h1 className='text-2xl font-semibold text-gray-100 py-3 pb-10'>
             Discover best restaurant 
@@ -86,6 +88,8 @@ export default function Home() {
             }
           </div>
         </section>
+
+        {/* Footer Section */}
         <section>
           <footer className="bg-gradient-to-t from-black/90 to-black/90 p-4 text-white">
         

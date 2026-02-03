@@ -40,8 +40,6 @@ export const reducers = {
     },
 
 
-
-
     registerSuccess: (state, action) => {
         state.isLoading = false;
         state.jwt = action?.payload;

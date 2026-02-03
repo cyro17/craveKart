@@ -8,26 +8,16 @@ import { menuReducer } from "../Customers/Menu/menuSlice";
 import { cartReducer } from "../Customers/Cart/cartSlice";
 import { ingredientsReducer } from "../Admin/Ingredients/ingredientsSlice";
 import { restaurantsOrderReducer } from "../Admin/Order/orderSlice";
+import { configureStore } from "@reduxjs/toolkit";
 
-const rootReducer = combineReducers({
-    auth: authReducer,
-    // restaurant: restaurantReducer,
-    // order: orderReducer,
-    // menu: menuReducer,
-    // cart: cartReducer,
 
-    // // admin
-    // restaurantsOrder: restaurantsOrderReducer,
-    // ingredients: ingredientsReducer,
-
-    //super admin
-
-})
-
-const store = legacy_createStore(
-    rootReducer,
-    applyMiddleware(thunk)
-);
+const store = configureStore({
+    reducer: {
+        auth: authReducer,
+        restaurant: restaurantReducer,
+    },
+    devTools: true
+});
 
 export default store;
 

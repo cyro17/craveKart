@@ -16,6 +16,7 @@ export default function Profile() {
             </div>
     
             {/* Main Content */}
+            User profile
             <div className="flex-1">
                 <Outlet /> {/* Renders orders, favourites, address, etc. */}
             </div>

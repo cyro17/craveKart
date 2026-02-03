@@ -8,19 +8,30 @@ import { useNavigate } from 'react-router-dom';
 
 
 const initialValues = {
-  fullName:"", 
-  email: "", 
+  username: "", 
+  firstName: "",
+  lastName: "",
+  email: "",
   password: "",
-  role: ""
+  role: "",
+  contactInfo: {
+    mail: "", mobile: "", twitter: "", instagram: ""
+  }
 }
 
 const validationSchema = Yup.object({
-  fullName: Yup.string().required("Full Name is required"),
+  username: Yup.string().required("Username is required"),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
-  password: Yup.string()
-    .required("Password is required"),
+  password: Yup.string().required("Password is required"),
+  role: Yup.string().required("Role is required"),
+  contactInfo: Yup.object({
+    mail: Yup.string().email("Invalid email"),
+    mobile: Yup.string().matches(/^[0-9]{10}$/, "Mobile must be 10 digits")
+  })
 });
 
 
@@ -32,8 +43,12 @@ export default function RegisterForm() {
   
 
   const handleSubmit = (values) => {
-    console.log("submit handler : ", values);
-    dispatch(registerUser({userData: values, navigate}))
+    const payload = {
+      ...values, 
+      // role: values.role.toUpperCase()
+    }
+    console.log("Register payload: ", payload);
+    dispatch(registerUser({userData: payload, navigate}));
   }
 
   const handleHealthCheck = () => {
@@ -53,12 +68,28 @@ export default function RegisterForm() {
           <Form>
             <Field
               as={TextField}
-              name="fullName"
-              label="Full Name"
+              name="username"
+              label="Username"
               fullWidth
               variant="outlined"
               margin="normal"
           />
+          <Field
+              as={TextField}
+              name="firstName"
+              label="First Name"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
+          <Field
+              as={TextField}
+              name="lastName"
+              label="Last Name"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
           <Field
               as={TextField}
               name="email"
@@ -76,13 +107,15 @@ export default function RegisterForm() {
               variant="outlined"
               margin="normal"
           />
+
            <Field name="role">
               {({ field }) => (
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="role-simple-select-label">Role</InputLabel>
                   <Select {...field} labelId="role-simple-select-label">
-                    <MenuItem value="ROLE_CUSTOMER">Customer</MenuItem>
-                    <MenuItem value="ROLE_RESTAURANT_OWNER">Restaurant Owner</MenuItem>
+                    <MenuItem value="CUSTOMER">Customer</MenuItem>
+                    <MenuItem value="RESTAURANT_PARTNER">Restaurant Partner</MenuItem>
+                    <MenuItem value="ADMIN">ADMIN</MenuItem>
                   </Select>
                 </FormControl>
               )}
@@ -92,6 +125,7 @@ export default function RegisterForm() {
             fullWidth
             type='submit'
             variant='contained'
+            // onClick={()=> handleHealthCheck()}
           >
               Register
             </Button>

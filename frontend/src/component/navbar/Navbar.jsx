@@ -18,6 +18,7 @@ export default function Navbar() {
     const { auth } = useSelector(store => store);
     console.log("auth", auth);
 
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
@@ -34,8 +35,8 @@ export default function Navbar() {
       };
 
     const navigateToProfile = (evene) => {
-        auth.user?.role === "ROLE_ADMIN" ||
-            auth.user?.role === "ROLE_RESTAURANT_OWNER" ?
+        auth.user?.role === "ADMIN" ||
+            auth.user?.role === "RESTAURANT_PARTNER" ?
             navigate("/admin/restaurants") : navigate("/my-profile");
     }
 
@@ -72,21 +73,21 @@ export default function Navbar() {
                 
                 <div className="flex items-center space-x-2">    
                     {
-                        auth.user?.fullName ? (
+                        auth.user?.firstName ? (
                             <span
                                 id='demo-positioned-button'
                                 aria-controls={open ? "demo-positioned-menu" : undefined}
                                 aria-haspopup="true"
                                 aria-expanded={open ? "true" : undefined}
                                 onClick={
-                                    auth.user?.role !== "ROLE_ADMIN" ?
+                                    auth.user?.role !== "ADMIN" ?
                                     handleOpenMenu :
                                     navigateToProfile
                                 }
                                 className='font-semibold cursor-pointer'
                             >
                                 <Avatar >
-                                    { auth.user.fullName[0].toUpperCase()}
+                                    { auth.user.firstName[0].toUpperCase()}
                                 </Avatar>
                             </span>
                         ) : (
@@ -124,7 +125,7 @@ export default function Navbar() {
                         <MenuItem onClick={handleLogout}>
                             Logout
                         </MenuItem>
-                    </Menu>
+                    </Menu>     
                 </div>
                         
                     <IconButton className=''>

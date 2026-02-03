@@ -12,14 +12,14 @@ import Events from "../component/profile/Address.jsx";
 import { Logout } from "@mui/icons-material";
 import RootLayout from "./Layout.jsx";
 import Payment from "../component/profile/Payment.jsx";
-import RestaurantDashboard from "../Admin/Dashboard/RestaurantDashboard.jsx";
-import RestaurantOrder from "../Admin/Orders/RestaurantOrder.jsx";
-import RestaurantMenu from "../Admin/Food/RestaurantMenu.jsx";
-import CreateRestaurantForm from "../Admin/AddRestaurants/CreateRestaurant.jsx";
-import Ingredients from "../Admin/Ingredients/Ingredients.jsx";
-import Category from "../Admin/Category/Category.jsx";
-import Details from "../Admin/Details/Details.jsx";
-import AdminLayout from "./AdminLayout.jsx";
+// import RestaurantDashboard from "../Admin/Dashboard/RestaurantDashboard.jsx";
+// import RestaurantOrder from "../Admin/Orders/RestaurantOrder.jsx";
+// import RestaurantMenu from "../Admin/Food/RestaurantMenu.jsx";
+// import CreateRestaurantForm from "../Admin/AddRestaurants/CreateRestaurant.jsx";
+// import Ingredients from "../Admin/Ingredients/Ingredients.jsx";
+// import Category from "../Admin/Category/Category.jsx";
+// import Details from "../Admin/Details/Details.jsx";
+// import AdminLayout from "./AdminLayout.jsx";
 
 const rootRouter = 
     createBrowserRouter([
