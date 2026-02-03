@@ -7,5 +7,8 @@ import lombok.Data;
 @Builder
 public class LoginResponse {
   String jwt;
-  Long id;
+  boolean status;
+  String message;
+  UserResponse user;
+
 }

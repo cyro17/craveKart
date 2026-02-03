@@ -9,24 +9,20 @@ import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.CartItem;
 import com.cyro.cravekart.models.Order;
-import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.CreateOrderRequest;
 import com.cyro.cravekart.response.CartItemResponse;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.*;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -134,9 +130,5 @@ public class CustomerController {
     Address address = customerService.saveAddress(createAddressRequest);
     return new ResponseEntity<>(address, HttpStatus.CREATED);
   }
-
-
-
-
 
 }

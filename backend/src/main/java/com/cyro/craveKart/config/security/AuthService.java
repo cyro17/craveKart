@@ -2,11 +2,9 @@ package com.cyro.cravekart.config.security;
 
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
-import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.LoginRequest;
-import com.cyro.cravekart.request.SignupRequest;
-import com.cyro.cravekart.request.USER_STATUS;
+import com.cyro.cravekart.request.*;
 import com.cyro.cravekart.response.LoginResponse;
+import com.cyro.cravekart.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +94,39 @@ public class AuthService {
         User user = (User) authentication.getPrincipal();
         log.info("User: " + user.getUsername());
         String token = jwtUtil.generateToken(user);
-        return LoginResponse.builder().jwt(token).id(user.getId()).build();
+        return LoginResponse.builder()
+            .jwt(token)
+            .status(true)
+            .message("Login successful")
+            .user(
+                UserResponse.from(user)
+            ).build();
+
+    } catch (Exception e) {
+      log.error("Login failed", e);
+      throw new AuthorizationDeniedException("Invalid username or password");
+    }
+  }
+
+  public LoginResponse loginViaEmail(LoginEmailRequest loginRequestDTO) {
+    String email = loginRequestDTO.getEmail();
+    User user1= userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email not found"));
+
+    try {
+      Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              user1.getUsername(), loginRequestDTO.getPassword())
+      );
+      User user = (User) authentication.getPrincipal();
+      log.info("User: " + user.getUsername());
+      String token = jwtUtil.generateToken(user);
+      return LoginResponse.builder()
+          .jwt(token)
+          .status(true)
+          .message("Login successful")
+          .user(
+              UserResponse.from(user)
+          ).build();
 
     } catch (Exception e) {
       log.error("Login failed", e);

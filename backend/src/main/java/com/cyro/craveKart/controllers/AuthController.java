@@ -1,22 +1,14 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.models.Address;
-import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.request.AddressRequest;
-import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.LoginRequest;
-import com.cyro.cravekart.request.SignupRequest;
+import com.cyro.cravekart.request.*;
 import com.cyro.cravekart.response.LoginResponse;
-import com.cyro.cravekart.response.SignupReponse;
 import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.response.SignupResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,7 +23,6 @@ public class AuthController {
     return ResponseEntity.ok("OK");
   }
 
-
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(
       @RequestBody LoginRequest loginRequestDTO){
@@ -39,12 +30,20 @@ public class AuthController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/signin")
+  public ResponseEntity<LoginResponse> login(
+      @RequestBody LoginEmailRequest loginEmailRequest
+  ){
+    LoginResponse loginResponse = authService.loginViaEmail(loginEmailRequest);
+    return ResponseEntity.ok(loginResponse);
+  }
+
   @PostMapping("/signup")
-  public ResponseEntity<SignupReponse> createUser(
+  public ResponseEntity<SignupResponse> createUser(
       @Valid @RequestBody SignupRequest reqeust
   ) {
     User registeredUser = authService.register(reqeust);
-    SignupReponse response = SignupReponse.builder()
+    SignupResponse response = SignupResponse.builder()
         .username(registeredUser.getUsername())
         .id(registeredUser.getId())
         .build();

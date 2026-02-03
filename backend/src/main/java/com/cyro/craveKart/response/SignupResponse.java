@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SignupReponse {
+public class SignupResponse {
   private String username;
   private  Long id;
 }
