@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4d36f655-c450-4561-9788-0494180b7d54" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/request/LoginEmailRequest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/SignupResponse$SignupResponseBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/config/AppConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/config/security/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/config/security/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/controllers/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/controllers/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/controllers/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/controllers/CustomerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/request/LoginEmailRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/request/LoginEmailRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/response/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/response/LoginResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/response/SignupReponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/response/SignupResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/cyro/craveKart/response/SignupResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/AppConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/AppConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/security/AuthService$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/security/AuthService$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/security/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/config/security/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/controllers/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/controllers/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/controllers/CustomerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/controllers/CustomerController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/LoginResponse$LoginResponseBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/LoginResponse$LoginResponseBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/LoginResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/LoginResponse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/SignupReponse$SignupReponseBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/SignupReponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/target/classes/com/cyro/craveKart/response/SignupResponse.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="39A35PhEd6vm59b6v2iJWuj7TZF" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "fe__main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/cyro_dev/Documents/Documents - Ronit’s MacBook Air/codes.nosync/project/craveKart/frontend",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4d36f655-c450-4561-9788-0494180b7d54" name="Changes" comment="" />
+      <created>1770124864949</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770124864949</updated>
+    </task>
+    <servers />
+  </component>
+</project>
