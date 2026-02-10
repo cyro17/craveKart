@@ -19,7 +19,7 @@ export default function MultiItemCarousel() {
     };
 
     return (
-        <div>
+        <div className='h-9'>
             <Slider {...settings}>
                 {topMeals.map((meal, index) =>
                     <CarouselItem key={index} image={meal.image} title={meal.title} />)

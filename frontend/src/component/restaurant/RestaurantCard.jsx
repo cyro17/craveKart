@@ -1,69 +1,61 @@
-import { Avatar, Card, CardHeader, Chip, IconButton } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import React from 'react';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-// import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Card, Chip, IconButton } from "@mui/material";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import React from "react";
 
-
-export default function RestaurantCard({data}) {
-  const navigate = useNavigate();
-  const { auth } = useSelector((store) => store);
-  const jwt=localStorage.getItem("jwt");
-
-  const dispatch = useDispatch();
-
-  // const handleAddToFavorites = () => {
-  //   dispatch(addTo({restaurantId:data.id,jwt:auth.jwt||jwt}));
-  // };
-
-  const navigateToRestaurant = () => {
-    if(data.open)
-    navigate(`/restaurant/${data.address.city}/${data.name}/${data.id}`);
-  };
-
+export default function RestaurantCard({ restaurant }) {
+  const {
+    name,
+    description,
+    image,
+    open,
+    ratings,
+    cuisineType,
+  } = restaurant;
 
   return (
-    <Card className="m-5 w-[18rem] productCard ">
-    <div onClick={navigateToRestaurant} className={`${data.open?"cursor-pointer":"cursor-not-allowed"}  relative`}>
-      <img
-        className="w-full h-[10rem] rounded-t-md object-cover "
-        src={data.images[0]}
-        alt=""
-      />
-      <Chip
-        size="small"
-        // variant="outlined"
-        className="absolute top-2 left-2"
-        color={data.open?"success":"error"}
-        label={data.open ? "Open" : "Closed"}
-      />
-    </div>
-    <div className="p-4 textPart lg:flex w-full justify-between">
-      <div className="space-y-1">
-        <p className="font-semibold text-lg">{data.name}</p>
-        {/* <div>
-        <span>{data.rating}</span>
-      </div> */}
-        <p className="text-gray-500 text-sm">
-          {data.description.length > 40
-            ? data.description.substring(0, 40) + "..."
-            : data.description}
-        </p>
+    <Card className="rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
+      {/* Image */}
+      <div className="relative">
+        <img
+          src={image}
+          alt={name}
+          className="h-44 w-full object-cover"
+        />
+
+        <Chip
+          size="small"
+          label={open ? "Open" : "Closed"}
+          color={open ? "success" : "error"}
+          className="absolute top-2 left-2"
+        />
       </div>
 
-      <div>
-        <IconButton >
-          {/* {isPresentInFavorites(auth.favorites, data) ? (
-            <FavoriteIcon color="primary" />
-          ) : (
+      {/* Content */}
+      <div className="p-4 space-y-1">
+        <div className="flex justify-between items-start">
+          <h3 className="font-semibold text-lg leading-tight">
+            {name}
+          </h3>
+          <IconButton size="small">
             <FavoriteBorderIcon />
-          )} */}
-        </IconButton>
+          </IconButton>
+        </div>
+
+        <p className="text-sm text-gray-500">
+          {cuisineType}
+        </p>
+
+        <p className="text-sm text-gray-600 line-clamp-2">
+          {description}
+        </p>
+
+        {/* Rating */}
+        <div className="flex items-center gap-2 text-sm mt-2">
+          <span className="bg-green-600 text-white px-2 py-[2px] rounded-md">
+            ⭐ {ratings || "New"}
+          </span>
+        </div>
       </div>
-    </div>
-  </Card>
-  )
+    </Card>
+  );
 }

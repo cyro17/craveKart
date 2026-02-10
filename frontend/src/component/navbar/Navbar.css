@@ -11,7 +11,10 @@
     font-family: 'Mynerve', cursive ;
     font-weight: bolder;
     font-size: 30px;
-  
+    
+  .navbar {
+    transition: all 0.2s ease;
+  }
     
     
 /* font-family: 'Playball', cursive; */

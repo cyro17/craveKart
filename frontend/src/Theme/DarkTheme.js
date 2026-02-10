@@ -1,5 +1,4 @@
 const { createTheme } = require("@mui/material");
-const { dark } = require("@mui/material/styles/createPalette");
 
 
 export const darkTheme = createTheme({
@@ -12,8 +11,8 @@ export const darkTheme = createTheme({
             main: '#5A20CB'
         },
         background: {
-            main: "#000000",
-            default: '#0D0D0D'
+            default: "#0D0D0D",
+            paper: "#000000",
         },
         text: {
             primary: '#FFFFFF'
