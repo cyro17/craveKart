@@ -1,9 +1,11 @@
 import { Box, Modal } from '@mui/material'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { style } from '../cart/Cart';
+
 import LoginForm from "./LoginForm"
 import RegisterForm from "./RegisterForm"
+import { style } from '../../styles/modalStyle'
+
 
 export default function Auth() {
     const location = useLocation();
@@ -12,6 +14,7 @@ export default function Auth() {
     const handleOnClose = () => {
         navigate("/");
     }
+    
     return (
       <div>
             <Modal open={

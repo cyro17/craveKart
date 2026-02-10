@@ -1,25 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { reducers } from "./reducers";
-
+import { loginUser, registerUser } from "./AuthThunks.js";
 
 const initialState = {
     user: null,
+    token: null,
     isLoading: false,
     error: null,
-    jwt: null,
-    favorites: [],
-    success: null,
-}
+    success: false,
+};
 
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: reducers
-})
+    reducers: {
+        logout(state) {
+            state.user = null;
+            state.token = null;
+            state.success = false;
+            localStorage.removeItem("token");
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            // LOGIN
+            .addCase(loginUser.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.user = action.payload.user;
+                state.token = action.payload.token;
+                state.success = true;
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
 
-export const { registerRequest,
-    loginRequest, getUserRequest, resetPasswordRequest, requestResetPasswordRequest,
-    registerSuccess, loginSuccess, logout } = authSlice.actions;
+            // REGISTER
+            .addCase(registerUser.fulfilled, (state) => {
+                state.success = true;
+            });
+    },
+});
 
+export const { logout } = authSlice.actions;
 export const authReducer = authSlice.reducer;
-
