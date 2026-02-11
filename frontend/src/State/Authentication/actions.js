@@ -43,7 +43,7 @@ export function loginUser(reqData) {
     return async function (dispatch) {
         try {
             dispatch({ type: "auth/loginRequest" });
-            const { data } = await api.post(`${API_URL}/auth/login`, reqData.data);
+            const { data } = await api.post(`${API_URL}/auth/signin`, reqData.data);
             console.log("data : ", data);
 
             if (data.jwt) localStorage.setItem("jwt", data.jwt);

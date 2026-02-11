@@ -5,6 +5,7 @@ import { Field, Formik, Form } from 'formik'
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../State/Authentication/actions';
 import {motion} from 'motion/react'
+import { toast } from 'react-toastify';
 
 const initialValues = {
   email: "", 
@@ -16,9 +17,26 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(loginUser({data: values, navigate}))  
+  const handleSubmit = async (values, {setSubmitting}) => {
+    try {
+      const response = await dispatch(loginUser(values));
+      console.log("response : ", response);
+      if (response?.payload?.token) {
+        localStorage.setItem("token", response.payload.token);
+        toast.success("Login Successful ! ");
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      }
+      else {
+        toast.error("Login Failed ! Please check your credentials.");
+      } 
+    } catch (error) {
+      toast.error("An error occurred during login. Please try again.");
+      console.error(error);
+    } finally {
+      setSubmitting(false);
+    }
     
   }
   return (
@@ -27,34 +45,37 @@ export default function LoginForm() {
         Login 
       </Typography>
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ isSubmitting}) => (
           <Form>
-            <Field
-              as={TextField}
-              name="email"
-              label="email"
-              fullWidth
-              variant="outlined"
-              margin="normal"
-            />
-            <Field
-              as={TextField}
-              name="password"
-              label="password"
-              fullWidth
-              variant="outlined"
-              margin="normal"
-            />
-          <Button sx={{ mt: 2, padding: "1rem " }}
-            onHoverStart={{
-              scale: 1.2
-            }}
+          <Field
+            as={TextField}
+            name="email"
+            label="email"
             fullWidth
-            type='submit'
-            variant='contained'
-          >
-              Login
-            </Button>
-          </Form>
+            variant="outlined"
+            margin="normal"
+          />
+          <Field
+            as={TextField}
+            name="password"
+            label="password"
+            fullWidth
+            variant="outlined"
+            margin="normal"
+          />
+        <Button sx={{ mt: 2, padding: "1rem " }}
+          onHoverStart={{
+            scale: 1.2
+          }}
+          fullWidth
+          type='submit'
+          variant='contained'
+          disabled={isSubmitting}  
+        >
+            {isSubmitting ? "Logging in..." : "Login"}
+          </Button>
+        </Form>
+        )}
         </Formik>
       <Typography variant='body2' align='center' sx={{mt:3}}>
         Don't have account ?
