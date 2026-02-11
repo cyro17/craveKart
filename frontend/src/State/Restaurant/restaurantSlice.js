@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api } from "../../component/config/api";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchRestaurants } from "./RestaurantThunks";
 
 const initialState = {
     list: [],
@@ -8,17 +8,7 @@ const initialState = {
     error: null,
 };
 
-export const fetchRestaurants = createAsyncThunk(
-    "restaurants/fetchRestaurants",
-    async (_, { rejectWithValue }) => {
-        try {
-            const res = await api.get("/customer/restaurants");
-            return res.data;
-        } catch (err) {
-            return rejectWithValue(err.message);
-        }
-    }
-)
+
 
 const restaurantSlice = createSlice({
     name: "restaurants",
@@ -42,6 +32,7 @@ const restaurantSlice = createSlice({
             .addCase(fetchRestaurants.fulfilled, (state, action) => {
                 state.loading = false;
                 state.list = action.payload;
+
             })
             .addCase(fetchRestaurants.rejected, (state, action) => {
                 state.loading = false;

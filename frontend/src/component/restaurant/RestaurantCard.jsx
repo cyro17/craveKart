@@ -6,7 +6,7 @@ export default function RestaurantCard({ restaurant }) {
   const {
     name,
     description,
-    image,
+    images,
     isOpen,
     ratings,
     cuisineType,
@@ -21,7 +21,7 @@ export default function RestaurantCard({ restaurant }) {
       {/* Image */}
       <div className="relative">
         <img
-          src={image}
+          src={images[0]}
           alt={name}
           className="h-44 w-full object-cover"
         />

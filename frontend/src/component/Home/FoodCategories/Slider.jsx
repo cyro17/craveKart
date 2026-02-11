@@ -6,7 +6,7 @@ import "swiper/css/grid";
 
 export default function Slider({ categories }) {
   return (
-      <div className="category-section flex flex-col">
+      <div className="category-section flex flex-col py-0">
         
         <Swiper
             className="food-swiper"
@@ -27,11 +27,11 @@ export default function Slider({ categories }) {
         >
         {categories.map((cat) => (
           <SwiperSlide key={cat.id}>
-            <div className="category-item ">
+            <div className="category-item flex flex-col items-center">
               <div className="circle-image">
                 <img src={cat.image} alt={cat.title} />
               </div>
-              <p className="text-2xl text-stone-900">{cat.title}</p>
+              <p className="text-sm text-center text-stone-900 mt-2">{cat.title}</p>
             </div>
           </SwiperSlide>
         ))}

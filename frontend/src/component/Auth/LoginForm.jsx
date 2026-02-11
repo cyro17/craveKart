@@ -1,11 +1,10 @@
 import React from 'react';
-import { Button, TextField, Typography } from '@mui/material'
+import { Backdrop, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import {  useNavigate } from 'react-router-dom'
 import { Field, Formik, Form } from 'formik'
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../../State/Authentication/actions';
-import {motion} from 'motion/react'
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { loginUser } from '../../State/Authentication/AuthThunks';
 
 const initialValues = {
   email: "", 
@@ -16,13 +15,17 @@ const initialValues = {
 export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isLoading } = useSelector(state => state.auth);
   
-  const handleSubmit = async (values, {setSubmitting}) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
+
     try {
       const response = await dispatch(loginUser(values));
-      console.log("response : ", response);
-      if (response?.payload?.token) {
-        localStorage.setItem("token", response.payload.token);
+    
+      if (loginUser.fulfilled.match(response)) {
+        const { loginData}  = response.payload;
+        localStorage.setItem("token", loginData.jwt);
+        
         toast.success("Login Successful ! ");
         setTimeout(() => {
           navigate("/");
@@ -33,7 +36,7 @@ export default function LoginForm() {
       } 
     } catch (error) {
       toast.error("An error occurred during login. Please try again.");
-      console.error(error);
+      
     } finally {
       setSubmitting(false);
     }
@@ -74,6 +77,14 @@ export default function LoginForm() {
         >
             {isSubmitting ? "Logging in..." : "Login"}
           </Button>
+
+            <Backdrop
+              open={isSubmitting || isLoading}
+              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          
         </Form>
         )}
         </Formik>

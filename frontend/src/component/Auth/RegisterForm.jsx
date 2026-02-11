@@ -2,9 +2,10 @@ import React from 'react';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { Field, Formik, Form } from 'formik'; 
 import { useDispatch } from 'react-redux';
-import { healthCheck, registerUser } from '../../State/Authentication/actions';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../State/Authentication/AuthThunks';
+import { healthCheck } from '../../State/Authentication/authSlice';
 
 
 const initialValues = {
@@ -38,6 +39,7 @@ export default function RegisterForm() {
 
   const handleHealthCheck = () => {
     dispatch(healthCheck());
+    
   }
 
   return (
