@@ -5,6 +5,9 @@
   padding: 10px 0;
 }
 
+.category-section{
+  height: 300px;
+}
 .category-item {
   display: flex;
   flex-direction: column;

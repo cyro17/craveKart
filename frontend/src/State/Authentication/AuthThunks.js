@@ -1,16 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../component/config/api";
+import api from "../../config/api";
 
 export const loginUser = createAsyncThunk(
     "auth/login",
-    async ({ values, navigate }, { rejectWithValue }) => {
+    async (values, { rejectWithValue }) => {
         try {
-            const { data } = await api.post("/auth/login", values);
-            localStorage.setItem("token", data.token);
-            navigate("/");
-            return data;
+            const { data: loginData } = await api.post("/auth/signin", values);
+            console.log("login response data: ", loginData);
+
+            const userId = loginData.id;
+
+            const { data: user } = await api.get(`/auth/profile/me/${userId}`);
+            console.log("profile response data: ", user);
+
+            return { loginData, user };
+
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            const message = error.response?.data?.message ||
+                "Login failed. Please try again.";
+            return rejectWithValue(message);
         }
     }
 );

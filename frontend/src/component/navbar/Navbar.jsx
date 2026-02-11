@@ -8,7 +8,8 @@ import { Avatar, Badge, InputBase, Menu, MenuItem } from '@mui/material';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from "../../State/Authentication/actions.js";
+import { logout } from '../../State/Authentication/authSlice';
+
 
 export default function Navbar({onCartOpen}) {
     const navigate = useNavigate();
@@ -18,8 +19,10 @@ export default function Navbar({onCartOpen}) {
     const searchRef = useRef(null);
     const [searchOpen, setSearchOpen] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState("");
+
+    const auth = useSelector(state => state.auth);
+    console.log(auth);
     
-    const [cartOpen, setCartOpen] = useState(true);
 
     const handleSearchOpen = () => {
         setSearchOpen(true);
@@ -33,7 +36,6 @@ export default function Navbar({onCartOpen}) {
         setSearchQuery("");
     }
 
-    const auth = useSelector(store => store.auth);
     const dispatch = useDispatch();
     
     useEffect(() => { 
@@ -128,7 +130,7 @@ export default function Navbar({onCartOpen}) {
             
                 <div className="flex items-center space-x-2">    
                     {
-                        auth.user?.firstName ?
+                        auth.user?.username?
                         (
                             <span
                                 id='demo-positioned-button'
@@ -136,14 +138,14 @@ export default function Navbar({onCartOpen}) {
                                 aria-haspopup="true"
                                 aria-expanded={open ? "true" : undefined}
                                 onClick={
-                                    auth.user?.role !== "ADMIN" ?
+                                    auth.user.user?.role !== "ADMIN" ?
                                     handleOpenMenu :
                                     navigateToProfile
                                 }
                                 className='font-semibold cursor-pointer'
                             >
                                 <Avatar >
-                                    { auth.user.firstName[0].toUpperCase()}
+                                    { auth.user.username[0].toUpperCase()}
                                 </Avatar>
                             </span>
                         ) : (
@@ -154,7 +156,7 @@ export default function Navbar({onCartOpen}) {
                     }
                 
                     <Menu
-                        id="basic-menu"
+                        id="user-menu"
                         anchorEl={anchorEl}
                         open={open}
                         onClose={handleCloseMenu}
@@ -166,16 +168,16 @@ export default function Navbar({onCartOpen}) {
                               sx: {
                                 width: 220, 
                                 padding: 1,
-                                backgroundColor: 'transparent', 
-                                boxShadow: 'none', 
-                                backdropFilter: 'none'
+                                // backgroundColor: 'transparent', 
+                                // boxShadow: 'none', 
+                                // backdropFilter: 'none'
                               },
                             },
                           }}
                     >
                         <MenuItem
                         onClick={() =>
-                            auth.user?.role === "ROLE_ADMIN"
+                            auth.user?.role === "ADMIN"
                             ? navigate("/admin")
                             : navigate("/super-admin")
                         }

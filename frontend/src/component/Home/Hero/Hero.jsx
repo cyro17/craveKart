@@ -58,12 +58,13 @@ export default function Hero() {
 
       {/* Hero Visual */}
       <motion.img
-        src="https://images.unsplash.com/photo-1688398846460-baab8638e30a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MnxadDM0T3lVZ0VLZ3x8ZW58MHx8fHx8"
+          src=
+          "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZvb2R8ZW58MHwwfDB8fHww"
         alt="Food delivery"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full rounded-3xl shadow-xl"
+        className="w-full h-[25vh] rounded-3xl shadow-xl object-fill"
       />
     </div>
   </section>
