@@ -12,12 +12,14 @@
         </processorPath>
         <module name="food-delivery-app" />
         <module name="craveKart" />
+        <module name="cravekart" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="craveKart" options="-parameters" />
+      <module name="cravekart" options="-parameters" />
       <module name="food-delivery-app" options="-parameters" />
     </option>
   </component>

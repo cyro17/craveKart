@@ -2,10 +2,7 @@ package com.cyro.cravekart.config.security;
 
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
-import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.LoginRequest;
-import com.cyro.cravekart.request.SignupRequest;
-import com.cyro.cravekart.request.USER_STATUS;
+import com.cyro.cravekart.request.*;
 import com.cyro.cravekart.response.LoginResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +83,6 @@ public class AuthService {
   }
 
 
-
   public LoginResponse login(LoginRequest loginRequestDTO) {
     try {
       Authentication authentication = authenticationManager.authenticate(
@@ -104,6 +100,28 @@ public class AuthService {
     }
   }
 
+  public LoginResponse signin(SigninRequest signinRequest){
+    User userRequest = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
+        () -> new RuntimeException("User not found")
+    );
+
+    try{
+      Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              userRequest.getUsername(), signinRequest.getPassword()
+          )
+      );
+
+      User user = (User) authentication.getPrincipal();
+      log.info("User: " + user.getUsername());
+      String token = jwtUtil.generateToken(user);
+      return LoginResponse.builder().jwt(token).id(user.getId()).build();
+
+    } catch (Exception e) {
+      log.error("Login failed", e);
+      throw new AuthorizationDeniedException("Invalid username or password");
+    }
+  }
 
 
   public boolean registerAll(List<SignupRequest> requestDTOS) {

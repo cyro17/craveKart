@@ -4,15 +4,15 @@ import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.models.User;
-import com.cyro.cravekart.request.AddressRequest;
-import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.LoginRequest;
-import com.cyro.cravekart.request.SignupRequest;
+import com.cyro.cravekart.request.*;
 import com.cyro.cravekart.response.LoginResponse;
 import com.cyro.cravekart.response.SignupReponse;
 import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.response.UserResponse;
+import com.cyro.cravekart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,10 +25,20 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private final AuthService authService;
   private final AuthContextService authContextService;
+  private final ModelMapper modelMapper;
+  private final UserService userService;
 
   @GetMapping("/check")
   public ResponseEntity<String> healthCheck() {
     return ResponseEntity.ok("OK");
+  }
+
+  @GetMapping("/profile/me/{userId}")
+  public ResponseEntity<UserResponse> getProfile(@PathVariable Long userId) {
+    UserResponse user = userService.getByUserId(userId);
+    if(user == null) return ResponseEntity.notFound().build();
+    return   ResponseEntity.ok(user);
+
   }
 
 
@@ -36,6 +46,14 @@ public class AuthController {
   public ResponseEntity<LoginResponse> login(
       @RequestBody LoginRequest loginRequestDTO){
     LoginResponse response = authService.login(loginRequestDTO);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/signin")
+  public  ResponseEntity<LoginResponse> signin(
+      @RequestBody SigninRequest signinRequest
+  ){
+    LoginResponse response = authService.signin(signinRequest);
     return ResponseEntity.ok(response);
   }
 
@@ -50,17 +68,6 @@ public class AuthController {
         .build();
     return ResponseEntity.ok(response);
   }
-
-
-
-//  @PutMapping
-//  public ResponseEntity<String> updatePassword(
-//      @RequestBody LoginRequestDTO loginRequestDTO
-//  ){
-//    authService.updatePassword()
-//
-//
-//  }
 
 
 }

@@ -55,13 +55,15 @@ public class CustomerController {
     return  new ResponseEntity<>("ok",  HttpStatus.OK);
   }
 
+
+
   // Restaurants
   @GetMapping("/restaurants")
   public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
-      @RequestParam(defaultValue = "0") Integer pageOffset,
-      @RequestParam(defaultValue = "10", required = false) Integer pageSize
+//      @RequestParam(defaultValue = "0") Integer pageOffset,
+//      @RequestParam(defaultValue = "10", required = false) Integer pageSize
   ) {
-    PageRequest pageRequest = PageRequest.of(pageOffset, pageSize);
+//    PageRequest pageRequest = PageRequest.of(pageOffset, pageSize);
     return ResponseEntity.ok(restaurantService.getAllRestaurant());
   }
 
