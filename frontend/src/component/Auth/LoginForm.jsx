@@ -44,9 +44,9 @@ export default function LoginForm() {
   }
   return (
     <div>
-      <Typography variant='h5' className='text-center'>
+      {/* <Typography variant='h5' className='text-center'>
         Login 
-      </Typography>
+      </Typography> */}
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {({ isSubmitting}) => (
           <Form>

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../State/Authentication/authSlice';
 
 
-export default function Navbar({onCartOpen}) {
+export default function Navbar({onCartOpen, openAuthLogin, openAuthRegister}) {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -22,6 +22,8 @@ export default function Navbar({onCartOpen}) {
 
     const auth = useSelector(state => state.auth);
     console.log(auth);
+
+    
     
 
     const handleSearchOpen = () => {
@@ -149,8 +151,9 @@ export default function Navbar({onCartOpen}) {
                                 </Avatar>
                             </span>
                         ) : (
-                                <IconButton onClick={()=>navigate("/account/login")}>
-                                    <PersonIcon className='hover:scale-110 transition-transform' sx={{fontSize: "2rem"}}/>
+                                <IconButton onClick={openAuthLogin}>
+                                    <PersonIcon className='hover:scale-110 transition-transform'
+                                        sx={{ fontSize: "2rem" }} />
                                 </IconButton>
                         )
                     }

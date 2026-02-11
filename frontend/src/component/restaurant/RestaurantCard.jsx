@@ -14,14 +14,14 @@ export default function RestaurantCard({ restaurant }) {
 
   return (
     <Card
-      className="rounded-4xl overflow-hidden
-             transition-transform duration-300 ease-in-out
-             hover:-translate-y-1 hover:scale-[1.02]
-             hover:shadow-lg text-stone-900">
+      elevation={3}
+      sx={{ backgroundColor: "#fff", borderRadius: "1.5rem" }}
+      className="overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+    >
       {/* Image */}
       <div className="relative">
         <img
-          src={images[0]}
+          src={images?.[0]}
           alt={name}
           className="h-44 w-full object-cover"
         />
@@ -35,7 +35,7 @@ export default function RestaurantCard({ restaurant }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-1 bg-gradient-to-br from-orange-100 to-rose-100">
+      <div className="p-4 space-y-1 bg-gradient-to-br h-full from-orange-100 to-rose-100">
         <div className="flex justify-between items-start">
           <h3 className="font-semibold text-lg text-stone-900 leading-tight">
             {name}
