@@ -11,7 +11,9 @@ import java.util.List;
 
 @Data
 @Builder
-public class UserResponse implements Serializable {
+public class UserResponse {
+
+  private static final long serialVersionUID = 1L; // always good
 
   private String username;
   private String email;

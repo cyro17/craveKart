@@ -27,6 +27,7 @@ public class AuthContextService {
         || authentication instanceof AnonymousAuthenticationToken) {
       return null;
     }
+
     return (User) authentication.getPrincipal();
   }
 

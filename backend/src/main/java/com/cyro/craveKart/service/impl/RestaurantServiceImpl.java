@@ -46,8 +46,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   @Override
   @Caching(evict = {
-      @CacheEvict(value = "restaurantsAll", allEntries = true),
-      @CacheEvict(value = "restaurantByKeyword", allEntries = true)
+      @CacheEvict(value = "restaurants", allEntries = true),
+      @CacheEvict(value = "restaurantByKeyword", allEntries = true),
   })
   public OnboardRestaurantResponse onboardRestaurant(
       OnboardRestaurantRequest req, Long restaurantPartnerId) {

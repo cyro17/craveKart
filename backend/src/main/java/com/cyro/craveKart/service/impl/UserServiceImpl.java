@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Cacheable(value = "allUsers")
+  @CacheEvict(allEntries = true)
 //  @Transactional
   public List<UserResponse> findAllUsers() {
     return  userRepository.findAll()  .stream()
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
 
   @Override
-  @Cacheable(key = "#userId", value = "usersById")
+//  @Cacheable(key = "#userId", value = "userById")
   public UserResponse getByUserId(Long userId) {
     log.warn("🚨 DB HIT userId={}", userId);
     User user = userRepository.findById(userId)
