@@ -7,13 +7,17 @@ export default function RestaurantCard({ restaurant }) {
     name,
     description,
     image,
-    open,
+    isOpen,
     ratings,
     cuisineType,
   } = restaurant;
 
   return (
-    <Card className="rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
+    <Card
+      className="rounded-4xl overflow-hidden
+             transition-transform duration-300 ease-in-out
+             hover:-translate-y-1 hover:scale-[1.02]
+             hover:shadow-lg text-stone-900">
       {/* Image */}
       <div className="relative">
         <img
@@ -24,16 +28,16 @@ export default function RestaurantCard({ restaurant }) {
 
         <Chip
           size="small"
-          label={open ? "Open" : "Closed"}
-          color={open ? "success" : "error"}
+          label={isOpen ? "Open" : "Closed"}
+          color={isOpen ? "success" : "error"}
           className="absolute top-2 left-2"
         />
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-1">
+      <div className="p-4 space-y-1 bg-gradient-to-br from-orange-100 to-rose-100">
         <div className="flex justify-between items-start">
-          <h3 className="font-semibold text-lg leading-tight">
+          <h3 className="font-semibold text-lg text-stone-900 leading-tight">
             {name}
           </h3>
           <IconButton size="small">
