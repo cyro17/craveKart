@@ -17,11 +17,10 @@ export default function Home() {
         <main className=' '>
           <Hero />
           <FoodCategories/>
-
           <RestaurantList/> 
         </main>  
 
-        <Auth/>
+        
       </>
     
   )

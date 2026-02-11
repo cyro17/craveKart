@@ -19,7 +19,7 @@ export default function RestaurantList() {
   if (loading) return <p>loading restaurants...</p>
   if (error) return <p className='text-red-500'>{ error}</p>
   return (
-      <section className='p-2 w-[80vw] mx-auto mt-10'>
+      <section className='p-2 w-[80vw] mx-auto my-10 py-10'>
           <h2 className="text-xl text-stone-900 font-semibold px-20">
             Best Picked Restaurants
         </h2>
