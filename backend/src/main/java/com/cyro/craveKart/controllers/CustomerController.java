@@ -2,31 +2,23 @@ package com.cyro.cravekart.controllers;
 
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.dto.CartItemDto;
 import com.cyro.cravekart.dto.CartItemQuantityDto;
-import com.cyro.cravekart.dto.RestaurantDto;
 import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.CartItem;
 import com.cyro.cravekart.models.Order;
-import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.request.CreateOrderRequest;
 import com.cyro.cravekart.response.CartItemResponse;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.*;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -60,11 +52,24 @@ public class CustomerController {
   // Restaurants
   @GetMapping("/restaurants")
   public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
-//      @RequestParam(defaultValue = "0") Integer pageOffset,
-//      @RequestParam(defaultValue = "10", required = false) Integer pageSize
+      @RequestParam(defaultValue = "1") int pageNo,
+      @RequestParam(defaultValue = "6", required = false) int pageSize
   ) {
-//    PageRequest pageRequest = PageRequest.of(pageOffset, pageSize);
-    return ResponseEntity.ok(restaurantService.getAllRestaurant());
+    return ResponseEntity.ok(restaurantService.getAllRestaurant(pageNo, pageSize));
+  }
+
+  @GetMapping("/restaurants/filter")
+  public ResponseEntity<List<RestaurantResponse>> getRestaurantsByFilters(
+    @RequestParam(required = false) String city,
+    @RequestParam(required = false) String cuisine,
+    @RequestParam(required = false) Double rating,
+    @RequestParam(required = false, defaultValue = "name_asc") String sort,
+    @RequestParam(required = false, defaultValue = "0") int page,
+    @RequestParam(required = false, defaultValue = "10") int size
+  ){
+
+    List<RestaurantResponse> restaurants = restaurantService.getRestaurantsByFilter(city, cuisine, rating, sort, page, size);
+    return ResponseEntity.ok(restaurants);
   }
 
   //cart

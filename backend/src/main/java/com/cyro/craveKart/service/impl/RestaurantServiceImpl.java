@@ -12,6 +12,7 @@ import com.cyro.cravekart.response.OnboardRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantPartnerService;
 import com.cyro.cravekart.service.RestaurantService;
+import com.cyro.cravekart.specification.RestaurantSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.PredicateSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Set;
 
@@ -133,12 +140,57 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   @Override
   @Cacheable(value = "restaurants")
-  public List<RestaurantResponse> getAllRestaurant() {
-    return  restaurantRepository.findAll()
+  public List<RestaurantResponse> getAllRestaurant(
+      int pageNo, int pageSize
+  ) {
+    PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize);
+    return  restaurantRepository.findAll(pageRequest)
         .stream()
         .map(RestaurantResponse::from)
         .toList();
   }
+
+  @Override
+  public List<RestaurantResponse> getRestaurantsByFilter(
+      String city, String cuisine, Double rating, String sort, int page, int size){
+
+
+    // Initialize spec as null
+    Specification<Restaurant> spec = null;
+
+    // Dynamic filters
+    if (city != null && !city.isEmpty()) {
+      spec = (spec == null)
+          ? RestaurantSpecification.hasCity(city)
+          : spec.and(RestaurantSpecification.hasCity(city));
+    }
+
+    if (cuisine != null && !cuisine.isEmpty()) {
+      spec = (spec == null)
+          ? RestaurantSpecification.hasCuisine(cuisine)
+          : spec.and(RestaurantSpecification.hasCuisine(cuisine));
+    }
+
+    if (rating != null) {
+      spec = (spec == null)
+          ? RestaurantSpecification.hasMinRating(rating)
+          : spec.and(RestaurantSpecification.hasMinRating(rating));
+    }
+
+    // If no filters were provided, spec must be at least Specification.where(null)
+    if (spec == null) {
+      spec = Specification.where((Specification<Restaurant>) null);
+    }
+
+
+    PageRequest pageRequest = PageRequest.of(page, size, getSort(sort));
+
+    return restaurantRepository.findAll(spec, pageRequest)
+        .stream()
+        .map(RestaurantResponse::from)
+        .toList();
+  }
+
 
   @Override
   @Cacheable(value = "restaurantById", key = "#id")
@@ -261,4 +313,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     return addressRepository.save(address);
   }
 
+  private Sort getSort(String sort) {
+    return switch (sort) {
+      case "rating_asc" -> Sort.by("rating").ascending();
+      case "rating_desc" -> Sort.by("rating").descending();
+      case "name_desc" -> Sort.by("name").descending();
+      default -> Sort.by("name").ascending();
+    };
+  }
 }

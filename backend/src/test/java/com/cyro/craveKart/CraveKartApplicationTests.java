@@ -43,8 +43,8 @@ class CraveKartApplicationTests {
 	@Transactional
 	@Commit
 	void contextLoads() {
-		List<RestaurantResponse> restaurants = restaurantService.getAllRestaurant();
-		System.out.println(restaurants);
+//		List<RestaurantResponse> restaurants = restaurantService.getAllRestaurant();
+//		System.out.println(restaurants);
 
 	}
 }

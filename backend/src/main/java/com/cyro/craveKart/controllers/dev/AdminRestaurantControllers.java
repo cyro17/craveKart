@@ -29,8 +29,11 @@ public class AdminRestaurantControllers {
   }
 
   @GetMapping
-  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(){
-    List<RestaurantResponse> allRestaurant = restaurantService.getAllRestaurant();
+  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
+      @RequestParam(defaultValue = "1") int pageNo,
+      @RequestParam(defaultValue = "10", required = false) int pageSize
+  ){
+    List<RestaurantResponse> allRestaurant = restaurantService.getAllRestaurant(pageNo, pageSize);
     return new ResponseEntity<>(allRestaurant, HttpStatus.OK);
   }
 

@@ -51,11 +51,14 @@ const rootRouter = createBrowserRouter([
     element: <RootLayout />,
     children: [
       //  Home
-      { index: true, element: <Home /> },
+      {
+        path: ":city",
+        element: <Home />
+      },
 
       //  Restaurants
         {
-            path: "restaurants/:id",
+            path: "city/:id",
             element: <RestaurantLayout />,
             children: [
                 {
