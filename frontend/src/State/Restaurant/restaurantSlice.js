@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchRestaurants } from "./RestaurantThunks";
+import { fetchRestaurants, fetchRestaurantsByCity } from "./RestaurantThunks";
 
 const initialState = {
     list: [],
@@ -11,7 +11,7 @@ const initialState = {
 
 
 const restaurantSlice = createSlice({
-    name: "restaurants",
+    name: "restaurant",
     initialState,
     reducers: {
         addFavorite: (state, action) => {
@@ -24,20 +24,35 @@ const restaurantSlice = createSlice({
         },
     },
     extraReducers: builder => {
+        const handlePending = (state) => {
+            state.loading = true;
+            state.error = null;
+        };
+
+        const handleRejected = (state, action) => {
+            state.loading = false;
+            state.error = action.payload || "Something went wrong";
+        };
         builder
-            .addCase(fetchRestaurants.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
+            .addCase(fetchRestaurants.pending, handlePending)
+
             .addCase(fetchRestaurants.fulfilled, (state, action) => {
                 state.loading = false;
                 state.list = action.payload;
 
             })
-            .addCase(fetchRestaurants.rejected, (state, action) => {
+            .addCase(fetchRestaurants.rejected, handleRejected)
+
+            .addCase(fetchRestaurantsByCity.pending, handlePending)
+
+            .addCase(fetchRestaurantsByCity.fulfilled, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
-            });
+                state.list = Array.isArray(action.payload) ?
+                    action.payload :
+                    action.payload.restaurants || [];
+            })
+
+            .addCase(fetchRestaurantsByCity.rejected, handleRejected);
     }
 })
 

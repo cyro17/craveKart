@@ -19,7 +19,9 @@ public interface RestaurantService {
   public OnboardRestaurantResponse onboardRestaurant(OnboardRestaurantRequest req, Long restaurantId) throws RestaurantException;
   public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) throws RestaurantException;
 
-  public List<RestaurantResponse> getAllRestaurant();
+  public List<RestaurantResponse> getAllRestaurant(int pageNo, int pageSize);
+
+  public List<RestaurantResponse> getRestaurantsByFilter(String city, String cuisine, Double rating, String sort, int page, int size);
 
   public RestaurantResponse updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurant)
       throws RestaurantException;

@@ -5,7 +5,8 @@ import { Outlet } from 'react-router-dom';
 function RestaurantLayout() {
     return (
         <Box className="restaurant-layout">
-          {/* Header / banner / tabs */}
+        {/* Header / banner / tabs */}
+        Restaurant page
           <Outlet />
         </Box>
       );

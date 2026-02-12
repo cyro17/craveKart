@@ -21,7 +21,7 @@ public class RestaurantResponse implements Serializable {
   private String email;
   private String phone;
   private String openingHours;
-  private int ratings;
+  private Double ratings;
   private List<String> images;
   private LocalDateTime registeredAt;
   private boolean open;

@@ -63,7 +63,7 @@ public class Restaurant {
 
   private String openingHours;
 
-  private int ratingCount;
+  private Double ratingCount;
 
   @ElementCollection
   @CollectionTable(

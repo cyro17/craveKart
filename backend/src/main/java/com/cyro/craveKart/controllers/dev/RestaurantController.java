@@ -36,8 +36,11 @@ public class RestaurantController {
   }
 
   @GetMapping
-  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(){
-    return ResponseEntity.ok(restaurantService.getAllRestaurant());
+  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
+      @RequestParam(defaultValue = "1") int pageNo,
+      @RequestParam(defaultValue = "10", required = false) int pageSize
+  ){
+    return ResponseEntity.ok(restaurantService.getAllRestaurant(pageNo, pageSize));
   }
 
   @GetMapping("/{id}")
