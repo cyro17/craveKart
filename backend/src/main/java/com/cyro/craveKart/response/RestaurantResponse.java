@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class RestaurantResponse implements Serializable {
-
+  private Long id;
   private String name;
   private String description;
   private String cuisineType;
@@ -29,6 +29,7 @@ public class RestaurantResponse implements Serializable {
 
   public static RestaurantResponse from(Restaurant restaurant) {
     return RestaurantResponse.builder()
+        .id(restaurant.getId())
         .name(restaurant.getName())
         .description(restaurant.getDescription())
         .cuisineType(restaurant.getCuisineType())
