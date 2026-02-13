@@ -41,7 +41,7 @@ export default function RestaurantList({restaurants, city, loading, error}) {
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-20 rounded-full mt-3 group'>
               {
                   restaurants.map(restaurant => (
-                      <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+                      <RestaurantCard key={restaurant.id} restaurant={restaurant} city={city} />
                   ))
               }
           </div>

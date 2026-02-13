@@ -1,8 +1,9 @@
 import { Card, Chip, IconButton } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function RestaurantCard({ restaurant }) {
+export default function RestaurantCard({ restaurant, city }) {
   const {
     name,
     description,
@@ -12,11 +13,15 @@ export default function RestaurantCard({ restaurant }) {
     cuisineType,
   } = restaurant;
 
+  const navigate = useNavigate();
+
   return (
     <Card
+      onClick={()=> navigate(`/${city}/restaurant/${restaurant.id}`)}
       elevation={3}
       sx={{ backgroundColor: "#fff", borderRadius: "1.5rem" }}
       className="overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+    
     >
       {/* Image */}
       <div className="relative">

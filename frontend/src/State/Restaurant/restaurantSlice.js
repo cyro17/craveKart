@@ -1,14 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchRestaurants, fetchRestaurantsByCity } from "./RestaurantThunks";
+import { fetchRestaurantById, fetchRestaurantMenu, fetchRestaurants, fetchRestaurantsFilter } from "./RestaurantThunks";
 
 const initialState = {
     list: [],
+    filtered: [],
+    selectedRestaurant: null,
     favorites: [],
+    menu: {},
     loading: false,
     error: null,
 };
-
-
 
 const restaurantSlice = createSlice({
     name: "restaurant",
@@ -33,26 +34,45 @@ const restaurantSlice = createSlice({
             state.loading = false;
             state.error = action.payload || "Something went wrong";
         };
-        builder
-            .addCase(fetchRestaurants.pending, handlePending)
 
+        builder
+            // fetch all restaurants
+            .addCase(fetchRestaurants.pending, handlePending)
+            .addCase(fetchRestaurants.rejected, handleRejected)
             .addCase(fetchRestaurants.fulfilled, (state, action) => {
                 state.loading = false;
                 state.list = action.payload;
+                state.filtered = action.payload;
 
             })
-            .addCase(fetchRestaurants.rejected, handleRejected)
 
-            .addCase(fetchRestaurantsByCity.pending, handlePending)
-
-            .addCase(fetchRestaurantsByCity.fulfilled, (state, action) => {
+            // filtered restaurants
+            .addCase(fetchRestaurantsFilter.pending, handlePending)
+            .addCase(fetchRestaurantsFilter.rejected, handleRejected)
+            .addCase(fetchRestaurantsFilter.fulfilled, (state, action) => {
                 state.loading = false;
-                state.list = Array.isArray(action.payload) ?
+                state.filtered = Array.isArray(action.payload) ?
                     action.payload :
                     action.payload.restaurants || [];
             })
 
-            .addCase(fetchRestaurantsByCity.rejected, handleRejected);
+            // fetch restaurant by id
+            .addCase(fetchRestaurantById.pending, handlePending)
+            .addCase(fetchRestaurantById.rejected, handleRejected)
+            .addCase(fetchRestaurantById.fulfilled, (state, action) => {
+                console.log("REDUX GOT:", action.payload);
+                state.loading = false;
+                state.selectedRestaurant = action.payload;
+            })
+
+            // fetch restaurant menu
+            .addCase(fetchRestaurantMenu.pending, handlePending)
+            .addCase(fetchRestaurantMenu.rejected, handleRejected)
+            .addCase(fetchRestaurantMenu.fulfilled, (state, action) => {
+                state.loading = false;
+                state.menu = action.payload;
+            })
+
     }
 })
 
