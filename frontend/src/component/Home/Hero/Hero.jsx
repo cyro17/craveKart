@@ -1,24 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Button from '../../UI/Button';
 import { motion } from "framer-motion";
 import { Search, MapPin, Star, Truck } from "lucide-react";
 // import { Card, CardContent } from "@/components/ui/card";
 import { Input } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 
-export default function Hero({ city }) {
-  const navigate = useNavigate(); 
-
+export default function Hero() {
+  const navigate = useNavigate();
+  const { city } = useParams();
+  
   const [searchParams] = useSearchParams();
   const [locationInput, setLocationInput] = useState(city || "");  
   const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
 
+  useEffect(() => { 
+    if (city) setLocationInput(city);
+    else setLocationInput("");
+  }, [city])
+
   const handleSearch = () => {
-    if (!city) return;
-    const params = URLSearchParams();
-    if (searchInput) params.get("q", searchInput);
-    navigate(`/${city}?${params.toString()}`)
+    const selectedCity = locationInput.trim();
+    if (!selectedCity) return;
+
+    const params = new URLSearchParams();
+    if (searchInput) params.set("q", searchInput);
+    navigate(`/${selectedCity}?${params?.toString()}`)
   }
 
   const handleCategoryClick = (category) => {
@@ -33,9 +41,9 @@ export default function Hero({ city }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold text-stone-900 leading-tight">
           Discover the best food in {" "}
-            <span className="block text-orange-600">{city}</span>
+            <span className="block text-orange-600 capitalize">{city}</span>
         </h1>
         <p className="mt-4 text-neutral-600 text-lg">
           Search restaurants, dishes, or stores near you
@@ -44,26 +52,35 @@ export default function Hero({ city }) {
         {/* Search Bar */}
         <div className="mt-8 flex items-center gap-3 bg-white text-stone-900 shadow-lg rounded-2xl p-3">
           <MapPin className="text-orange-500" />
-            <Input
+          <Input
               value={locationInput}
+              autoFocus={!city}
               onChange={(e)=> setLocationInput(e.target.value)}
               placeholder="city"
-              className="border-none focus-visible:ring-0"
-          />
-          <div className="h-6 w-px bg-neutral-200" />
-          <Search className="text-neutral-400" />
-            <Input
-              value={searchInput}
-              onChange={(e)=> setSearchInput(e.target.value)}
-              placeholder="Search for food or restaurants"
-              className="border-none focus-visible:ring-0"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+              className="border-none text-black focus-visible:ring-0"
+              sx={{
+                color: "black"
               }}
           />
-            <Button
-              onClick={handleSearch}
-              className="rounded-xl bg-orange-500 hover:bg-orange-600">
+
+          <div className="h-6 w-px bg-neutral-200" />
+          
+          <Search className="text-neutral-400" />
+          <Input
+            value={searchInput}
+            onChange={(e)=> setSearchInput(e.target.value)}
+            placeholder="Search for food or restaurants"
+            className="border-none focus-visible:ring-0"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+            sx={{
+              color: "black"
+            }}
+          />
+          <Button
+            onClick={()=>handleSearch()}
+            className="rounded-xl bg-orange-500 hover:bg-orange-600">
             Search
           </Button>
         </div>
@@ -72,6 +89,7 @@ export default function Hero({ city }) {
         <div className="mt-6 flex flex-wrap gap-3">
           {["Pizza", "Burger", "Biryani", "Cafe", "Desserts"].map((cat) => (
             <Button
+              onClick={()=>handleCategoryClick(cat)}
               key={cat}
               variant="outline"
               className="rounded-full"

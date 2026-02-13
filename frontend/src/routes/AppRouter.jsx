@@ -12,6 +12,7 @@ import Auth from "../component/Auth/Auth";
 import ProtectedRoute from "./ProtectedRoute";
 import ProfileLayout from "../component/profile/ProfileLayout";
 import RoleRoute from "./RoleRoute";
+import LandingPage from "../component/Home/LandingPage";
 
 
 // Guards
@@ -50,6 +51,11 @@ const rootRouter = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
+      //landing page
+      {
+        index: true, 
+        element: <LandingPage />  
+      },
       //  Home
       {
         path: ":city",
@@ -58,7 +64,7 @@ const rootRouter = createBrowserRouter([
 
       //  Restaurants
         {
-            path: "city/:id",
+            path: ":city/restaurant/:id",
             element: <RestaurantLayout />,
             children: [
                 {

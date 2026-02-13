@@ -10,7 +10,7 @@ export default function Footer () {
         <div>
           <h2 className="text-2xl font-bold text-white">CraveKart</h2>
           <p className="mt-3 text-sm text-gray-400">
-            Delivering your cravings, fast and fresh 🍔🍕
+            Carting your Cravings !
           </p>
         </div>
 

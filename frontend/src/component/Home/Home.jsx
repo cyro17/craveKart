@@ -7,7 +7,7 @@ import FoodCategories from './FoodCategories/FoodCategories';
 import RestaurantList from './RestaurantList/RestaurantList';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRestaurants } from '../../State/Restaurant/RestaurantThunks';
+import { fetchRestaurants, fetchRestaurantsFilter } from '../../State/Restaurant/RestaurantThunks';
 
 
 
@@ -15,10 +15,11 @@ import { fetchRestaurants } from '../../State/Restaurant/RestaurantThunks';
 
 export default function Home() {
   const { city } = useParams();
+  console.log("city: ", city)
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
 
-  const { restaurants, loading, error} = useSelector(state => state.restaurant);
+  const { filtered, list, loading, error} = useSelector(state => state.restaurant);
 
   const cuisine = searchParams.get("cuisine");
   const rating = searchParams.get("rating");
@@ -26,10 +27,12 @@ export default function Home() {
 
   useEffect(() => {
     if (city) {
-      dispatch(fetchRestaurants())
+      dispatch(fetchRestaurantsFilter({city}))
     }
     
   }, [city, cuisine, rating, sort, dispatch]);
+
+  
 
     return (
       
@@ -37,7 +40,7 @@ export default function Home() {
           <Hero city={ city} />
           <FoodCategories />
           <RestaurantList
-            restaurants={restaurants}
+            restaurants={filtered}
             loading={loading}
             error={error}
             city={city}

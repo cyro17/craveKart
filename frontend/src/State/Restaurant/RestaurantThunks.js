@@ -19,8 +19,41 @@ export const fetchRestaurants = createAsyncThunk(
     }
 )
 
-export const fetchRestaurantsByCity = createAsyncThunk(
-    "restaurant/fetchRestaurantsByCity",
+export const fetchRestaurantById = createAsyncThunk(
+    "restaurant/id",
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const res = await api.get(`/customer/restaurants/${id}`);
+            console.log("fetched data: ", res.data);
+            return res.data;
+        } catch (err) {
+            if (err.response?.data?.message) {
+                return rejectWithValue(err.response.data.message);
+            }
+            return rejectWithValue(err.message || "Failed to fetch restauratn with id : ", id);
+        }
+    }
+)
+
+export const fetchRestaurantMenu = createAsyncThunk(
+    "restaurant/menu",
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const res = await api.get(`/customer/restaurants/${id}/menu`);
+            console.log("fetched menu data: ", res.data);
+            return res.data;
+        } catch (err) {
+            if (err.response?.data?.message) {
+                return rejectWithValue(err.response.data.message);
+            }
+            return rejectWithValue(err.message || "Failed to fetch restauratn with id : ", id);
+        }
+
+    }
+)
+
+export const fetchRestaurantsFilter = createAsyncThunk(
+    "restaurant/filter",
     async (filters = {}, { rejectWithValue }) => {
         try {
             const { city, cuisine, rating, sort } = filters;
@@ -32,8 +65,9 @@ export const fetchRestaurantsByCity = createAsyncThunk(
             if (sort) params.append("sort", sort);
 
             const res = await api.get(
-                `/customer/restaurants?${params.toString}`
+                `/customer/restaurants/filter?${params.toString()}`
             );
+            console.log("filter thunk data: ", res.data)
             return res.data;
         } catch (err) {
             return rejectWithValue(
