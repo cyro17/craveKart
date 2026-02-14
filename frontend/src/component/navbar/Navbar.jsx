@@ -24,7 +24,8 @@ export default function Navbar({
     const [searchQuery, setSearchQuery] = React.useState("");
 
     const auth = useSelector((state) => state.auth);
-    console.log(auth);
+    const { items } = useSelector((state) => state.cart);
+    // console.log(auth);
 
     const handleSearchOpen = () => {
         setSearchOpen(true);
@@ -205,7 +206,7 @@ export default function Navbar({
                     className="hover:scale-110 transition-transform"
                     onClick={onCartOpen}
                 >
-                    <Badge badgeContent={4} color="secondary">
+                    <Badge badgeContent={items.length} color="secondary">
                         <ShoppingCartIcon sx={{ fontSize: "1.5rem" }} />
                     </Badge>
                 </IconButton>
