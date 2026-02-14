@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,7 +64,9 @@ public class Restaurant {
 
   private String openingHours;
 
-  private Double ratingCount;
+  @Builder.Default
+  @Column(nullable = false)
+  private Double ratingCount = 0.0;
 
   @ElementCollection
   @CollectionTable(
@@ -77,6 +80,12 @@ public class Restaurant {
   private List<String> images = new ArrayList<>();
 
   private boolean open = false;
+
+
+  @OneToMany(mappedBy = "restaurant")
+  @JsonIgnore
+  private List<FoodCategory> foodCategories = new ArrayList<>();
+
 
   @JsonIgnore
   @OneToMany(mappedBy = "restaurant",

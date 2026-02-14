@@ -3,16 +3,11 @@ package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.CartItemQuantityDto;
-import com.cyro.cravekart.models.Address;
-import com.cyro.cravekart.models.CartItem;
-import com.cyro.cravekart.models.Order;
+import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.CreateAddressRequest;
-import com.cyro.cravekart.response.CartItemResponse;
-import com.cyro.cravekart.response.CartResponse;
-import com.cyro.cravekart.response.PlaceOrderResponse;
-import com.cyro.cravekart.response.RestaurantResponse;
+import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +30,7 @@ public class CustomerController {
   private final CartItemService cartItemService;
   private final OrderService orderService;
   private final AuthContextService  authService;
+  private final FoodCategoryService foodCategoryService;
 
 
   @GetMapping("/check")
@@ -80,38 +76,52 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
-  //cart
-  @GetMapping("/carts")
-  public ResponseEntity<List<CartItemResponse>> getCartItems(){
-    CartResponse cart = cartService.getCart();
-    return ResponseEntity.ok(cart.getItems());
+//  FOOD API
+
+  @GetMapping("restaurants/{id}/menu")
+  public ResponseEntity<RestaurantMenuResponse> getMenu(@PathVariable Long id){
+    return new ResponseEntity<>(restaurantService.getRestaurantMenu(id), HttpStatus.OK);
   }
 
-  @PostMapping("/cart/addFoodToCart/{foodId}")
+  //cart
+  @GetMapping("/cart")
+  public ResponseEntity<CartResponse> getCart(){
+    CartResponse cart = cartService.getCart();
+    return ResponseEntity.ok(cart);
+  }
+
+  @PostMapping("/cart/add/{foodId}")
   public ResponseEntity<CartResponse> addFoodToCart(@PathVariable Long foodId){
     AddCartItemRequest cartItemRequest = AddCartItemRequest.builder().foodId(foodId).quantity(1).build();
     return ResponseEntity.ok(cartService.addItem(cartItemRequest));
 
   }
 
-  @PutMapping("/cart/cartItem/incrementCartItemQuantity")
-  public ResponseEntity<CartItemResponse> incrementCartItemQuantity(
-      @RequestBody CartItemQuantityDto cartItemQuantityDto){
+  @PutMapping("/cart/cartItem/inc/{cartItemId}")
+  public ResponseEntity<CartResponse> incrementCartItemQuantity(
+      @PathVariable Long cartItemId){
 
-    CartItem cartItemById = cartItemService.getCartItemById(cartItemQuantityDto.getCartItemId());
-    CartItemResponse response = cartItemService.incrementCartItemQuantity
-        (cartItemById, cartItemQuantityDto.getQuantity());
+
+    CartResponse response = cartItemService.incrementCartItemQuantity(cartItemId);
     return  ResponseEntity.ok(response);
-
   }
 
-  @PutMapping("/cart/cartItem/decrementCartItemQuantity")
-  public ResponseEntity<CartItemResponse> decrementCartItemQuantity(@RequestBody CartItemQuantityDto cartItemQuantityDto){
-    CartItem cartItemById = cartItemService.getCartItemById(cartItemQuantityDto.getCartItemId());
-    CartItemResponse response = cartItemService.decrementCartItemQuantity(cartItemById, cartItemQuantityDto.getQuantity());
+  @PutMapping("/cart/cartItem/dec/{cartItemId}")
+  public ResponseEntity<CartResponse> decrementCartItemQuantity(@PathVariable Long cartItemId){
+
+    CartResponse response = cartItemService.decrementCartItemQuantity(cartItemId);
     return new ResponseEntity<>(response, HttpStatus.OK);
 
   }
+
+  @DeleteMapping("/cart/cartItem/{id}")
+  public ResponseEntity<CartResponse> removeCartItem(@PathVariable Long id){
+
+    CartResponse cartResponse = cartItemService.removeCartItemFromCart(id);
+    return  ResponseEntity.ok(cartResponse);
+
+  }
+
 
   @DeleteMapping("/cart")
   public ResponseEntity<String> deleteCart(){

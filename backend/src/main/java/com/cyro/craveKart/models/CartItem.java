@@ -32,6 +32,7 @@ public class CartItem {
   @JoinColumn(name = "food_id", nullable = false)
   private Food food;
 
+
   @Column(nullable = false)
   private Integer quantity;
 

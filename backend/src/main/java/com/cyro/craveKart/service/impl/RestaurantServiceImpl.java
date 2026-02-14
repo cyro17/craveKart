@@ -7,9 +7,7 @@ import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.request.OnboardRestaurantRequest;
-import com.cyro.cravekart.response.CreateRestaurantResponse;
-import com.cyro.cravekart.response.OnboardRestaurantResponse;
-import com.cyro.cravekart.response.RestaurantResponse;
+import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.RestaurantPartnerService;
 import com.cyro.cravekart.service.RestaurantService;
 import com.cyro.cravekart.specification.RestaurantSpecification;
@@ -22,21 +20,20 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.awt.print.Pageable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class RestaurantServiceImpl implements RestaurantService {
+  private final FoodCategoryRepository foodCategoryRepository;
   private final CustomerRepository customerRepository;
   private final RestaurantPartnerRepository restaurantPartnerRepository;
 
@@ -46,7 +43,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   private final RestaurantPartnerService restaurantPartnerService;
   private final ModelMapper modelMapper;
   private final AuthContextService authContextService;
-
+  private final FoodRepository foodRepository;
 
   // ======================= CREATE ====================================
 
@@ -191,6 +188,51 @@ public class RestaurantServiceImpl implements RestaurantService {
         .toList();
   }
 
+  @Override
+  public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) throws RestaurantException {
+    Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
+        () -> new RestaurantException("Restaurant not found")
+    );
+
+    List<FoodCategory> categories = foodCategoryRepository.findByRestaurantIdOrderByIdAsc(restaurantId);
+
+    List<Food> foods = foodRepository.findByRestaurantIdAndAvailableTrueOrderByCategoryIdAsc(restaurantId);
+
+    Map<Long, List<Food>> foodMap = foods.stream()
+        .collect(Collectors.groupingBy(
+            food -> food.getCategory().getId()
+        ));
+
+    List<FoodCategoryResponse> foodCategoryResponse = categories.stream()
+        .map(category -> {
+
+          List<FoodResponse> foodResponse = foodMap.getOrDefault(category.getId(), List.of())
+              .stream()
+              .map(food -> FoodResponse.builder()
+                  .id(food.getId())
+                  .name(food.getName())
+                  .price(food.getPrice())
+                  .vegetarian(food.isVegetarian())
+                  .images(food.getImages())
+                  .build())
+              .toList();
+
+          return FoodCategoryResponse.builder()
+              .id(category.getId())
+              .name(category.getName())
+              .foods(foodResponse)
+              .build();
+
+        }).toList();
+
+    return RestaurantMenuResponse.builder()
+        .id(restaurant.getId())
+        .name(restaurant.getName())
+        .categories(foodCategoryResponse)
+        .build();
+
+  }
+
 
   @Override
   @Cacheable(value = "restaurantById", key = "#id")
@@ -216,6 +258,17 @@ public class RestaurantServiceImpl implements RestaurantService {
         .map(RestaurantResponse::from)
         .toList();
   }
+
+
+
+
+//  @Override
+//  public Restaurant getRestaurantBySlug(String slug){
+//    Restaurant restaurant = restaurantRepository.findBySlugWithCategoriesAndFoods(slug).orElseThrow(
+//        () -> new RestaurantException("Not Found")
+//    );
+//    return  restaurant;
+//  }
 
 //  ===================== update ========================
 

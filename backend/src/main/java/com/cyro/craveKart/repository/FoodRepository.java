@@ -20,4 +20,7 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
   List<Food> searchByNameOrCategory(String keyword);
 
   boolean existsByRestaurantIdAndNameIgnoreCase(Long restaurantId, String name);
+
+  List<Food> findByRestaurantIdAndAvailableTrueOrderByCategoryIdAsc(Long restaurantId);
+
 }
