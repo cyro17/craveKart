@@ -33,7 +33,7 @@ function RestaurantLayout() {
                 <RestaurantHero restaurant={selectedRestaurant} />
             </div>
 
-            <div className="border-b sticky top-0 z-50">
+            <div className="border-b sticky top-16 z-50">
                 <div className="max-w-6xl px-4 sm:px-6 lg:px-8 mt-2">
                     <RestaurantTabs />
                 </div>

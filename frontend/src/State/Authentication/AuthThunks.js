@@ -6,12 +6,12 @@ export const loginUser = createAsyncThunk(
     async (values, { rejectWithValue }) => {
         try {
             const { data: loginData } = await api.post("/auth/signin", values);
-            console.log("login response data: ", loginData);
+            // console.log("login response data: ", loginData);
 
             const userId = loginData.id;
 
             const { data: user } = await api.get(`/auth/profile/me/${userId}`);
-            console.log("profile response data: ", user);
+            // console.log("profile response data: ", user);
 
             return { loginData, user };
 
