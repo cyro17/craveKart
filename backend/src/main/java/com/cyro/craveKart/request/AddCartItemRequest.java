@@ -18,4 +18,5 @@ public class AddCartItemRequest {
   @NotNull
   @Min(1)
   private Integer quantity;
+//  private String restaurant;
 }

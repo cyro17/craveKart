@@ -9,6 +9,7 @@ import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.request.OnboardRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.OnboardRestaurantResponse;
+import com.cyro.cravekart.response.RestaurantMenuResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface RestaurantService {
   public List<RestaurantResponse> getAllRestaurant(int pageNo, int pageSize);
 
   public List<RestaurantResponse> getRestaurantsByFilter(String city, String cuisine, Double rating, String sort, int page, int size);
+
+  public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) throws RestaurantException;
 
   public RestaurantResponse updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurant)
       throws RestaurantException;

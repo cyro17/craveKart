@@ -45,6 +45,9 @@ public class CartServiceImpl implements CartService {
     Food food = foodRepository.findById(request.getFoodId())
         .orElseThrow(() -> new RuntimeException("Food not found"));
 
+    String restaurantName = food.getRestaurant().getName();
+    List<String> images = food.getImages();
+
     Optional<CartItem> existing = cart.getItems().stream()
         .filter(item -> item.getFood().getId().equals(food.getId()))
         .findFirst();
@@ -128,8 +131,11 @@ public class CartServiceImpl implements CartService {
             ci.getId(),
             ci.getFood().getId(),
             ci.getFood().getName(),
+            ci.getFood().getDescription(),
             ci.getQuantity(),
-            ci.getTotalPrice()
+            ci.getTotalPrice(),
+            ci.getFood().getRestaurant().getName(),
+            ci.getFood().getImages()
         )).toList();
 
     return  new CartResponse(
