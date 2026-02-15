@@ -3,15 +3,19 @@ import React, { useEffect } from "react";
 import CartItem from "./CartItem";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "../../State/cart/cartThunk";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { closeCart } from "../../State/ui/uiSlice";
 
 export default function CartAside({ open, onClose }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const {
         items = [],
         cartTotal = 0,
         deliveryCharge = 40,
-        loading,
     } = useSelector((state) => state.cart);
+    const { isAuthenticated } = useSelector((state) => state.auth);
 
     const findTotal = cartTotal + deliveryCharge;
 
@@ -21,6 +25,16 @@ export default function CartAside({ open, onClose }) {
         }
     }, [dispatch, open]);
 
+    const handleCheckout = () => {
+        if (!items.length) return;
+        if (!isAuthenticated) {
+            toast.error("Please login to contitnue");
+            navigate("/account/login");
+            return;
+        }
+        dispatch(closeCart());
+        navigate("/checkout");
+    };
     return (
         <Drawer
             anchor="right"
@@ -102,13 +116,13 @@ export default function CartAside({ open, onClose }) {
                             </div>
 
                             <Button
+                                onClick={handleCheckout}
                                 variant="contained"
                                 fullWidth
                                 size="large"
                                 disabled={!items.length}
                                 className="text-2xl font-bold rounded-lg py-2 bg-gradient-to-r from-rose-500 to-pink-500
-                        hover:scale-102 transition-all duration-200
-                    "
+                        hover:scale-102 transition-all duration-200"
                             >
                                 Proceed To Checkout
                             </Button>

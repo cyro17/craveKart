@@ -8,6 +8,8 @@ import {
 } from "../../State/cart/cartThunk";
 
 import { fetchRestaurantMenu } from "../../State/Restaurant/RestaurantThunks";
+import { openCart } from "../../State/ui/uiSlice";
+import toast from "react-hot-toast";
 
 const img =
     "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zm9vZHxlbnwwfHwwfHx8MA%3D%3D";
@@ -70,9 +72,21 @@ export default function MenuCategory({ category, items }) {
                                 />
                                 {!cartItem ? (
                                     <button
-                                        onClick={() =>
-                                            dispatch(addToCart(item.id))
-                                        }
+                                        onClick={async () => {
+                                            try {
+                                                await dispatch(
+                                                    addToCart(item.id)
+                                                ).unwrap();
+                                                toast.success(
+                                                    `${item.name} added to cart 🛒`
+                                                );
+                                                dispatch(openCart());
+                                            } catch (err) {
+                                                toast.error(
+                                                    "Failed to add item"
+                                                );
+                                            }
+                                        }}
                                         className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white text-red-500 font-semibold px-6 py-1 rounded-md shadow-md border hover:bg-red-50 transition"
                                     >
                                         ADD
@@ -82,9 +96,7 @@ export default function MenuCategory({ category, items }) {
                                         <button
                                             onClick={() =>
                                                 dispatch(
-                                                    decrementCartItem(
-                                                        cartItem.cartItemId
-                                                    )
+                                                    decrementCartItem(item.id)
                                                 )
                                             }
                                         >

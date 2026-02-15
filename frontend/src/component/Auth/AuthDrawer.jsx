@@ -47,14 +47,14 @@ export default function AuthDrawer({ open, onClose, mode, setMode }) {
             }}
         >
             {/* Header */}
-            <Box className="flex flex-col">
+            <Box className="flex flex-col text-black">
                 <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     mb={4}
                 >
-                    <Typography variant="h6" fontWeight="bold">
+                    <Typography variant="h6" fontWeight="bold" color="black">
                         {mode === "login" ? "Login" : "Sign Up"}
                     </Typography>
 

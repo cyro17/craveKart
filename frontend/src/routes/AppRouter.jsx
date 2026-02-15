@@ -8,12 +8,11 @@ import RestaurantLayout from "../component/restaurant/RestaurantLayout";
 import RestaurantMenu from "../component/restaurant/RestaurantMenu";
 import RestaurantInfo from "../component/restaurant/RestaurantInfo";
 import RestaurantReviews from "../component/restaurant/RestaurantReviews";
-import Auth from "../component/Auth/Auth";
 import ProtectedRoute from "./ProtectedRoute";
 import ProfileLayout from "../component/profile/ProfileLayout";
 import RoleRoute from "./RoleRoute";
 import LandingPage from "../component/Home/LandingPage";
-
+import Checkout from "../component/cart/Checkout";
 
 // Guards
 // import ProtectedRoute from "./ProtectedRoute";
@@ -47,106 +46,114 @@ import LandingPage from "../component/Home/LandingPage";
 // import CreateRestaurantForm from "../component/admin/CreateRestaurantForm";
 
 const rootRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      //landing page
-      {
-        index: true, 
-        element: <LandingPage />  
-      },
-      //  Home
-      {
-        path: ":city",
-        element: <Home />
-      },
-
-      //  Restaurants
-        {
-            path: ":city/restaurant/:id",
-            element: <RestaurantLayout />,
-            children: [
-                {
-                    index: true, element: <RestaurantMenu />
-                }, 
-                { 
-                    path: "reviews", element: <RestaurantReviews />
-                }, 
-                { 
-                    path: "info", element: <RestaurantInfo />
-                }
-            ]
-        },
-
-      //  Cart
-        // { path: "cart", element: <Cart /> },
-        // {
-        //     path: "checkout",
-        //     element: (
-        //         <ProtectedRoute>
-        //             <Checkout />
-        //       </ProtectedRoute>
-        //   )  
-        // },
-
-      //  Auth
-      {
-        path: "account",
+    {
+        path: "/",
+        element: <RootLayout />,
         children: [
-          { path: "login", element: <Auth type="login" /> },
-          { path: "register", element: <Auth type="register" /> },
-        ],
-      },
+            //  Auth
+            // {
+            //     path: "account",
+            //     children: [
+            //         { path: "login", element: <Auth type="login" /> },
+            //         { path: "register", element: <Auth type="register" /> },
+            //     ],
+            // },
+            //landing page
+            {
+                index: true,
+                element: <LandingPage />,
+            },
+            //  Home
+            {
+                path: ":city",
+                element: <Home />,
+            },
 
-      //  Customer Profile (Protected)
-      {
-        path: "my-profile",
+            //  Restaurants
+            {
+                path: ":city/restaurant/:id",
+                element: <RestaurantLayout />,
+                children: [
+                    {
+                        index: true,
+                        element: <RestaurantMenu />,
+                    },
+                    {
+                        path: "reviews",
+                        element: <RestaurantReviews />,
+                    },
+                    {
+                        path: "info",
+                        element: <RestaurantInfo />,
+                    },
+                ],
+            },
+            {
+                path: "checkout",
+                element: (
+                    <ProtectedRoute>
+                        <Checkout />
+                    </ProtectedRoute>
+                ),
+            },
+
+            //  Cart
+            // { path: "cart", element: <Cart /> },
+            // {
+            //     path: "checkout",
+            //     element: (
+            //         <ProtectedRoute>
+            //             <Checkout />
+            //       </ProtectedRoute>
+            //   )
+            // },
+
+            //  Customer Profile (Protected)
+            {
+                path: "my-profile",
+                element: (
+                    <ProtectedRoute>
+                        <ProfileLayout />
+                    </ProtectedRoute>
+                ),
+                children: [
+                    //   { index: true, element: <UserProfile /> },
+                    //   { path: "orders", element: <Orders /> },
+                    //   { path: "favourites", element: <Favourites /> },
+                    //   { path: "address", element: <Address /> },
+                    //   { path: "payment", element: <Payment /> },
+                    //   { path: "logout", element: <Logout /> },
+                ],
+            },
+
+            //   //  Checkout
+            //   {
+            //     path: "checkout",
+            //     element: (
+            //       <ProtectedRoute>
+            //         <Payment />
+            //       </ProtectedRoute>
+            //     ),
+            //   },
+        ],
+    },
+
+    //  Restaurant Partner Routes
+    {
+        path: "restaurant",
         element: (
-          <ProtectedRoute>
-            <ProfileLayout />
-          </ProtectedRoute>
+            <RoleRoute role="RESTAURANT">{/* <AdminLayout /> */}</RoleRoute>
         ),
         children: [
-        //   { index: true, element: <UserProfile /> },
-        //   { path: "orders", element: <Orders /> },
-        //   { path: "favourites", element: <Favourites /> },
-        //   { path: "address", element: <Address /> },
-        //   { path: "payment", element: <Payment /> },
-        //   { path: "logout", element: <Logout /> },
+            //   { index: true, element: <RestaurantDashboard /> },
+            //   { path: "orders", element: <RestaurantOrders /> },
+            //   { path: "menu", element: <RestaurantMenu /> },
+            //   { path: "add-menu", element: <CreateRestaurantForm /> },
         ],
-      },
-
-    //   //  Checkout
-    //   {
-    //     path: "checkout",
-    //     element: (
-    //       <ProtectedRoute>
-    //         <Payment />
-    //       </ProtectedRoute>
-    //     ),
-    //   },
-    ],
-  },
-
-  //  Restaurant Partner Routes
-  {
-    path: "restaurant",
-    element: (
-      <RoleRoute role="RESTAURANT">
-        {/* <AdminLayout /> */}
-      </RoleRoute>
-    ),
-    children: [
-    //   { index: true, element: <RestaurantDashboard /> },
-    //   { path: "orders", element: <RestaurantOrders /> },
-    //   { path: "menu", element: <RestaurantMenu /> },
-    //   { path: "add-menu", element: <CreateRestaurantForm /> },
-    ],
     },
-  
+
     // DELIVERY PARTNER ROUTES
-  
+
     // {
     //     path: "/delivery",
     //     element: (
@@ -182,11 +189,11 @@ const rootRouter = createBrowserRouter([
     //         { path: "payouts", element: <AdminPayouts /> },
     //         { path: "reports", element: <AdminReports /> },
     //     ]
-  // }
+    // }
     // ✅ GLOBAL 404
     { path: "*", element: <NotFound /> },
 ]);
 
 export default function AppRouter() {
-  return <RouterProvider router={rootRouter} />;
+    return <RouterProvider router={rootRouter} />;
 }

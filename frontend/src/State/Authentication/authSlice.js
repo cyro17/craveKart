@@ -12,6 +12,7 @@ const initialState = {
     isLoading: false,
     error: null,
     success: false,
+    isAuthenticated: false
 };
 
 const authSlice = createSlice({
@@ -38,6 +39,7 @@ const authSlice = createSlice({
                 state.isLoading = false;
                 state.user = action.payload.user;
                 state.token = action.payload.loginData.jwt;
+                state.isAuthenticated = true;
                 state.success = true;
             })
             .addCase(loginUser.rejected, (state, action) => {
