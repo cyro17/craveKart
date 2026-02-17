@@ -8,13 +8,12 @@ import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.repository.AddressRepository;
 import com.cyro.cravekart.repository.CustomerRepository;
 import com.cyro.cravekart.request.AddCartItemRequest;
+import com.cyro.cravekart.request.AddressRequest;
 import com.cyro.cravekart.request.CreateAddressRequest;
+import com.cyro.cravekart.response.AddressResponse;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.OrderResponse;
-import com.cyro.cravekart.service.CartService;
-import com.cyro.cravekart.service.CustomerService;
-import com.cyro.cravekart.service.FoodService;
-import com.cyro.cravekart.service.RestaurantService;
+import com.cyro.cravekart.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.naming.ServiceUnavailableException;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
   private final AuthContextService authService;
   private final CartService cartService;
   private final ModelMapper modelMapper;
+  private final AddressService addressService;
 
   @Override
   public CartResponse addFoodToCart(Long foodId) throws FoodException, ServiceUnavailableException {
@@ -98,17 +98,27 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public Address saveAddress(CreateAddressRequest createAddressRequest) {
+  public AddressResponse saveAddress(AddressRequest request) {
     Customer user = authService.getCustomer();
 
     Customer customer = customerRepository.findById(user.getId()).orElseThrow(
         ()-> new IllegalStateException("Customer with id " + user.getId() + " not found")
     );
+    return addressService.createAddress(request, customer.getId());
 
-    Address address = modelMapper.map(createAddressRequest, Address.class);
-    customer.addAddress(address);
-    customerRepository.save(customer);
-
-    return address;
   }
+
+  @Override
+  public List<AddressResponse> getUserAddress() {
+    Customer user = authService.getCustomer();
+    return addressService.getCustomerAddresses(user.getId());
+
+  }
+
+
+
+
+
+
+
 }

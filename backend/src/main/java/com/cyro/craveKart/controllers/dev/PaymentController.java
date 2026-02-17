@@ -25,6 +25,4 @@ public class PaymentController {
     PaymentResponse paymentResponse = paymentService.checkoutProducts(paymentRequest);
     return ResponseEntity.ok().body(paymentResponse);
   }
-
-
 }

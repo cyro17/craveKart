@@ -12,7 +12,11 @@ import ProtectedRoute from "./ProtectedRoute";
 import ProfileLayout from "../component/profile/ProfileLayout";
 import RoleRoute from "./RoleRoute";
 import LandingPage from "../component/Home/LandingPage";
-import Checkout from "../component/cart/Checkout";
+import CheckoutLayout from "../component/checkout/CheckoutLayout";
+import CheckoutSummary from "../component/checkout/pages/CheckoutSummary";
+import CheckoutShipping from "../component/checkout/pages/CheckoutShipping";
+import CheckoutPayment from "../component/checkout/pages/CheckoutPayment";
+import CheckoutConfirmation from "../component/checkout/pages/CheckoutConfirmation";
 
 // Guards
 // import ProtectedRoute from "./ProtectedRoute";
@@ -50,14 +54,6 @@ const rootRouter = createBrowserRouter([
         path: "/",
         element: <RootLayout />,
         children: [
-            //  Auth
-            // {
-            //     path: "account",
-            //     children: [
-            //         { path: "login", element: <Auth type="login" /> },
-            //         { path: "register", element: <Auth type="register" /> },
-            //     ],
-            // },
             //landing page
             {
                 index: true,
@@ -88,25 +84,22 @@ const rootRouter = createBrowserRouter([
                     },
                 ],
             },
+
+            // checkout
             {
                 path: "checkout",
                 element: (
                     <ProtectedRoute>
-                        <Checkout />
+                        <CheckoutLayout />
                     </ProtectedRoute>
                 ),
+                children: [
+                    { index: true, element: <CheckoutSummary /> },
+                    { path: "shipping", element: <CheckoutShipping /> },
+                    { path: "payment", element: <CheckoutPayment /> },
+                    { path: "confirmation", element: <CheckoutConfirmation /> },
+                ],
             },
-
-            //  Cart
-            // { path: "cart", element: <Cart /> },
-            // {
-            //     path: "checkout",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <Checkout />
-            //       </ProtectedRoute>
-            //   )
-            // },
 
             //  Customer Profile (Protected)
             {

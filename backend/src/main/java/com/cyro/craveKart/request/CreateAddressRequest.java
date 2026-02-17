@@ -1,6 +1,7 @@
 package com.cyro.cravekart.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,9 @@ public class CreateAddressRequest {
   private String streetAddress;
 
   @NotBlank(message = "City is required")
+  private String landmark;
+
+  @NotBlank(message = "City is required")
   private String city;
 
   private String state;
@@ -29,5 +33,11 @@ public class CreateAddressRequest {
 
   @NotBlank(message = "Country is required")
   private String country;
+
+  private Double latitude;
+  private Double longitude;
+
+  @Size(max = 500)
+  private String deliveryInstruction;
 
 }
