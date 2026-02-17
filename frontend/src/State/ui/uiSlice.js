@@ -5,7 +5,8 @@ const uiSlice = createSlice({
     initialState: {
         cartOpen: false,
         authOpen: false,
-        authMode: "login"
+        authMode: "login",
+        redirectAfterLogin: "/"
     },
     reducers: {
         openCart: (state) => {
@@ -16,7 +17,8 @@ const uiSlice = createSlice({
         },
         openAuth: (state, action) => {
             state.authOpen = true;
-            state.authMode = action.payload || "login"
+            state.redirectAfterLogin = action.payload?.redirectAfterLogin || "/";
+            state.authMode = action.payload?.authMode || "login"
         },
         closeAuth: (state) => {
             state.authOpen = false;

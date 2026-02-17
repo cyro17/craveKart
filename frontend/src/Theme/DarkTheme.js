@@ -17,5 +17,10 @@ export const darkTheme = createTheme({
         text: {
             primary: '#FFFFFF'
         },
+        greyButton: {
+            main: "#2a2a2a",
+            dark: "#3a3a3a",
+            contrastText: "#ffffff",
+        },
     }
 });

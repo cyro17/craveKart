@@ -6,6 +6,7 @@ import com.cyro.cravekart.dto.CartItemQuantityDto;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
+import com.cyro.cravekart.request.AddressRequest;
 import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.*;
@@ -154,9 +155,18 @@ public class CustomerController {
 
   }
 
+  // address
+
+  @GetMapping("/address")
+  public ResponseEntity<List<AddressResponse>> getUserAddress(){
+    List<AddressResponse> userAddress = customerService.getUserAddress();
+    return  new ResponseEntity<>(userAddress, HttpStatus.OK);
+  }
+
+
   @PostMapping("/address")
-  public ResponseEntity<Address> saveAddress(@RequestBody CreateAddressRequest createAddressRequest){
-    Address address = customerService.saveAddress(createAddressRequest);
+  public ResponseEntity<AddressResponse> saveAddress(@RequestBody AddressRequest request){
+    AddressResponse address = customerService.saveAddress(request);
     return new ResponseEntity<>(address, HttpStatus.CREATED);
   }
 

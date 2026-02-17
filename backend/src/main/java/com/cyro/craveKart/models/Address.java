@@ -9,7 +9,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @AllArgsConstructor
@@ -22,10 +26,13 @@ public class Address {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String firstName;
   private String lastName;
 
   private String streetAddress;
+
+  private String landmark;
 
   private String city;
 
@@ -34,6 +41,14 @@ public class Address {
   private String postalCode;
 
   private String country;
+
+  @Builder.Default
+  private Boolean isDefault = false;
+
+  private Double latitude;
+  private Double longitude;
+
+  private String deliveryInstruction;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "customer_id")
@@ -50,10 +65,9 @@ public class Address {
   private LocalDateTime updatedAt;
 
   public String getFullAddress() {
-    return String.join(", ",
-        streetAddress != null ? streetAddress: "",
-        city != null ? city : "",
-        state != null ? state : "",
-        postalCode != null ? postalCode : "");
+    return Stream.of(streetAddress, city, state, postalCode, country)
+        .filter(Objects::nonNull)
+        .filter(s -> !s.isBlank())
+        .collect(Collectors.joining(", "));
   }
 }
