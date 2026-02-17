@@ -17,7 +17,7 @@ const handleRejected = (state, action) => {
 };
 
 const paymentSlice = createSlice({
-    name: "",
+    name: "payment",
     initialState,
     reducers: {
         resetPayment: (state) => {

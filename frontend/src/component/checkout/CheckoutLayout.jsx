@@ -40,10 +40,10 @@ export default function CheckoutLayout() {
         // main content
         <div className=" max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-screen">
             {/* left section */}
-            <div className=" py-4 shadow-sm lg:col-span-2 space-y-6">
+            <div className=" flex flex-col py-4 shadow-sm lg:col-span-2 space-y-6">
                 <CheckoutShipping />
                 <CheckoutPayment />
-                <PaymentButton />
+                <PaymentButton className="" />
             </div>
             {/* right side */}
             <div className="sticky top-24">

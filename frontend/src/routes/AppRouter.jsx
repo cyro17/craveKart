@@ -17,6 +17,9 @@ import CheckoutSummary from "../component/checkout/pages/CheckoutSummary";
 import CheckoutShipping from "../component/checkout/pages/CheckoutShipping";
 import CheckoutPayment from "../component/checkout/pages/CheckoutPayment";
 import CheckoutConfirmation from "../component/checkout/pages/CheckoutConfirmation";
+import PaymentSuccess from "../component/checkout/components/PaymentConfirmation";
+import PaymentConfirmation from "../component/checkout/components/PaymentConfirmation";
+import Orders from "../component/profile/Orders";
 
 // Guards
 // import ProtectedRoute from "./ProtectedRoute";
@@ -101,9 +104,18 @@ const rootRouter = createBrowserRouter([
                 ],
             },
 
+            {
+                path: "payment/success",
+                element: <PaymentConfirmation />,
+            },
+            // {
+            //     path: "payment/cancel",
+            //     element: <
+            // }
+
             //  Customer Profile (Protected)
             {
-                path: "my-profile",
+                path: "profile",
                 element: (
                     <ProtectedRoute>
                         <ProfileLayout />
@@ -111,7 +123,7 @@ const rootRouter = createBrowserRouter([
                 ),
                 children: [
                     //   { index: true, element: <UserProfile /> },
-                    //   { path: "orders", element: <Orders /> },
+                    { path: "orders", element: <Orders /> },
                     //   { path: "favourites", element: <Favourites /> },
                     //   { path: "address", element: <Address /> },
                     //   { path: "payment", element: <Payment /> },

@@ -4,6 +4,7 @@ import com.cyro.cravekart.exception.OrderException;
 import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.enums.OrderStatus;
+import com.cyro.cravekart.response.CustomerOrderResponse;
 import com.cyro.cravekart.response.PlaceOrderResponse;
 import org.apache.coyote.BadRequestException;
 
@@ -19,7 +20,7 @@ public interface OrderService {
 
   String cancelOrder(Long orderId) throws AccessDeniedException, BadRequestException;
 
-  List<Order> getCustomerOrders(Long id);
+  List<CustomerOrderResponse> getCustomerOrders(Long id);
   List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) throws OrderException, RestaurantException;
   public List<Order> getPendingOrdersForRestaurant();
 }

@@ -5,6 +5,7 @@ import { cartReducer } from "../cart/cartSlice";
 import { uiReducer } from "../ui/uiSlice";
 import { addressReducer } from "../address/addressSlice";
 import { paymentReducer } from "../payment/paymentSlice";
+import { orderReducer } from "../order/orderSlice";
 
 
 const store = configureStore({
@@ -14,7 +15,8 @@ const store = configureStore({
         cart: cartReducer,
         ui: uiReducer,
         address: addressReducer,
-        payment: paymentReducer
+        payment: paymentReducer,
+        order: orderReducer
     }
 })
 

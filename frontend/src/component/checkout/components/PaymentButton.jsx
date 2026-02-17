@@ -28,12 +28,22 @@ export default function PaymentButton() {
             dispatch(resetPayment());
         }
     }, [sessionUrl, dispatch]);
+
     return (
-        <div className="m-auto w-full">
+        <div className="m-auto w-full ">
             <Typography>Complete Your Payment</Typography>
-            <Button variant="contained" onclick>
-                {loading ? "Redirecting..." : "Complete your payment"}
+            <Button
+                fullWidth
+                disabled={loading}
+                variant="contained"
+                onClick={handlePayment}
+                className="py-3"
+            >
+                {loading ? "Redirecting..." : "Pay Now"}
             </Button>
+            {error && (
+                <Typography className="mt-2 text-red-500">{error}</Typography>
+            )}
         </div>
     );
 }

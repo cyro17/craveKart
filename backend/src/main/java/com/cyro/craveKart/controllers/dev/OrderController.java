@@ -26,14 +26,14 @@ public class OrderController {
       return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-  @GetMapping("/user")
-  public ResponseEntity<List<Order>> getAllUsersOrders(){
-
-    Customer customer = authService.getCustomer();
-    if(customer.getId() != null){
-      List<Order> userOrders = orderService.getCustomerOrders(customer.getId());
-      return new ResponseEntity<>(userOrders, HttpStatus.OK);
-    } else return  new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
-  }
+//  @GetMapping("/user")
+//  public ResponseEntity<List<Order>> getAllUsersOrders(){
+//
+//    Customer customer = authService.getCustomer();
+//    if(customer.getId() != null){
+//      List<Order> userOrders = orderService.getCustomerOrders(customer.getId());
+//      return new ResponseEntity<>(userOrders, HttpStatus.OK);
+//    } else return  new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//  }
 
 }
