@@ -197,6 +197,9 @@ export default function Navbar({
                         >
                             Profile
                         </MenuItem>
+                        <MenuItem onClick={() => navigate("/profile/orders")}>
+                            Orders
+                        </MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
                     {/* <AccountMenu/> */}

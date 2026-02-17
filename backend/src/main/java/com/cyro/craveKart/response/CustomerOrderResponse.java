@@ -1,17 +1,20 @@
 package com.cyro.cravekart.response;
 
 import com.cyro.cravekart.models.enums.OrderStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class CustomerResponse {
-  private Long orderId;
+@AllArgsConstructor
+@NoArgsConstructor
+public class CustomerOrderResponse {
+  private Long id;
   private String restaurantName;
   private BigDecimal totalPrice;
   private int totalItems;

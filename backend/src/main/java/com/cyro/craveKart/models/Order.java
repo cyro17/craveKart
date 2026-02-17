@@ -83,8 +83,8 @@ public class Order {
     @Column(name = "total_items",  nullable = false)
     private Integer totalItems;
 
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalAmount;
+    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalPrice;
 
     private LocalDateTime acceptedAt;
     private LocalDateTime preparedAt;

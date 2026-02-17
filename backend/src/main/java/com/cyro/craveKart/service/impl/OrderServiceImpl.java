@@ -7,12 +7,15 @@ import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.models.enums.OrderStatus;
 import com.cyro.cravekart.repository.*;
+import com.cyro.cravekart.response.CustomerOrderResponse;
+import com.cyro.cravekart.response.OrderResponse;
 import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -34,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
   private final CartRepository cartRepository;
   private final AuthContextService authService;
   private final OrderRepository orderRepository;
-
+  private final ModelMapper modelMapper;
 
   // customer
   @Override
@@ -61,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         .customerName(customer.getUser().getUsername())
         .customerPhone(customer.getUser().getContact().getMobile())
         .deliveryAddressLine(address.getFullAddress())
+
 //        .deliveryCity(customer.getAddresses().get(0).getCity())
 //        .deliveryPinCode(customer.getAddresses().get(0).getPostalCode())
         .restaurantId(restaurant.getId())
@@ -90,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
     order.setTotalItems(orderItems.size());
 
 
-    order.setTotalAmount(
+    order.setTotalPrice(
         orderItems.stream()
             .map(OrderItem::getTotalPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -103,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     return  PlaceOrderResponse.builder()
         .orderId(order.getId())
         .orderStatus(OrderStatus.PENDING)
-        .totalPrice(order.getTotalAmount()).build();
+        .totalPrice(order.getTotalPrice()).build();
   }
 
   // restaurant partner
@@ -186,8 +190,11 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public List<Order> getCustomerOrders(Long customerId) {
-    return orderRepository.findByCustomerId(customerId);
+  public List<CustomerOrderResponse> getCustomerOrders(Long customerId) {
+    List<Order> orders = orderRepository.findByCustomerId(customerId);
+    return orders.stream()
+        .map(order -> modelMapper.map(order, CustomerOrderResponse.class))
+        .toList();
   }
 
   @Override
