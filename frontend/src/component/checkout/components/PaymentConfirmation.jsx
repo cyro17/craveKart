@@ -1,5 +1,5 @@
 import { CircularProgress, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,13 +12,24 @@ export default function PaymentConfirmation() {
     const { loading, error, orderId, success, totalPrice } = useSelector(
         (state) => state.order
     );
-
+    const [countdown, setCountdown] = useState(3);
     useEffect(() => {
         dispatch(placeOrder());
+
+        const interval = setInterval(() => {
+            setCountdown((prev) => prev - 1);
+        }, 1000);
+
+        const timer = setTimeout(() => {
+            navigate("/profile/orders", { replace: true });
+        }, 3000);
+
         return () => {
             dispatch(resetOrder());
+            clearTimeout(timer);
+            clearInterval(interval);
         };
-    }, [dispatch]);
+    }, [dispatch, navigate]);
     return (
         <div className="text-black max-w-[50vw] mx-auto mt-8 p-4 text-center border border-solid border-slate-700 rounded-md shadow-lg">
             {loading ? (
@@ -32,12 +43,17 @@ export default function PaymentConfirmation() {
                         Thank you for your order! Your payment has been
                         completed.
                     </Typography>
-                    <Button
+
+                    <div className="mt-4 text-xl text-gray-500">
+                        Redirecting to home in {countdown} second{" "}
+                        {countdown > 1 ? "s" : ""}...
+                    </div>
+                    {/* <Button
                         variant="contained"
                         onClick={() => navigate("/profile/orders")}
                     >
                         View My Orders
-                    </Button>
+                    </Button> */}
                 </>
             )}
         </div>

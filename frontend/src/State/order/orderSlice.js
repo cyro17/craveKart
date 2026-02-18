@@ -2,12 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fetchOrders, placeOrder } from "./orderThunk";
 
 const initialState = {
-    list: [],
+    orders: [],
+    selectedOrder: null,
+
     loading: false,
     error: null,
-    orderId: null,
-    totalPrice: 0,
-    success: false
+    pagination: {
+        page: 0,
+        size: 10,
+        totalPages: 0,
+        totalElements: 0
+    },
+    filters: {
+        status: null,
+        dateRange: null
+    }
 }
 
 const handlePending = (state, action) => {
@@ -49,8 +58,9 @@ const orderSlice = createSlice({
             .addCase(fetchOrders.pending, handlePending)
             .addCase(fetchOrders.rejected, handleRejected)
             .addCase(fetchOrders.fulfilled, (state, action) => {
+                console.log(action.payload);
                 state.loading = false;
-                state.list = action.payload;
+                state.orders = action.payload;
                 state.success = true;
             })
     }

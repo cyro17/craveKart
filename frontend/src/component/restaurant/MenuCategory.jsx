@@ -16,7 +16,7 @@ const img =
 
 export default function MenuCategory({ category, items }) {
     const dispatch = useDispatch();
-    console.log(items);
+    console.log("menu category page: ", items);
 
     useEffect(() => {
         dispatch(fetchRestaurantMenu());

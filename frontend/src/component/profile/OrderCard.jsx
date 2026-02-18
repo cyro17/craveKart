@@ -1,26 +1,60 @@
-import { Button, Card } from '@mui/material'
-import React from 'react'
+import { Button, Card, Chip, Grid2, Paper, Typography } from "@mui/material";
+import React from "react";
+import OrderItem from "./OrderItem";
+import { ORDER_STATUS_CONFIG } from "../UI/orderStatusConfig";
+import StatusChip from "../UI/StatusChip";
 
-export default function OrderCard() {
-  return (
-      <Card>
-          <div className='flex justify-between items-center p-5 h-2/3'>
-              <div className='flex items-center space-x-5'>
-                  <img
-                      src="https://cdn.britannica.com/35/225835-050-A5CC289A/Indian-one-pot-meal-for-party.jpg?w=300"
-                      className='h-16 w-16'
-                      alt=""
-                  />
-              </div>
-              <div>
-                  <p>Biryani</p>
-                  <p>Rs 399</p>
-              </div>
-              <div>
-                  <Button disabled className='cursor-not-allowed'>
-                      completed
-                  </Button>
-              </div>
-          </div>
-    </Card>
-  ) }
+export default function OrderCard({ order, pricing, ship, status }) {
+    let date = new Date(String(order.createdAt));
+    date = date.toDateString();
+
+    // console.log(pricing);
+
+    return (
+        <Paper
+            className="p-4 mb-4 rounded-xl"
+            elevation={4}
+            sx={{ backgroundColor: "white" }}
+        >
+            {/* Header */}
+            <Grid2
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                    backgroundColor: "#f5f5f5",
+                    padding: 1,
+                    borderRadius: 2,
+                }}
+            >
+                <div>
+                    <Typography variant="body2" className="text-slate-500-">
+                        Order placed
+                    </Typography>
+                    <Typography fontWeight={600}>{date}</Typography>
+                </div>
+                <div>
+                    <Typography variant="body2">TOTAL</Typography>
+                    <Typography fontWeight={600}>{pricing?.total}</Typography>
+                </div>
+                <div>
+                    <Typography variant="body2">SHIP TO</Typography>
+                    <Typography fontWeight={600}>{ship}</Typography>
+                </div>
+                <div>
+                    <StatusChip status={status} />
+                </div>
+            </Grid2>
+
+            <div>
+                {order.items.map((item, index) => (
+                    <OrderItem key={index} item={item} />
+                ))}
+            </div>
+            <div className="flex gap-3 mt-4">
+                <Button variant="secondary">Track Package</Button>
+                <Button variant="seondary">View Details</Button>
+            </div>
+        </Paper>
+    );
+}

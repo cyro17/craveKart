@@ -92,7 +92,8 @@ export default function Navbar({
                 className="lg:mr-10 cursor-pointer flex items-center space-x-4"
             >
                 <div className="logo font-extrabold text-grey-300 text-2xl tracking-wider">
-                    Crave<span className="text-yellow-300">Kart</span>
+                    <span className="text-white">Crave</span>
+                    <span className="text-yellow-300">Kart</span>
                 </div>
             </div>
 
@@ -181,9 +182,9 @@ export default function Navbar({
                                 sx: {
                                     width: 220,
                                     padding: 1,
-                                    // backgroundColor: 'transparent',
-                                    // boxShadow: 'none',
-                                    // backdropFilter: 'none'
+                                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                    boxShadow: "none",
+                                    backdropFilter: "none",
                                 },
                             },
                         }}
@@ -192,15 +193,96 @@ export default function Navbar({
                             onClick={() =>
                                 auth.user?.role === "ADMIN"
                                     ? navigate("/admin")
-                                    : navigate("/super-admin")
+                                    : navigate("/")
                             }
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
                         >
                             Profile
                         </MenuItem>
-                        <MenuItem onClick={() => navigate("/profile/orders")}>
+                        <MenuItem
+                            onClick={() => {
+                                navigate("/profile/orders");
+                                handleCloseMenu();
+                            }}
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
+                        >
                             Orders
                         </MenuItem>
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                navigate("/profile/orders");
+                                handleCloseMenu();
+                            }}
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
+                        >
+                            Favourites
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => navigate("/profile/orders")}
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
+                        >
+                            Addresses
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => navigate("/profile/orders")}
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
+                        >
+                            Payments
+                        </MenuItem>
+                        <MenuItem
+                            onClick={handleLogout}
+                            sx={{
+                                borderRadius: "8px",
+                                transition: "all 0.4s easeInOut",
+                                "&:hover": {
+                                    backgroundColor: "#BAB7B6", // pink hover
+                                    color: "white",
+                                    transform: "translateX(4px)",
+                                },
+                            }}
+                        >
+                            Logout
+                        </MenuItem>
                     </Menu>
                     {/* <AccountMenu/> */}
                 </div>

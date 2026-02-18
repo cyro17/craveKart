@@ -15,7 +15,7 @@ export const darkTheme = createTheme({
             paper: "#000000",
         },
         text: {
-            primary: '#FFFFFF'
+            primary: '#000000'
         },
         greyButton: {
             main: "#2a2a2a",
