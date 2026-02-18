@@ -19,7 +19,7 @@ import CheckoutPayment from "../component/checkout/pages/CheckoutPayment";
 import CheckoutConfirmation from "../component/checkout/pages/CheckoutConfirmation";
 import PaymentSuccess from "../component/checkout/components/PaymentConfirmation";
 import PaymentConfirmation from "../component/checkout/components/PaymentConfirmation";
-import Orders from "../component/profile/Orders";
+import Orders from "../pages/profile/orders/Orders";
 
 // Guards
 // import ProtectedRoute from "./ProtectedRoute";
