@@ -64,6 +64,7 @@ public class CartServiceImpl implements CartService {
       item.setCart(cart);
       item.setFood(food);
       item.setQuantity(request.getQuantity());
+      item.setImageUrl(food.getImages().size() > 0 ? food.getImages().get(0) : null);
       item.setTotalPrice(
           food.getPrice().multiply(new BigDecimal(request.getQuantity()))
       );

@@ -1,16 +1,14 @@
 package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.models.Customer;
-import com.cyro.cravekart.models.Order;
-import com.cyro.cravekart.response.PlaceOrderResponse;
+import com.cyro.cravekart.request.PlaceOrderRequest;
+import com.cyro.cravekart.response.OrderResponse;
+//import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -21,8 +19,9 @@ public class OrderController {
   private final AuthContextService authService;
 
   @PostMapping("/place")
-  public ResponseEntity<PlaceOrderResponse> createOrder(){
-      PlaceOrderResponse response = orderService.placeOrder();
+  public ResponseEntity<OrderResponse> createOrder(@RequestBody PlaceOrderRequest
+                                                        request){
+      OrderResponse response = orderService.placeOrder(request);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

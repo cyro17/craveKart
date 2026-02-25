@@ -36,7 +36,6 @@ public class RestaurantServiceImpl implements RestaurantService {
   private final FoodCategoryRepository foodCategoryRepository;
   private final CustomerRepository customerRepository;
   private final RestaurantPartnerRepository restaurantPartnerRepository;
-
   private final AddressRepository addressRepository;
   private final RestaurantRepository restaurantRepository;
   private final UserRepository userRepository;
@@ -88,6 +87,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
 
+  // create restaurant
   @Override
   public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) throws RestaurantException {
 
@@ -211,6 +211,7 @@ public class RestaurantServiceImpl implements RestaurantService {
               .map(food -> FoodResponse.builder()
                   .id(food.getId())
                   .name(food.getName())
+                  .description(food.getDescription())
                   .price(food.getPrice())
                   .vegetarian(food.isVegetarian())
                   .images(food.getImages())

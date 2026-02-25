@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: com.cyro.cravekart.UserServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 6.601 s <<< FAILURE! -- in com.cyro.cravekart.UserServiceTest
+com.cyro.cravekart.UserServiceTest.createUserTest -- Time elapsed: 0.332 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.security.core.Authentication.getPrincipal()" because "authentication" is null
+	at com.cyro.cravekart.UserServiceTest.createUserTest(UserServiceTest.java:43)
+

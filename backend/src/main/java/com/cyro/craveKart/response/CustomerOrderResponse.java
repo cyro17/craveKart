@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,6 +20,7 @@ public class CustomerOrderResponse {
   private String restaurantName;
   private BigDecimal totalPrice;
   private int totalItems;
+  private List<CustomerOrderItemResponse> orterItems = new ArrayList<>() ;
   private OrderStatus orderStatus;
 
   private LocalDateTime createdAt;

@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../config/api";
 
-
 export const createCheckoutSession = createAsyncThunk(
     "payment/checkout",
     async (values, { rejectWithValue }) => {

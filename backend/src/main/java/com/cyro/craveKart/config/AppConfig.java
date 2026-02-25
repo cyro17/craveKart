@@ -47,7 +47,9 @@ public class AppConfig {
                 .requestMatchers(
                     "/api/public/**",
                     "/api/auth/**", "/api/restaurant/**",
+                    "/api/v1/webhook/stripe",
                     "/swagger-ui/**",
+                    "/api/notification/stream",
                     "/swagger-ui.html",
                     "/v3/api-docs/**")
                   .permitAll()

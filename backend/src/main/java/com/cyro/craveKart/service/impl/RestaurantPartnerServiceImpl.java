@@ -32,7 +32,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   @Override
   public Order acceptOrder(Long orderId) throws AccessDeniedException {
     Order order = getOrderForPartner(orderId);
-    if(order.getOrderStatus() != OrderStatus.PENDING) {
+    if(order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
       throw new AccessDeniedException("Order cannot be accepted");
     }
     order.setOrderStatus(OrderStatus.CONFIRMED);
@@ -43,11 +43,11 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   public Order rejectOrder(Long orderId) throws AccessDeniedException, BadRequestException {
     Order order = getOrderForPartner(orderId);
 
-    if (order.getOrderStatus() != OrderStatus.PENDING) {
+    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
       throw new BadRequestException("Order cannot be rejected");
     }
 
-    order.setOrderStatus(OrderStatus.FAILED);
+    order.setOrderStatus(OrderStatus.PAYMENT_FAILED);
     return orderRepository.save(order);
   }
 
@@ -59,7 +59,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
       throw  new AccessDeniedException("Not authorized for this order");
     }
     return orderRepository
-        .findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.PENDING);
+        .findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.PAYMENT_PENDING);
   }
 
   @Override

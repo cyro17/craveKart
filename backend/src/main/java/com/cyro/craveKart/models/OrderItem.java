@@ -37,6 +37,7 @@ public class OrderItem {
   @Column(name = "restaurant_name")
   private String restaurantName;
 
+  private String imageUrl;
 
   // order item price and qty
   @Column(precision = 10, scale = 2, name = "Price")

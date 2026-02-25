@@ -39,6 +39,8 @@ public class CartItem {
   @Column(precision = 10, scale = 2)
   private BigDecimal totalPrice;
 
+  private String imageUrl;
+
   @CreationTimestamp
   private LocalDateTime createdAt;
   @UpdateTimestamp
