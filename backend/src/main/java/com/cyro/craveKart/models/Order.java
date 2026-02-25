@@ -77,11 +77,21 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private Payment payment;
+//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+//    private Payment payment;
 
     @Column(name = "total_items",  nullable = false)
     private Integer totalItems;
+
+    private BigDecimal subtotal;
+    private BigDecimal taxAmount;
+    private BigDecimal deliveryFee;
+    private BigDecimal restaurantCharge;
+    private BigDecimal discount;
+    private BigDecimal platformFee;
+
+    private String specialInstruction;
+
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
@@ -90,13 +100,18 @@ public class Order {
     private LocalDateTime preparedAt;
     private LocalDateTime pickedUpAt;
     private LocalDateTime deliveredAt;
+    private LocalDateTime paidAt;
     private LocalDateTime cancelledAt;
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
+
 
 //    @PrePersist
 //    public void onCreate(){

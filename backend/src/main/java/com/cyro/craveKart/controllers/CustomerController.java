@@ -5,6 +5,7 @@ import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.AddressRequest;
+import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.*;
 import lombok.RequiredArgsConstructor;
@@ -129,15 +130,17 @@ public class CustomerController {
 
   // orders
   @PostMapping("/order/place")
-  public ResponseEntity<PlaceOrderResponse> createOrder(){
-    PlaceOrderResponse response = orderService.placeOrder();
+  public ResponseEntity<OrderResponse> createOrder(
+      @RequestBody PlaceOrderRequest request
+      ){
+    OrderResponse response = orderService.placeOrder(request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping("/order")
-  public ResponseEntity<List<CustomerOrderResponse>> getOrder(){
+  public ResponseEntity<List<OrderResponse>> getOrder(){
     Long customerId = authService.getCustomer().getId();
-    List<CustomerOrderResponse> userOrders =
+    List<OrderResponse> userOrders =
         orderService.getCustomerOrders(customerId);
     return  new ResponseEntity<>(userOrders, HttpStatus.OK);
   }

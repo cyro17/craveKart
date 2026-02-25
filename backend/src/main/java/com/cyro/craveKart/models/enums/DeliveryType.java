@@ -1,4 +1,6 @@
 package com.cyro.cravekart.models.enums;
 
-public class DeliveryType {
+public enum DeliveryType {
+  DELIVERY,
+  PICKUP
 }

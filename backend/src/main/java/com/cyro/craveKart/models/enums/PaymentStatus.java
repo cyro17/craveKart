@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum PaymentStatus {
-  CREATED,
+  PENDING,
+  REQUIRES_ACTION,
   SUCCESS,
-  FAILED
+  FAILED,
+  CANCELLED,
+  REFUNDED
 }
