@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -38,11 +39,8 @@ public class CustomerController {
     for (USER_ROLE role : authService.getCustomer().getUser().getRoles()) {
       System.out.println(role);
     }
-
     return  new ResponseEntity<>("ok",  HttpStatus.OK);
   }
-
-
 
   // Restaurants
   @GetMapping("/restaurants")
@@ -137,12 +135,20 @@ public class CustomerController {
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
+//  get all orders
   @GetMapping("/order")
   public ResponseEntity<List<OrderResponse>> getOrder(){
     Long customerId = authService.getCustomer().getId();
     List<OrderResponse> userOrders =
         orderService.getCustomerOrders(customerId);
     return  new ResponseEntity<>(userOrders, HttpStatus.OK);
+  }
+
+//  get order by id
+  @GetMapping("/order/{orderId}")
+  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long orderId){
+    OrderResponse response = orderService.getOrderById(orderId);
+    return  new  ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @PostMapping("/order/cancel/{orderId}")
@@ -173,6 +179,11 @@ public class CustomerController {
 
 
 
+  @GetMapping("/test-auth")
+  public ResponseEntity<?> testAuth(Authentication authentication) {
+    System.out.println(authentication.getAuthorities());
+    return ResponseEntity.ok(authentication.getAuthorities());
+  }
 
 
 }

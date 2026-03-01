@@ -18,9 +18,14 @@ public class PaymentInitiatedListener {
   public void handlePaymentInitiated(PaymentInitiatedEvent paymentInitiatedEvent) {
     log.info("Received Payment Initiated event for orderId = {}", paymentInitiatedEvent.getOrderId());
 
+    log.info("***********************", paymentInitiatedEvent.getOrderId());
+
+
+    log.info("***********************", "sending client secret to SSE : {}",
+        paymentInitiatedEvent.getClientSecret());
     sseEmitterService.pushClientSecret(
-        paymentInitiatedEvent.getCustomerId(),
         paymentInitiatedEvent.getOrderId(),
+        paymentInitiatedEvent.getCustomerId(),
         paymentInitiatedEvent.getClientSecret()
     );
   }

@@ -9,6 +9,7 @@ import com.cyro.cravekart.repository.FoodRepository;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.response.CartItemResponse;
 import com.cyro.cravekart.response.CartResponse;
+import com.cyro.cravekart.response.PriceBreakdown;
 import com.cyro.cravekart.service.CartItemService;
 import com.cyro.cravekart.service.CartService;
 import jakarta.transaction.Transactional;
@@ -92,7 +93,7 @@ public class CartServiceImpl implements CartService {
   public void removeCartItem(Long cartItemId) throws BadRequestException {
     Customer user = authService.getCustomer();
 
-    Cart cart = getCartorThrow();
+    Cart cart = getCartOrThrow();
     CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(() -> new BadRequestException("Item not found"));
     cart.getItems().remove(cartItem);
     cartRepository.save(cart);
@@ -139,9 +140,12 @@ public class CartServiceImpl implements CartService {
             ci.getFood().getImages()
         )).toList();
 
-    return  new CartResponse(
-        cart.getId(), items, cart.getCartTotal()
-    );
+    PriceBreakdown pricing = calculateCartPricing(cart);
+    return CartResponse.builder()
+        .cartId(cart.getId())
+        .items(items)
+        .pricing(pricing)
+        .build();
 
   }
 
@@ -152,9 +156,42 @@ public class CartServiceImpl implements CartService {
         .orElseGet(this::createNewCart);
   }
 
-  private Cart getCartorThrow() throws BadRequestException {
+  private Cart getCartOrThrow() throws BadRequestException {
     Customer user = authService.getCustomer();
     return cartRepository.findByCustomerId(user.getId()).orElseThrow(
         ()->  new BadRequestException("Cart not found"));
   }
+
+
+  private PriceBreakdown calculateCartPricing(Cart cart) {
+    BigDecimal subtotal = cart.getItems().stream()
+        .map(CartItem::getTotalPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    BigDecimal taxRate = new BigDecimal("0.05");
+    BigDecimal tax = subtotal.multiply(taxRate);
+
+    BigDecimal restaurantCharge = new BigDecimal("50");
+
+
+    BigDecimal deliveryFee = new BigDecimal("40");
+
+    BigDecimal discount = BigDecimal.ZERO; // apply coupon later
+
+    BigDecimal total = subtotal
+        .add(tax)
+        .add(restaurantCharge)
+        .add(deliveryFee)
+        .subtract(discount);
+
+    return PriceBreakdown.builder()
+        .subtotal(subtotal)
+        .tax(tax)
+        .deliveryFee(deliveryFee)
+        .restaurantCharge(restaurantCharge)
+        .discount(discount)
+        .total(total)
+        .build();
+  }
+
 }

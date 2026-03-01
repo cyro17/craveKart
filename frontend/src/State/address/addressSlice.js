@@ -30,7 +30,7 @@ const addressSlice = createSlice({
             .addCase(fetchAddress.pending, handlePending)
             .addCase(fetchAddress.rejected, handleRejected)
             .addCase(fetchAddress.fulfilled, (state, action) => {
-                console.log(action.payload);
+                // console.log(action.payload);
                 state.loading = false;
                 state.addresses = action.payload;
                 if (!state.selectedAddress && action.payload.length > 0) {

@@ -1,5 +1,7 @@
 package com.cyro.cravekart.service;
 
+import com.cyro.cravekart.config.security.AuthContextService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,29 +12,38 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SseEmitterServiceImpl implements SseEmitterService {
   private final Map<Long, SseEmitter> emitters =
       new ConcurrentHashMap<>();
 
   @Override
-  public SseEmitter register(Long orderId) {
+  public SseEmitter register(Long customerId) {
+
+    SseEmitter existingEmitter = emitters.get(customerId);
+    // close stale emitter if exist
+    if(existingEmitter != null){
+      existingEmitter.complete();
+    }
+
+
     SseEmitter emitter = new SseEmitter(120_000L);
 
     emitter.onCompletion(
-        ()-> emitters.remove(orderId)
+        ()-> emitters.remove(customerId)
     );
     emitter.onTimeout(()->{
-      log.warn("SSE timeout for orderId = {}", orderId);
-      emitters.remove(orderId);
+      log.warn("SSE timeout for orderId = {}", customerId);
+      emitters.remove(customerId);
     });
 
     emitter.onError(e-> {
-      log.error("SSE emitter error for orderId = {}", orderId, e);
-      emitters.remove(orderId);
+      log.error("SSE emitter error for orderId = {}", customerId, e);
+      emitters.remove(customerId);
     });
 
-    emitters.put(orderId, emitter);
-    log.info("SSE emitter registered for orderId = {}", orderId);
+    emitters.put(customerId, emitter);
+    log.info("SSE emitter registered for orderId = {}", customerId);
 
     return  emitter;
   }
@@ -41,10 +52,15 @@ public class SseEmitterServiceImpl implements SseEmitterService {
   public void pushClientSecret(Long orderId,
                    Long customerId,
                    String clientSecret) {
-    SseEmitter emitter = emitters.get(orderId);
+
+    log.info("🔍 pushClientSecret called. orderId={} customerId={}", orderId, customerId);
+    log.info("🔍 Active emitters: {}", emitters.keySet());  // shows all registered keys
+
+
+    SseEmitter emitter = emitters.get(customerId);
 
     if(emitter == null){
-      log.warn("SSE emitter not found for orderId = {}", orderId);
+      log.warn("SSE emitter not found for orderId = {}", customerId);
       return;
     }
 
@@ -52,17 +68,17 @@ public class SseEmitterServiceImpl implements SseEmitterService {
       emitter.send(SseEmitter.event()
           .name("payment-ready")
           .data(Map.of(
-              "orderId", orderId,
+              "customerId", customerId,
               "clientSecret", clientSecret,
-              "customerId", customerId
+              "orderId", orderId
           ))
       );
       log.info("SSE emitter sent for orderId = {}", orderId);
       emitter.complete();
-      emitters.remove(orderId);
+      emitters.remove(customerId);
     } catch (IOException e){
       log.error("Failed to push SSE event for orderId = {}", orderId, e);
-      emitters.remove(orderId);
+      emitters.remove(customerId);
     }
   }
 

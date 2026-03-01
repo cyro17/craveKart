@@ -22,6 +22,7 @@ public interface OrderService {
   String cancelOrder(Long orderId) throws AccessDeniedException, BadRequestException;
 
   List<OrderResponse> getCustomerOrders(Long id);
+  OrderResponse getOrderById(Long orderId);
   List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) throws OrderException, RestaurantException;
   public List<Order> getPendingOrdersForRestaurant();
 

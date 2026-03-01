@@ -16,18 +16,30 @@ const initialState = {
     filters: {
         status: null,
         dateRange: null
-    }
+    },
+
+    // payment 
+    orderId: null,
+    totalPrice: 0,
+    success: false,
+    clientSecret: null,
+    paymentStep: "idle",  // idle -> placing-> pay-> confirmed/failed -> idle
+    paymentMethod: null,
+
+
 }
 
 const handlePending = (state, action) => {
     state.loading = true;
     state.error = null;
     state.success = false;
+
 }
 
 const handleRejected = (state, action) => {
     state.loading = false;
     state.error = action.payload || "Failed to place order";
+    state.paymentStep = "failed";
 }
 
 const orderSlice = createSlice({
@@ -40,18 +52,39 @@ const orderSlice = createSlice({
             state.orderId = null;
             state.success = null;
             state.totalPrice = 0;
+            state.clientSecret = null;
+            state.paymentStep = "idle";
         },
+
+        setPaymentConfirmed: (state) => {
+            state.paymentStep = "confirmed";
+            state.clientSecret = null;
+            state.success = true;
+        },
+
+        setPaymentFailed: (state, action) => {
+            state.paymentStep = "failed";
+            state.error = action.payload || "Payment failed.";
+        }
     },
     extraReducers: (builder) => {
         builder
             // place order
-            .addCase(placeOrder.pending, handlePending)
+            .addCase(placeOrder.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.success = false;
+                state.paymentStep = "placing";
+            })
             .addCase(placeOrder.rejected, handleRejected)
             .addCase(placeOrder.fulfilled, (state, action) => {
+                console.log("order place response: ", action.payload);
                 state.loading = false;
-                state.orderId = action.payload?.orderId;
-                state.totalPrice = action.payload?.totalPrice;
                 state.success = true;
+                state.orderId = action.payload?.orderId;
+                state.totalPrice = action.payload?.pricing?.total;
+                state.clientSecret = action.payload?.clientSecret;
+                state.paymentStep = "pay";
             })
 
             // fetch order
@@ -66,5 +99,5 @@ const orderSlice = createSlice({
     }
 });
 
-export const { resetOrder } = orderSlice.actions;
+export const { resetOrder, setPaymentConfirmed, setPaymentFailed } = orderSlice.actions;
 export const orderReducer = orderSlice.reducer;

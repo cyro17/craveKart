@@ -21,26 +21,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @SpringBootTest
 public class UserServiceTest {
 
-  @Autowired
-  private AuthContextService authContextService;
-
-  @Autowired
-  private CustomerRepository customerRepository;
-
-  @Test
-  @Transactional
-  public void createUserTest() {
-//    String username = authContextService.getCustomer().getUser().getUsername();
-//    log.info("Creating user {}", username);
-
-    Authentication authentication =
-        SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication == null || !authentication.isAuthenticated()
-        || authentication instanceof AnonymousAuthenticationToken) {
-      System.out.println("Authentication is null");
-    }
-    User principal = (User) authentication.getPrincipal();
-    System.out.println(principal.getUsername());
-  }
+//  @Autowired
+//  private AuthContextService authContextService;
+//
+//  @Autowired
+//  private CustomerRepository customerRepository;
+//
+//  @Test
+//  @Transactional
+//  public void createUserTest() {
+////    String username = authContextService.getCustomer().getUser().getUsername();
+////    log.info("Creating user {}", username);
+//
+//    Authentication authentication =
+//        SecurityContextHolder.getContext().getAuthentication();
+//
+//    if (authentication == null || !authentication.isAuthenticated()
+//        || authentication instanceof AnonymousAuthenticationToken) {
+//      System.out.println("Authentication is null");
+//    }
+//    User principal = (User) authentication.getPrincipal();
+//    System.out.println(principal.getUsername());
+//  }
 }

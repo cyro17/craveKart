@@ -12,7 +12,7 @@ export default function AuthDrawer({ open, onClose, mode, setMode }) {
             anchor="right"
             open={open}
             onClose={onClose}
-            transitionDuration={400}
+            transitionDuration={50}
             ModalProps={{
                 BackdropProps: {
                     sx: {

@@ -1,6 +1,6 @@
 package com.cyro.cravekart.service.impl;
 
-import com.cyro.cravekart.Exceptions.OrderPublishException;
+//import com.cyro.cravekart.Exceptions.OrderPublishException;
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.events.OrderCreatedEvent;
 import com.cyro.cravekart.exception.OrderException;
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
       );
 
       if(!address.getCustomer().getId().equals(customer.getId())){
-        throw new RuntimeException("Invadi address for this customer");
+        throw new RuntimeException("Invalid address for this customer");
       }
 
       deliveryAddressLine = address.getFullAddress();
@@ -116,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
 
     // apply voucher
     if(request.getVoucherCode() != null) {
-      applycoupon(order, request.getVoucherCode());
+      this.applycoupon(order, request.getVoucherCode());
     }
 
     // calculate total
@@ -135,6 +135,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   // restaurant partner
+
   @Override
   public Order confirmOrder(Long orderId) throws AccessDeniedException, BadRequestException {
     RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
@@ -225,11 +226,17 @@ public class OrderServiceImpl implements OrderService {
         .toList();
   }
 
+  public OrderResponse getOrderById(Long orderId) {
+    Order order = orderRepository.findById(orderId).orElseThrow(
+        () -> new RuntimeException("Order does not exist")
+    );
+    return buildOrderResponse(order);
+  }
+
   @Override
   public List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) throws OrderException, RestaurantException {
     return List.of();
   }
-
 
 
   @Override
@@ -291,21 +298,28 @@ public class OrderServiceImpl implements OrderService {
   }
 
 
-//  HELPER METHODS ------------------------------------------------------
+  // ==================== Utility methods ==================
+
+//  create order publisher
+
   private void publishOrderCreatedEvent(Order savedOrder){
+
+    //amount
     long amountInPaise = savedOrder.getTotalPrice()
         .setScale(2, RoundingMode.HALF_UP)
         .multiply(BigDecimal.valueOf(100)).longValueExact();
 
+    // event
     OrderCreatedEvent event = OrderCreatedEvent.builder()
         .orderId(savedOrder.getId())
         .customerId(savedOrder.getCustomerId())
         .restaurantId(savedOrder.getRestaurantId())
         .customerName(savedOrder.getCustomerName())
-        .currency("INR")
+        .currency("inr")
         .amount(amountInPaise)
         .build();
 
+    // publish event
     kafkaTemplate.send("order-created",
         savedOrder.getId().toString(),
         event
@@ -322,6 +336,7 @@ public class OrderServiceImpl implements OrderService {
 
 
   }
+
 
   private void calculateOrderTotals(Order order){
 

@@ -5,10 +5,7 @@ import { act } from "react";
 const initialState = {
     cartId: null,
     items: [],
-    cartTotal: 0,
-    discount: 0,
-    deliveryCharges: 0,
-    tax: 0,
+    pricing: null,
     isDrawerOpen: false,
     loading: false,
     loadingItemId: null,
@@ -54,10 +51,11 @@ const cartSlice = createSlice({
             .addCase(fetchCart.pending, handlePending)
             .addCase(fetchCart.rejected, handleRejected)
             .addCase(fetchCart.fulfilled, (state, action) => {
-                // console.log(action.payload);
+                console.log(action.payload);
                 state.loading = false;
-                state.items = action.payload.items;
-                state.cartTotal = action.payload.cartTotal;
+                state.cartId = action.payload?.cartId;
+                state.items = action.payload?.items;
+                state.pricing = action.payload?.pricing;
             })
 
             // add to cart

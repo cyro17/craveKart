@@ -6,7 +6,9 @@ import com.cyro.cravekart.events.PaymentSuccessEvent;
 import com.cyro.cravekart.models.Payment;
 import com.cyro.cravekart.models.enums.PaymentStatus;
 import com.cyro.cravekart.repository.PaymentRepository;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
 import lombok.RequiredArgsConstructor;
@@ -20,38 +22,43 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/v1/webhook")
+@RequestMapping("/api/webhook/")
 @RequiredArgsConstructor
 @Slf4j
 public class StripeWebhookHandler {
 
-  @Value("${stripe.webhook-secret}")
+
+  @Value("${stripe.api.webhook-secret}")
   private String webhookSecret;
+
   private final KafkaTemplate<String, Object> kafkaTemplate;
   private final PaymentRepository paymentRepository;
 
-  @PostMapping(value = "/stripe", consumes = "application/json")
+  @PostMapping("stripe")
   public ResponseEntity<String> handleWebhook(
       @RequestBody String payload,
       @RequestHeader("Stripe-Signature") String sigHeader
   ){
+    log.info("webhook-secret: {}", webhookSecret);
+    log.info("🔔 Webhook hit. Payload length={}", payload.length());
+    log.info("🔔 Webhook hit. Payload={}", payload);
+
+    log.info("🔔 Event type will be parsed...");
+
+
+    // verify payment event
+    
     Event event;
     try {
       event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
+      log.info("✅ Signature OK. Event type={}, id={}", event.getType(), event.getId());
 
     } catch (Exception e) {
       log.error("Invalid webhook signature: {}", e.getMessage());
       return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
     }
 
-    PaymentIntent intent;
-    try {
-      intent = (PaymentIntent) event.getDataObjectDeserializer()
-          .getObject().orElseThrow();
-
-    } catch (Exception e) {
-      return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid intent");
-    }
+    PaymentIntent paymentIntent = getPaymentIntent(event);
 
     if(event.getId() != null && paymentRepository.existsByStripeEventId(event.getId())) {
       log.warn("Duplicate payment id for event {}", event.getId());
@@ -59,10 +66,8 @@ public class StripeWebhookHandler {
     }
 
     switch(event.getType()){
-      case "payment_intent.succeeded" -> handlePaymentSucceeded(intent, event.getId());
-//      case "payment_intent.payment_failed" -> (intent, event.getId());
-//      case "payment_intent.succeeded" -> handlePaymentSucceeded(intent, event.getId());
-//      case "payment_intent.succeeded" -> handlePaymentSucceeded(intent, event.getId());
+      case "payment_intent.succeeded" -> handlePaymentSucceeded(paymentIntent, event.getId());
+
       default ->
           log.info("Unhandled stripe event: {}", event.getType());
     }
@@ -72,13 +77,32 @@ public class StripeWebhookHandler {
 
     }
 
+  private static PaymentIntent getPaymentIntent(Event event) {
+    EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
+
+    PaymentIntent paymentIntent = null;
+
+    if (deserializer.getObject().isPresent()) {
+      paymentIntent = (PaymentIntent) deserializer.getObject().get();
+    } else {
+      // Fallback to unsafe deserialization
+      try {
+        paymentIntent = (PaymentIntent) deserializer.deserializeUnsafe();
+
+      } catch (EventDataObjectDeserializationException e) {
+        throw new RuntimeException("Unable to Deserialize Payment Event to Payment Intent Object");
+      }
+    }
+    return paymentIntent;
+  }
 
 
-    // ============= Handlers===================
+  // ============= Handlers===================
 
 
     private void handlePaymentSucceeded(PaymentIntent intent, String eventId) {
       log.info("Handled payment intent: {}", intent.getId());
+      log.info("Payment intent received for event {}", eventId, intent);
 
       paymentRepository.findByStripePaymentIntentId(intent.getId())
           .ifPresentOrElse((payment) -> {

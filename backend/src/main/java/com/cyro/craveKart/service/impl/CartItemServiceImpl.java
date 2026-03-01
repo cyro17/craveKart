@@ -120,7 +120,7 @@ public class CartItemServiceImpl implements CartItemService {
   private CartResponse buildCartResponse(Cart cart) {
     CartResponse cartResponse = new CartResponse();
     cartResponse.setCartId(cart.getId());
-    cartResponse.setCartTotal(cart.getCartTotal());
+//    cartResponse.setCartTotal(cart.getCartTotal());
 
     List<CartItemResponse> items = cart.getItems().stream()
         .map(this::mapToCartItemResponse)

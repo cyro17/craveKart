@@ -91,16 +91,18 @@ const rootRouter = createBrowserRouter([
             // checkout
             {
                 path: "checkout",
+                // element: <CheckoutLayout />,
                 element: (
+                    // <CheckoutLayout />
                     <ProtectedRoute>
                         <CheckoutLayout />
                     </ProtectedRoute>
                 ),
                 children: [
-                    { index: true, element: <CheckoutSummary /> },
-                    { path: "shipping", element: <CheckoutShipping /> },
-                    { path: "payment", element: <CheckoutPayment /> },
-                    { path: "confirmation", element: <CheckoutConfirmation /> },
+                    // { index: true, element: <CheckoutSummary /> },
+                    // { path: "shipping", element: <CheckoutShipping /> },
+                    // { path: "payment", element: <CheckoutPayment /> },
+                    // { path: "confirmation", element: <CheckoutConfirmation /> },
                 ],
             },
 

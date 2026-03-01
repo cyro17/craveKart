@@ -33,12 +33,15 @@
 //  ){
 //    Stripe.apiKey = secretKey;
 //
-//    SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData.builder()
+//    // create payment param
+//
+//    SessionCreateParams.LineItem.PriceData.ProductData productData =
+//        SessionCreateParams.LineItem.PriceData.ProductData.builder()
 //        .setName(request.getName()).build();
 //
 //    SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 //        .setCurrency(request.getCurrency() == null ?
-//            "USD" : request.getCurrency())
+//            "usd" : request.getCurrency())
 //        .setUnitAmount(request.getAmount())
 //        .setProductData(productData)
 //        .build();
@@ -82,8 +85,10 @@
 //  ){
 //    log.info("Processing payment for orderId={}", event.getOrderId());
 //    Stripe.apiKey = secretKey;
+//
 //    try {
 //
+//      // create session param
 //      SessionCreateParams.LineItem.PriceData.ProductData productData =
 //          SessionCreateParams.LineItem.PriceData.ProductData.builder()
 //              .setName("Order #" + event.getOrderId())

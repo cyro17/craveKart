@@ -6,6 +6,7 @@ import { fetchCart } from "../../State/cart/cartThunk";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { closeCart } from "../../State/ui/uiSlice";
+import { resetOrder } from "../../State/order/orderSlice";
 
 export default function CartAside({ open, onClose }) {
     const dispatch = useDispatch();
@@ -33,6 +34,8 @@ export default function CartAside({ open, onClose }) {
             return;
         }
         dispatch(closeCart());
+        dispatch(resetOrder());
+
         navigate("/checkout");
     };
     return (
@@ -40,6 +43,7 @@ export default function CartAside({ open, onClose }) {
             anchor="right"
             open={open}
             onClose={onClose}
+            transitionDuration={50}
             PaperProps={{
                 sx: {
                     width: {
@@ -80,8 +84,8 @@ export default function CartAside({ open, onClose }) {
                         </div>
                     ) : (
                         <div className="mt-2 border-b-2">
-                            {items?.map((item) => (
-                                <CartItem key={item.CartItemId} item={item} />
+                            {items?.map((item, index) => (
+                                <CartItem key={index} item={item} />
                             ))}
                         </div>
                     )}

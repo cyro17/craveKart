@@ -35,7 +35,6 @@ public class AppConfig {
     this.jwtAuthFilter = jwtAuthFilter;
   }
 
-
   @Bean
   public  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return  http
@@ -47,12 +46,13 @@ public class AppConfig {
                 .requestMatchers(
                     "/api/public/**",
                     "/api/auth/**", "/api/restaurant/**",
-                    "/api/v1/webhook/stripe",
+                    "/api/webhook/**",
                     "/swagger-ui/**",
-                    "/api/notification/stream",
+                    "/api/notification/stream/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**")
                   .permitAll()
+//                .requestMatchers("/notification/stream/**").authenticated()
                 .requestMatchers("/api/admin/**")
                   .hasAnyRole("RESTAURANT_PARTNER","ADMIN")
                 .requestMatchers("/api/customer/**")

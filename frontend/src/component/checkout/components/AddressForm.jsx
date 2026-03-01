@@ -61,6 +61,7 @@ export default function AddressForm({ isOpen, onClose, onSave }) {
             open={isOpen}
             onClose={onClose}
             closeAfterTransition
+            delay={0}
             BackdropProps={{
                 style: {
                     backgroundColor: "rgba(0, 0, 0, 0.7)",

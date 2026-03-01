@@ -5,8 +5,10 @@ const img =
     "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Zm9vZHxlbnwwfHwwfHx8MA%3D%3D";
 
 export default function CartSummary() {
-    const { items, cartTotal } = useSelector((state) => state.cart);
-    // console.log(items);
+    const { cartId, items, pricing } = useSelector((state) => state.cart);
+
+    // console.log(items, cartTotal, data);
+
     return (
         <div className="bg-white text-black rounded-3xl p-6 shadow-sm h-fit sticky top-12 mt-5">
             {/* cart header */}
@@ -35,7 +37,10 @@ export default function CartSummary() {
                                 </span>
                                 <span> {item?.quantity}</span>
                             </div>
-                            <div className="text-gray-400">
+                            <span className="text-xs text-gray-400">
+                                {item.description}
+                            </span>
+                            <div className="text-gray-600 text-sm font-medium">
                                 {item.totalPrice}
                             </div>
                         </div>
@@ -61,26 +66,25 @@ export default function CartSummary() {
             <div className="space-y-2 text-sm mb-6">
                 <div className="flex justify-between">
                     <span>Item price</span>
-                    <span>{cartTotal}</span>
+                    <span>{pricing?.subtotal}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>shipping fee</span>
-                    <span>price</span>
+                    <span>{pricing?.deliveryFee}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>restaurant charges</span>
-                    <span>price</span>
+                    <span>{pricing?.restaurantCharge}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>platform fee</span>
-                    <span>price</span>
+                    <span>{pricing?.platformFee || "00"}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-lg mb-6">
-                    <span>total</span>
-                    <span>Grand Total</span>
+                    <span>Total</span>
+                    <span>{pricing?.total}</span>
                 </div>
             </div>
-            <div>welcome to our food order app</div>
         </div>
     );
 }

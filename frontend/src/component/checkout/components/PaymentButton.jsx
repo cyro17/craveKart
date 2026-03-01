@@ -1,33 +1,25 @@
 import { Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import Button from "../../UI/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { resetPayment } from "../../../State/payment/paymentSlice";
-import { createCheckoutSession } from "../../../State/payment/paymentThunk";
+import { placeOrder } from "../../../State/order/orderThunk";
 
 const fakeData = {
-    amount: 100000,
-    quantity: 1,
-    name: "Veg Burger",
-    currency: "INR",
+    addressId: 9,
+    deliveryType: "DELIVERY",
+    paymentMethod: "CARD",
+    voucherCode: "WELCOME50",
+    specialInstruction: "Please avoid calling, just ring the bell.",
 };
 
-export default function PaymentButton() {
+export default function PaymentButton({ loading }) {
     const dispatch = useDispatch();
-    const { loading, error, sessionUrl } = useSelector(
-        (state) => state.payment
-    );
+    const addressstore = useSelector((state) => state.address);
 
+    console.log(addressstore);
     const handlePayment = () => {
-        dispatch(createCheckoutSession(fakeData));
+        dispatch(placeOrder(fakeData));
     };
-
-    useEffect(() => {
-        if (sessionUrl) {
-            window.location.href = sessionUrl;
-            dispatch(resetPayment());
-        }
-    }, [sessionUrl, dispatch]);
 
     return (
         <div className="m-auto w-full ">
@@ -39,11 +31,8 @@ export default function PaymentButton() {
                 onClick={handlePayment}
                 className="py-3"
             >
-                {loading ? "Redirecting..." : "Pay Now"}
+                {loading ? "Placing Order...." : "Place Order"}
             </Button>
-            {error && (
-                <Typography className="mt-2 text-red-500">{error}</Typography>
-            )}
         </div>
     );
 }

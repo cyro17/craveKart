@@ -2,7 +2,7 @@ import { Grid2, Typography } from "@mui/material";
 import React from "react";
 
 export default function OrderItem({ item }) {
-    console.log(item);
+    // console.log(item);
     return (
         <Grid2
             container
