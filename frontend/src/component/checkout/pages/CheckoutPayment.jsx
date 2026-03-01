@@ -66,7 +66,7 @@ export default function CheckoutPayment({ orderId, onSuccess, onFailure }) {
             {/* Header */}
             <div className="">
                 <div>
-                    HEADER
+                    Payment
                     <div>
                         <svg
                             width="20"

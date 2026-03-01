@@ -2,14 +2,15 @@ import { Chip } from "@mui/material";
 
 export const ACTIVE_STATUSES = [
     "CREATED",
-    "PENDING",
+    "PAID",
     "CONFIRMED",
     "PREPARING",
     "READY_FOR_PICKUP",
     "OUT_FOR_DELIVERY",
 ];
 
-export const FAILED_STATUSES = ["CANCELLED", "FAILED"];
+export const FAILED_STATUSES = ["CANCELLED", "FAILED", "RETURNED"];
+export const PENDING_STATUSES = ["CREATED", "PAYMENT_PENDING"];
 
 export default function StatusChip({ status }) {
     let color = "default";
@@ -18,6 +19,8 @@ export default function StatusChip({ status }) {
         color = "success"; // 🟢 green
     } else if (FAILED_STATUSES.includes(status)) {
         color = "error"; // 🔴 red
+    } else {
+        color = "warning"; // 🟠 orange
     }
 
     return (
