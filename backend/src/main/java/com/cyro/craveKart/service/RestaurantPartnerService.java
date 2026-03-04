@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface RestaurantPartnerService {
 
-  public Order acceptOrder(Long orderId) throws AccessDeniedException;
-  public Order rejectOrder(Long orderId) throws AccessDeniedException, BadRequestException;
-  public List<Order> getPendingOrdersForRestaurants(Long restaurantId) throws AccessDeniedException, BadRequestException;
+  public Order acceptOrder(Long orderId);
+  public Order rejectOrder(Long orderId) ;
+  public List<Order> getPendingOrdersForRestaurants(Long restaurantId) ;
 
-  RestaurantPartner getById(Long restaurantPartnerId) throws AccessDeniedException, BadRequestException;
+  RestaurantPartner getById(Long restaurantPartnerId) ;
   List<Order> getNewOrders();
   public RestaurantPartner createRestaurantPartner(User user);
 

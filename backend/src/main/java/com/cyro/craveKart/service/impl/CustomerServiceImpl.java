@@ -3,6 +3,7 @@ package com.cyro.cravekart.service.impl;
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.*;
 import com.cyro.cravekart.exception.FoodException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.Customer;
 import com.cyro.cravekart.repository.AddressRepository;
@@ -40,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
   private final AddressService addressService;
 
   @Override
-  public CartResponse addFoodToCart(Long foodId) throws FoodException, ServiceUnavailableException {
+  public CartResponse addFoodToCart(Long foodId) {
     AddCartItemRequest cartItemRequest = AddCartItemRequest.builder().foodId(foodId)
         .quantity(1).build();
     return cartService.addItem(cartItemRequest);
@@ -102,7 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
     Customer user = authService.getCustomer();
 
     Customer customer = customerRepository.findById(user.getId()).orElseThrow(
-        ()-> new IllegalStateException("Customer with id " + user.getId() + " not found")
+        ()-> new ResourceNotFoundException("Customer with id " + user.getId() + " not found")
     );
     return addressService.createAddress(request, customer.getId());
 

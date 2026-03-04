@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface CustomerService {
 
-  CartResponse addFoodToCart(Long foodItemId) throws FoodException, ServiceUnavailableException;
+  CartResponse addFoodToCart(Long foodItemId);
   CartItemDto incrementCartItemQuantity(Long cartItemId, Long cartId, Integer quantity);
   CartItemDto decrementCartItemQuantity(Long cartItemId, Long cartId, Integer quantity);
   CartDto removeCartItemFromCart(Long cartItemId, Long cartId);

@@ -1,10 +1,8 @@
-import StarIcon from "@mui/icons-material/Star";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { disableInstantTransitions, motion } from "motion/react";
+import { motion } from "motion/react";
 
 import React from "react";
-import RestaurantInfo from "./RestaurantInfo";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";

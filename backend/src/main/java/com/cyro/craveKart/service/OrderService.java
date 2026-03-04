@@ -14,16 +14,16 @@ import java.util.List;
 
 public interface OrderService {
   OrderResponse placeOrder(PlaceOrderRequest request);
-  Order confirmOrder(Long orderId) throws AccessDeniedException, BadRequestException; // restaurant
+  Order confirmOrder(Long orderId) ; // restaurant
   Order updatePreparationStatus(Long orderId, OrderStatus orderStatus);
-  Order pickupOrder(Long orderId) throws BadRequestException; // delivery
+  Order pickupOrder(Long orderId) ; // delivery
   Order deliveryOrder(Long orderId);
 
-  String cancelOrder(Long orderId) throws AccessDeniedException, BadRequestException;
+  String cancelOrder(Long orderId) ;
 
   List<OrderResponse> getCustomerOrders(Long id);
   OrderResponse getOrderById(Long orderId);
-  List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) throws OrderException, RestaurantException;
+  List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus);
   public List<Order> getPendingOrdersForRestaurant();
 
   void markAsPaid(Long orderId);

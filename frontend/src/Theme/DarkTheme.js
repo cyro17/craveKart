@@ -11,16 +11,17 @@ export const darkTheme = createTheme({
             main: '#5A20CB'
         },
         background: {
-            default: "#0D0D0D",
-            paper: "#000000",
+            default: "#f8f9fa",
+            paper: "#ffffff",
         },
         text: {
-            primary: '#000000'
+            primary: '#111827',
+            secondary: "#4b5563",
         },
         greyButton: {
-            main: "#2a2a2a",
-            dark: "#3a3a3a",
-            contrastText: "#ffffff",
+            main: "#f3f4f6",
+            dark: "#e5e7eb",
+            contrastText: "#111827",
         },
     }
 });

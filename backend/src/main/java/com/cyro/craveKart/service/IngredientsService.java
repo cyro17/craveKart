@@ -12,10 +12,10 @@ import java.util.List;
 public interface IngredientsService {
 
   public IngredientCategory createIngredientCategory(
-      CreateIngredientCategoryRequest request) throws RestaurantException;
+      CreateIngredientCategoryRequest request) ;
 
-  public IngredientCategory findIngredientCategoryById(Long id) throws RestaurantException;
-  public List<IngredientCategory> findByRestaurantId(Long restaurantId) throws Exception;
+  public IngredientCategory findIngredientCategoryById(Long id) ;
+  public List<IngredientCategory> findByRestaurantId(Long restaurantId) ;
   public  IngredientItem createIngredientItem(CreateIngredientItemRequest request);
   IngredientItem updateStock(Long ingredientId);
 }

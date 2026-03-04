@@ -1,6 +1,7 @@
 package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.JwtUtil;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.UserRepository;
 import com.cyro.cravekart.response.UserResponse;
@@ -37,9 +38,10 @@ public class UserServiceImpl implements UserService {
   @CacheEvict(allEntries = true)
 //  @Transactional
   public List<UserResponse> findAllUsers() {
-    return  userRepository.findAll()  .stream()
-        .map(UserResponse::from)
-        .toList();
+    return  userRepository.findAll()
+                .stream()
+                .map(UserResponse::from)
+                .toList();
   }
 
 
@@ -48,7 +50,8 @@ public class UserServiceImpl implements UserService {
   public UserResponse getByUserId(Long userId) {
     log.warn("🚨 DB HIT userId={}", userId);
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() ->
+            new ResourceNotFoundException("User not found with id : " + userId));
     return  UserResponse.from(user);
   }
 
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService {
   public UserResponse getUserByEmail(String email) {
     log.warn("🚨 DB HIT userId={}", email);
     User user =  userRepository.findByEmail(email)
-        .orElseThrow(()-> new RuntimeException("User with email " + email + " not found"));
+        .orElseThrow(()-> new ResourceNotFoundException("User with email " + email + " not found"));
     return   UserResponse.from(user);
   }
 

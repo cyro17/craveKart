@@ -1,13 +1,13 @@
 package com.cyro.cravekart.models;
 
 
+import com.cyro.cravekart.models.enums.RestaurantStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +51,12 @@ public class Restaurant {
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "partner_id", unique = true)
   private RestaurantPartner restaurantPartner;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  @Builder.Default
+  private RestaurantStatus status = RestaurantStatus.PENDING;
+
 
   @ManyToMany(mappedBy = "favoriteRestaurants")
   private Set<Customer> favoritedBy = new HashSet<>();

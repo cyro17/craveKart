@@ -1,10 +1,11 @@
 package com.cyro.cravekart.service.impl;
 
-//import com.cyro.cravekart.Exceptions.OrderPublishException;
+
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.events.OrderCreatedEvent;
-import com.cyro.cravekart.exception.OrderException;
-import com.cyro.cravekart.exception.RestaurantException;
+import com.cyro.cravekart.exception.BadRequestException;
+import com.cyro.cravekart.exception.ForbiddenException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.models.enums.DeliveryType;
 import com.cyro.cravekart.models.enums.OrderStatus;
@@ -15,14 +16,12 @@ import com.cyro.cravekart.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +40,6 @@ public class OrderServiceImpl implements OrderService {
   private final AuthContextService authService;
   private final OrderRepository orderRepository;
   private final ModelMapper modelMapper;
-//  private final KafkaTemplate<String, OrderNotifcationEvent>
 
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -55,11 +53,11 @@ public class OrderServiceImpl implements OrderService {
     // get cart
     Cart cart = cartRepository.findByCustomerId(
         customer.getId()).orElseThrow(
-        () -> new RuntimeException("User does not exist")
+        () -> new ResourceNotFoundException("User does not exist")
     );
     // check if cart is empty
     if(cart.getItems().isEmpty()) {
-      throw new RuntimeException("cart is empty");
+      throw new BadRequestException("cart is empty");
     }
 
     // fetch restaurant
@@ -70,11 +68,11 @@ public class OrderServiceImpl implements OrderService {
     // add delivery address
     if(request.getDeliveryType() == DeliveryType.DELIVERY){
       Address address = addressRepository.findById(request.getAddressId()).orElseThrow(
-          () -> new RuntimeException("Address not found")
+          () -> new ResourceNotFoundException("Address not found")
       );
 
       if(!address.getCustomer().getId().equals(customer.getId())){
-        throw new RuntimeException("Invalid address for this customer");
+        throw new BadRequestException("Invalid address for this customer");
       }
 
       deliveryAddressLine = address.getFullAddress();
@@ -137,13 +135,13 @@ public class OrderServiceImpl implements OrderService {
   // restaurant partner
 
   @Override
-  public Order confirmOrder(Long orderId) throws AccessDeniedException, BadRequestException {
+  public Order confirmOrder(Long orderId) {
     RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
     Order order = orderRepository.findById(orderId).orElseThrow(
-        () -> new RuntimeException("Order does not exist")
+        () -> new ResourceNotFoundException("Order does not exist")
     );
     if( !order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())){
-      throw new AccessDeniedException("Order does not belong to your restaurant");
+      throw new ForbiddenException("Order does not belong to your restaurant");
     }
 
     if(order.getOrderStatus() != OrderStatus.PAID){
@@ -166,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
     DeliveryPartner partner = authService.getDeliveryPartner();
 
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
     if (order.getOrderStatus() != OrderStatus.READY_FOR_PICKUP) {
       throw new BadRequestException("Order not ready");
@@ -186,22 +184,22 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public String cancelOrder(Long orderId) throws AccessDeniedException, BadRequestException {
+  public String cancelOrder(Long orderId)  {
 
     Customer customer = authService.getCustomer();
     Order order = orderRepository.findById(orderId).orElseThrow(
-        ()-> new RuntimeException("Order does not exist")
+        ()-> new ResourceNotFoundException("Order does not exist")
     );
 
     if( !order.getCustomerId().equals(customer.getId())) {
-      throw new AccessDeniedException("This order request does not belong to the customer with id :" +
+      throw new ForbiddenException("This order request does not belong to the customer with id :" +
           customer.getId());
     }
 
     if(order.getOrderStatus() == OrderStatus.CONFIRMED ||
         order.getOrderStatus() == OrderStatus.OUT_FOR_DELIVERY ||
         order.getOrderStatus() == OrderStatus.DELIVERED){
-      throw new BadRequestException("Order request cannot be Cancelled");
+      throw new ForbiddenException("Order request cannot be Cancelled");
     }
 
     order.setOrderStatus(OrderStatus.CANCELLED);
@@ -228,13 +226,13 @@ public class OrderServiceImpl implements OrderService {
 
   public OrderResponse getOrderById(Long orderId) {
     Order order = orderRepository.findById(orderId).orElseThrow(
-        () -> new RuntimeException("Order does not exist")
+        () -> new ResourceNotFoundException("Order does not exist")
     );
     return buildOrderResponse(order);
   }
 
   @Override
-  public List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) throws OrderException, RestaurantException {
+  public List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus) {
     return List.of();
   }
 
@@ -253,7 +251,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public void markAsPaid(Long orderId) {
       Order order = orderRepository.findById(orderId)
-          .orElseThrow(() -> new RuntimeException("Order not found"));
+          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
       if(order.getOrderStatus() == OrderStatus.PAID){
         log.info("Order {} is already PAID, skipping duplicate event.", orderId);
@@ -280,7 +278,7 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public void markAsFailed(Long orderId) {
     Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new RuntimeException("Order not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
     if(order.getOrderStatus() == OrderStatus.CANCELLED){
       return;
@@ -328,7 +326,7 @@ public class OrderServiceImpl implements OrderService {
         log.error("Failed to publish order-created for orderId = {}",
             savedOrder.getId(), ex);
         // ✅ throw so cart is NOT cleared and customer can retry
-        throw new RuntimeException(
+        throw new BadRequestException(
             "Failed to initiate payment for order: " + savedOrder.getId());
       }
       log.info("Published order-created for orderId = {}", savedOrder.getId());
@@ -345,7 +343,8 @@ public class OrderServiceImpl implements OrderService {
         .map(OrderItem::getTotalPrice)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    // tax rate + commision rate
+    // tax rate + commission rate
+
     BigDecimal taxRate = new BigDecimal("0.05");
     BigDecimal commissionRate = new  BigDecimal("0.20");
 
@@ -364,7 +363,6 @@ public class OrderServiceImpl implements OrderService {
         .subtract(discount);
 
     BigDecimal commission = subTotal.multiply(commissionRate);
-//    BigDecimal payout = subTotal.add(restaurantCharge).subtract(commission);
 
     order.setSubtotal(subTotal);
     order.setTaxAmount(tax);
@@ -449,9 +447,4 @@ public class OrderServiceImpl implements OrderService {
         .build();
 
   }
-
 }
-
-
-
-

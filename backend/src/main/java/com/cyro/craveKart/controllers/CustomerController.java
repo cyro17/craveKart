@@ -10,13 +10,11 @@ import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -61,7 +59,8 @@ public class CustomerController {
     @RequestParam(required = false, defaultValue = "10") int size
   ){
 
-    List<RestaurantResponse> restaurants = restaurantService.getRestaurantsByFilter(city, cuisine, rating, sort, page, size);
+    List<RestaurantResponse> restaurants =
+        restaurantService.getRestaurantsByFilter(city, cuisine, rating, sort, page, size);
     return ResponseEntity.ok(restaurants);
   }
 
@@ -153,11 +152,8 @@ public class CustomerController {
 
   @PostMapping("/order/cancel/{orderId}")
   public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){
-    try {
-      orderService.cancelOrder(orderId);
-    } catch (AccessDeniedException | BadRequestException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+    orderService.cancelOrder(orderId);
+
     return new ResponseEntity<>(HttpStatus.OK);
 
   }

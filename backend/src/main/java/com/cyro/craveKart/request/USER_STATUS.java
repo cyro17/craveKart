@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum USER_STATUS {
 
+  PENDING,
   ACTIVE,
-  EXPIRED,
-  INACTIVE,
+  BLOCKED,
   SUSPENDED,
 }

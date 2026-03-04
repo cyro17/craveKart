@@ -13,13 +13,17 @@ import ProfileLayout from "../component/profile/ProfileLayout";
 import RoleRoute from "./RoleRoute";
 import LandingPage from "../component/Home/LandingPage";
 import CheckoutLayout from "../component/checkout/CheckoutLayout";
-import CheckoutSummary from "../component/checkout/pages/CheckoutSummary";
-import CheckoutShipping from "../component/checkout/pages/CheckoutShipping";
-import CheckoutPayment from "../component/checkout/pages/CheckoutPayment";
-import CheckoutConfirmation from "../component/checkout/pages/CheckoutConfirmation";
-import PaymentSuccess from "../component/checkout/components/PaymentConfirmation";
 import PaymentConfirmation from "../component/checkout/components/PaymentConfirmation";
 import Orders from "../pages/profile/orders/Orders";
+import AdminLayout from "../pages/admin/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminRestaurants from "../pages/admin/AdminRestaurants";
+import AdminRestaurantDetail from "../pages/admin/AdminRestaurantDetail";
+import AdminOrderDetail from "../pages/admin/AdminOrderDetail";
+import AdminUsers from "../pages/admin/AdminUsers";
+import AdminPayouts from "../pages/admin/AdminPayouts";
+import AdminSettings from "../pages/admin/AdminSettings";
+import AdminOrders from "../pages/admin/AdminOrders";
 
 // Guards
 // import ProtectedRoute from "./ProtectedRoute";
@@ -53,6 +57,28 @@ import Orders from "../pages/profile/orders/Orders";
 // import CreateRestaurantForm from "../component/admin/CreateRestaurantForm";
 
 const rootRouter = createBrowserRouter([
+    {
+        path: "/admin",
+        element: (
+            // <RoleRoute role="ADMIN">
+            <AdminLayout />
+            // </RoleRoute>
+        ),
+        children: [
+            { index: true, element: <AdminDashboard /> },
+
+            { path: "restaurants", element: <AdminRestaurants /> },
+            { path: "restaurants/:id", element: <AdminRestaurantDetail /> },
+
+            { path: "orders", element: <AdminOrders /> },
+            { path: "orders/:id", element: <AdminOrderDetail /> },
+
+            { path: "users", element: <AdminUsers /> },
+            { path: "payouts", element: <AdminPayouts /> },
+            { path: "settings", element: <AdminSettings /> },
+        ],
+    },
+
     {
         path: "/",
         element: <RootLayout />,

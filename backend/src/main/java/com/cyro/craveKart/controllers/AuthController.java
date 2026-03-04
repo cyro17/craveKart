@@ -37,8 +37,7 @@ public class AuthController {
   public ResponseEntity<UserResponse> getProfile(@PathVariable Long userId) {
     UserResponse user = userService.getByUserId(userId);
     if(user == null) return ResponseEntity.notFound().build();
-    return   ResponseEntity.ok(user);
-
+    return ResponseEntity.ok(user);
   }
 
 

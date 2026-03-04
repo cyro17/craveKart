@@ -1,7 +1,8 @@
 package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.config.security.AuthService;
+import com.cyro.cravekart.exception.BadRequestException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.CartItemRepository;
 import com.cyro.cravekart.repository.CartRepository;
@@ -14,7 +15,6 @@ import com.cyro.cravekart.service.CartItemService;
 import com.cyro.cravekart.service.CartService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -44,7 +44,7 @@ public class CartServiceImpl implements CartService {
     Cart cart = getCartOrCreateNew();
 
     Food food = foodRepository.findById(request.getFoodId())
-        .orElseThrow(() -> new RuntimeException("Food not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 
     String restaurantName = food.getRestaurant().getName();
     List<String> images = food.getImages();
@@ -90,11 +90,12 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public void removeCartItem(Long cartItemId) throws BadRequestException {
+  public void removeCartItem(Long cartItemId){
     Customer user = authService.getCustomer();
 
     Cart cart = getCartOrThrow();
-    CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(() -> new BadRequestException("Item not found"));
+    CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
+        () -> new BadRequestException("Item not found"));
     cart.getItems().remove(cartItem);
     cartRepository.save(cart);
   }
@@ -102,7 +103,7 @@ public class CartServiceImpl implements CartService {
   @Override
   public Cart getCartByCustomerId(Long userId) {
     return cartRepository.findByCustomerId(userId).orElseThrow(
-        () -> new RuntimeException("Cart is not present")
+        () -> new ResourceNotFoundException("Cart is not present")
     );
   }
 
@@ -156,7 +157,7 @@ public class CartServiceImpl implements CartService {
         .orElseGet(this::createNewCart);
   }
 
-  private Cart getCartOrThrow() throws BadRequestException {
+  private Cart getCartOrThrow(){
     Customer user = authService.getCustomer();
     return cartRepository.findByCustomerId(user.getId()).orElseThrow(
         ()->  new BadRequestException("Cart not found"));
@@ -193,5 +194,4 @@ public class CartServiceImpl implements CartService {
         .total(total)
         .build();
   }
-
 }

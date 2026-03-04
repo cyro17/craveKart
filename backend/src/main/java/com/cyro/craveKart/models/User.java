@@ -82,17 +82,12 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return this.status.equals(USER_STATUS.ACTIVE);
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        return this.status != USER_STATUS.BLOCKED;
     }
 
     @Override

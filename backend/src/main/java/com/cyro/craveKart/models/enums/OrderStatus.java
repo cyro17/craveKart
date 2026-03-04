@@ -7,8 +7,8 @@ public enum OrderStatus {
 
   CREATED,              // order placed
   PAYMENT_PENDING,      // waiting for Stripe confirmation
-  PAID,                 // payment success
-  PAYMENT_FAILED,       // payment failed
+  PAID,                 // payment success updated by webhook
+  PAYMENT_FAILED,       // payment failed updated by webhook
 
   CONFIRMED,
   PREPARING,

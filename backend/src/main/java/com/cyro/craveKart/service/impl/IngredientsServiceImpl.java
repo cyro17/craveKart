@@ -1,6 +1,8 @@
 package com.cyro.cravekart.service.impl;
 
 
+import com.cyro.cravekart.exception.BadRequestException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.IngredientCategory;
 import com.cyro.cravekart.models.IngredientItem;
@@ -29,15 +31,15 @@ public class IngredientsServiceImpl implements IngredientsService {
   private final RestaurantService restaurantService;
 
   @Override
-  public IngredientCategory createIngredientCategory(CreateIngredientCategoryRequest request) throws RestaurantException {
+  public IngredientCategory createIngredientCategory(CreateIngredientCategoryRequest request) {
 
     if( categoryRepo.existsByRestaurantIdAndNameIgnoreCase(
         request.getRestaurantId(), request.getName()))
-      throw new RestaurantException("Ingredient Category already exists for this restaurant");
+      throw new ResourceNotFoundException("Ingredient Category already exists for this restaurant");
 
     Restaurant restaurant = restaurantRepository.findById(
         request.getRestaurantId()).orElseThrow(() ->
-          new RuntimeException("Ingredient category already exists for this restaurant"));
+          new BadRequestException("Ingredient category already exists for this restaurant"));
 
     IngredientCategory category = IngredientCategory.builder()
         .name(request.getName())
@@ -47,15 +49,15 @@ public class IngredientsServiceImpl implements IngredientsService {
   }
 
   @Override
-  public IngredientCategory findIngredientCategoryById(Long id) throws RestaurantException {
+  public IngredientCategory findIngredientCategoryById(Long id){
     Optional<IngredientCategory> opt = categoryRepo.findById(id);
     if(opt.isEmpty())
-      throw new RestaurantException("Ingredient Category not found for this restaurant");
+      throw new ResourceNotFoundException("Ingredient Category not found for this restaurant");
     return opt.get();
   }
 
   @Override
-  public List<IngredientCategory> findByRestaurantId(Long restaurantId) throws Exception {
+  public List<IngredientCategory> findByRestaurantId(Long restaurantId)  {
     List<IngredientCategory> allByRestaurantId =
         categoryRepo.findAllByRestaurantId(restaurantId);
     return allByRestaurantId;
@@ -88,7 +90,7 @@ public class IngredientsServiceImpl implements IngredientsService {
   public IngredientItem updateStock(Long ingredientId) {
     Optional<IngredientItem> item = ingredientItemRepository.findById(ingredientId);
     if(item.isEmpty())
-      throw new RestaurantException("Ingredient not found with this id" +  ingredientId);
+      throw new ResourceNotFoundException("Ingredient not found with this id" +  ingredientId);
     IngredientItem ingredientItem = item.get();
     ingredientItem.setInStock(!ingredientItem.isInStock());
     return ingredientItemRepository.save(ingredientItem);

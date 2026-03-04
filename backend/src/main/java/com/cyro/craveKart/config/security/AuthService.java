@@ -1,5 +1,8 @@
 package com.cyro.cravekart.config.security;
 
+import com.cyro.cravekart.exception.ConflictException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
+import com.cyro.cravekart.exception.UnauthorizedException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.*;
@@ -40,11 +43,11 @@ public class AuthService {
   public User register(SignupRequest request) {
 
     if(userRepository.existsByUsername(request.getUsername())){
-      throw new RuntimeException("Username already exists");
+      throw new ConflictException("Username already exists");
     }
 
     if(userRepository.existsByEmail(request.getEmail())){
-      throw new RuntimeException("Email already exists");
+      throw new ConflictException("Email already exists");
     }
 
 
@@ -83,6 +86,8 @@ public class AuthService {
   }
 
 
+  // login service
+
   public LoginResponse login(LoginRequest loginRequestDTO) {
     try {
       Authentication authentication = authenticationManager.authenticate(
@@ -96,13 +101,15 @@ public class AuthService {
 
     } catch (Exception e) {
       log.error("Login failed", e);
-      throw new AuthorizationDeniedException("Invalid username or password");
+      throw new UnauthorizedException("Invalid username or password");
     }
   }
 
+  // signin request
+
   public LoginResponse signin(SigninRequest signinRequest){
     User userRequest = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
-        () -> new RuntimeException("User not found")
+        () -> new ResourceNotFoundException("User not found")
     );
 
     try{
@@ -119,7 +126,7 @@ public class AuthService {
 
     } catch (Exception e) {
       log.error("Login failed", e);
-      throw new AuthorizationDeniedException("Invalid username or password");
+      throw new UnauthorizedException("Invalid username or password");
     }
   }
 
@@ -128,11 +135,11 @@ public class AuthService {
     List<User> userList = new ArrayList<>();
     for(SignupRequest user : requestDTOS){
       if(userRepository.existsByUsername(user.getUsername())){
-        throw new RuntimeException("Username already exists");
+        throw new ConflictException("Username already exists");
       }
 
       if(userRepository.existsByEmail(user.getEmail())){
-        throw new RuntimeException("Email already exists");
+        throw new ConflictException("Email already exists");
       }
 
       User newUser = User.builder()
@@ -145,21 +152,12 @@ public class AuthService {
           .status(USER_STATUS.ACTIVE)
           .build();
 
-      User savedUser = userRepository.save(newUser);
+      userRepository.save(newUser);
 
     }
     return true;
   }
 
-//  public User getCurrentAuthUser(){
-//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//    if (authentication == null || !authentication.isAuthenticated()
-//        || authentication instanceof AnonymousAuthenticationToken) {
-//      return null;
-//    }
-//    return (User) authentication.getPrincipal();
-//    }
 }
 
 

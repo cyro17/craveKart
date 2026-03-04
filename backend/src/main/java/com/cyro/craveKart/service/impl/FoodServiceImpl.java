@@ -1,6 +1,7 @@
 package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.exception.FoodException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.FoodCategory;
 import com.cyro.cravekart.models.Food;
 import com.cyro.cravekart.models.IngredientItem;
@@ -29,21 +30,21 @@ public class FoodServiceImpl implements FoodService {
   private final IngredientItemRepository ingredientItemRepository;
 
   @Override
-  public Food createFood(CreateFoodRequest req) throws FoodException {
+  public Food createFood(CreateFoodRequest req) {
 
     // if food already exist
     if(foodRepository.existsByRestaurantIdAndNameIgnoreCase(
         req.getRestaurant_id(), req.getName()))
-      throw new FoodException("Food already exists");
+      throw new ResourceNotFoundException("Food already exists");
 
     Restaurant restaurant = restaurantRepository.findById(
         req.getRestaurant_id()).orElseThrow(
-        () -> new FoodException("Restaurant not found")
+        () -> new ResourceNotFoundException("Restaurant not found")
     );
 
     FoodCategory foodCategory = foodCategoryRepository.findById(
         req.getFoodCategoryId()).orElseThrow(
-        () -> new FoodException("Food category not found")
+        () -> new ResourceNotFoundException("Food category not found")
     );
 
     Set<IngredientItem> ingredients = new HashSet<>();
@@ -75,7 +76,7 @@ public class FoodServiceImpl implements FoodService {
   @Override
   public void deleteFood(Long foodId) {
     Food food = foodRepository.findById(foodId).orElseThrow(
-        () -> new RuntimeException());
+        () -> new ResourceNotFoundException("Food not found"));
     food.setRestaurant(null);
     foodRepository.delete(food);
   }
@@ -86,7 +87,7 @@ public class FoodServiceImpl implements FoodService {
   public List<Food> getRestaurantFoods(Long restaurantId,
                                        boolean isVeg,
                                        boolean isSeasonal ,
-                                       String foodCategory) throws FoodException {
+                                       String foodCategory) {
 
     List<Food> foods = foodRepository.findByRestaurantId(restaurantId);
 
@@ -134,16 +135,16 @@ public class FoodServiceImpl implements FoodService {
   }
 
   @Override
-  public Food findFoodById(Long foodId) throws FoodException{
+  public Food findFoodById(Long foodId) {
     Optional<Food> food = foodRepository.findById(foodId);
     if(food.isPresent()) {
       return food.get();
     }
-    throw new FoodException("Food with is " + foodId + "not found");
+    throw new ResourceNotFoundException("Food with is " + foodId + "not found");
   }
 
   @Override
-  public Food updateAvailibilityStatus(Long foodId) throws FoodException {
+  public Food updateAvailibilityStatus(Long foodId)  {
     Food food = findFoodById(foodId);
     food.setAvailable(!food.isAvailable());
     foodRepository.save(food);

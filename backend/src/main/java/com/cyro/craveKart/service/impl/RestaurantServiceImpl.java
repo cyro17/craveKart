@@ -2,6 +2,8 @@ package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.RestaurantDto;
+import com.cyro.cravekart.exception.ConflictException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.*;
 import com.cyro.cravekart.repository.*;
@@ -57,11 +59,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     // restaurant partner
     RestaurantPartner partner = restaurantPartnerRepository.findById(restaurantPartnerId).orElseThrow(
-        () -> new RestaurantException("Restaurant partner not found")
+        () -> new ResourceNotFoundException("Restaurant partner not found")
     );
 
     if(partner.getRestaurant() != null) {
-      throw new RestaurantException("Partner already has a restaurant");
+      throw new ConflictException("Partner already has a restaurant");
     }
 
     Address address = mapAddress(req);
@@ -87,13 +89,13 @@ public class RestaurantServiceImpl implements RestaurantService {
   }
 
 
-  // create restaurant
+  // ====================== CREATE  restaurant================================
   @Override
-  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) throws RestaurantException {
+  public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) {
 
     // check if restaurant exists
     boolean exists = restaurantRepository.existsByNameIgnoreCase(req.getName());
-    if(exists) throw new RestaurantException("Restaurant already exists");
+    if(exists) throw new ConflictException("Restaurant already exists");
 
     Address address = modelMapper.map(req.getAddressRequest(), Address.class);
     addressRepository.save(address);
@@ -110,12 +112,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         .build();
   }
 
-  public boolean assignPartner(Long restaurantId, Long partnerId) throws RestaurantException {
-    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
-    if(restaurant.getRestaurantPartner() != null) throw   new RestaurantException("Restaurant already assigned");
+  // =================== ASSIGN PARTNER ===============================
 
-    RestaurantPartner partner = restaurantPartnerRepository.findById(partnerId).orElseThrow(
-        () -> new RestaurantException("Partner not found")
+  public boolean assignPartner(Long restaurantId, Long partnerId) {
+    Restaurant restaurant = getRestaurantOrThrow(restaurantId);
+    if(restaurant.getRestaurantPartner() != null)
+      throw new ConflictException("Restaurant already assigned");
+
+    RestaurantPartner partner = restaurantPartnerRepository.findById(partnerId)
+        .orElseThrow(
+        () -> new ResourceNotFoundException("Partner not found")
     );
 
     restaurant.setRestaurantPartner(partner);
@@ -188,10 +194,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         .toList();
   }
 
+
+  // ==================== GET RESTAURANT MENU ============================
+
   @Override
-  public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) throws RestaurantException {
+  public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) {
     Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
-        () -> new RestaurantException("Restaurant not found")
+        () -> new ResourceNotFoundException("Restaurant not found")
     );
 
     List<FoodCategory> categories = foodCategoryRepository.findByRestaurantIdOrderByIdAsc(restaurantId);
@@ -345,16 +354,16 @@ public class RestaurantServiceImpl implements RestaurantService {
 //  ============================ UTIL ===================================
 
 
-  public Restaurant getRestaurantById_util(Long id) throws RestaurantException {
+  public Restaurant getRestaurantById_util(Long id) {
     return   restaurantRepository.findById(id).orElseThrow(
-        ()->  new RestaurantException("Restaurant not found with id : " + id)
+        ()->  new ResourceNotFoundException("Restaurant not found with id : " + id)
     );
   }
 
   private Restaurant getRestaurantOrThrow(Long id) {
     return restaurantRepository.findById(id)
         .orElseThrow(() ->
-            new RestaurantException("Restaurant not found with id : " + id));
+            new ResourceNotFoundException("Restaurant not found with id : " + id));
   }
 
   private Address mapAddress(OnboardRestaurantRequest req) {

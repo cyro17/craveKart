@@ -2,6 +2,7 @@ package com.cyro.cravekart.repository;
 
 import com.cyro.cravekart.models.Restaurant;
 import com.cyro.cravekart.models.User;
+import com.cyro.cravekart.models.enums.RestaurantStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,6 +23,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, J
   Restaurant findByRestaurantPartner(Long userId);
 
   boolean existsByNameIgnoreCase(String name);
+
+  List<Restaurant> findByStatus(RestaurantStatus status );
 
 //  @Query("select r from Restaurant r " +
 //      "join r.restaurantPartner rp " +

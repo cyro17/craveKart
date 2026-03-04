@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface FoodCategoryService {
-  public CreateCategoryResponse createCategory (CreateCategoryRequest request) throws RestaurantException;
-  public List<FoodCategory> findCategoryByRestaurantId(Long restaurantId) throws RestaurantException;
-  public FoodCategory findCategoryById(Long id) throws RestaurantException;
-  List<FoodCategory> getAllFoodCategories() throws RestaurantException;
+  public CreateCategoryResponse createCategory (CreateCategoryRequest request) ;
+  public List<FoodCategory> findCategoryByRestaurantId(Long restaurantId) ;
+  public FoodCategory findCategoryById(Long id) ;
+  List<FoodCategory> getAllFoodCategories() ;
 }

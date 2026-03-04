@@ -1,8 +1,9 @@
 package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.config.security.AuthService;
-import com.cyro.cravekart.exception.RestaurantException;
+import com.cyro.cravekart.exception.BadRequestException;
+import com.cyro.cravekart.exception.ForbiddenException;
+import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.Restaurant;
 import com.cyro.cravekart.models.RestaurantPartner;
@@ -14,10 +15,8 @@ import com.cyro.cravekart.repository.RestaurantRepository;
 import com.cyro.cravekart.service.OrderService;
 import com.cyro.cravekart.service.RestaurantPartnerService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -29,21 +28,26 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   private final RestaurantRepository restaurantRepository;
   private final RestaurantPartnerRepository restaurantPartnerRepository;
 
+
+  // accept
   @Override
-  public Order acceptOrder(Long orderId) throws AccessDeniedException {
+  public Order acceptOrder(Long orderId) {
+
     Order order = getOrderForPartner(orderId);
-    if(order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
-      throw new AccessDeniedException("Order cannot be accepted");
+    if(order.getOrderStatus() != OrderStatus.PAID) {
+      throw new BadRequestException("Order must be paid before acceptance");
     }
     order.setOrderStatus(OrderStatus.CONFIRMED);
     return  orderRepository.save(order);
   }
 
+  // reject
+
   @Override
-  public Order rejectOrder(Long orderId) throws AccessDeniedException, BadRequestException {
+  public Order rejectOrder(Long orderId) {
     Order order = getOrderForPartner(orderId);
 
-    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
+    if (order.getOrderStatus() != OrderStatus.PAID) {
       throw new BadRequestException("Order cannot be rejected");
     }
 
@@ -51,28 +55,33 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
     return orderRepository.save(order);
   }
 
+  // get pending orders
+
   @Override
-  public List<Order> getPendingOrdersForRestaurants(Long restaurantId)
-      throws AccessDeniedException, BadRequestException {
+  public List<Order> getPendingOrdersForRestaurants(Long restaurantId) {
     RestaurantPartner partner = authContextService.getRestaurantPartner();
     if(!partner.getRestaurant().getId().equals(restaurantId)) {
-      throw  new AccessDeniedException("Not authorized for this order");
+      throw  new ForbiddenException("Not authorized for this order");
     }
     return orderRepository
         .findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.PAYMENT_PENDING);
   }
 
+  // get restaurant by partner id
+
   @Override
-  public RestaurantPartner getById(Long restaurantPartnerId) throws AccessDeniedException, BadRequestException {
+  public RestaurantPartner getById(Long restaurantPartnerId) {
     return restaurantPartnerRepository.findById(restaurantPartnerId).orElseThrow(
-        ()-> new AccessDeniedException("Not authorized for this restaurant")
+        ()-> new ResourceNotFoundException("restaurant partner not found with id : " + restaurantPartnerId)
     );
   }
+
+  // create Restaurant partner ( ONLY ADMINS )
 
   @Override
   public RestaurantPartner createRestaurantPartner(User user) {
     if(restaurantPartnerRepository.existsByUser(user)){
-      throw new RuntimeException("Restaurant already exists");
+      throw new BadRequestException("Restaurant already exists");
     }
     RestaurantPartner restaurantPartner = new RestaurantPartner();
     restaurantPartner.setUser(user);
@@ -95,18 +104,20 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
     return List.of();
   }
 
-  private Order getOrderForPartner(Long orderId) throws AccessDeniedException {
+  private Order getOrderForPartner(Long orderId) {
 
     RestaurantPartner partner = authContextService.getRestaurantPartner();
     Order order = orderRepository.findById(orderId).orElseThrow(
-        () -> new RestaurantException("No order found with id: " + orderId)
+        () -> new ResourceNotFoundException("No order found with id: " + orderId)
     );
 
-    Restaurant restaurant = restaurantRepository.findById(order.getRestaurantId()).orElseThrow(
-        () -> new RestaurantException("No restaurant found with id: " + order.getRestaurantId()));
+    Restaurant restaurant = restaurantRepository.findById(order.getRestaurantId())
+        .orElseThrow(() ->
+            new ResourceNotFoundException("No restaurant found with id: " +
+                order.getRestaurantId()));
 
     if (!partner.getRestaurant().getId().equals(restaurant.getId())) {
-      throw new AccessDeniedException("Order does not belong to your restaurant");
+      throw new ForbiddenException("Order does not belong to your restaurant");
     }
     return order;
   }
