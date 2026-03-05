@@ -18,12 +18,12 @@ export default function Topbar() {
     const { pathname } = useLocation();
     const page = pageTitles[pathname] || { title: "Admin", sub: "" };
     return (
-        <header>
-            <div className="bg-white border-b border-gray-100 px-6 py-3.5 flex items-center gap-4 sticky top-0 z-10">
+        <header className="flex items-center border-b border-gray-100 px-6 py-3.5 bg-white gap-4 sticky top-0 z-10">
+            <div>
                 <h1 className="text-base font-bold text-gray-900">
                     {page.title}
                 </h1>
-                <p>{page.sub}</p>
+                <p className="text-xs text-gray-400">{page.sub}</p>
             </div>
 
             {/* Search */}

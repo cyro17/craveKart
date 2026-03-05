@@ -6,7 +6,6 @@ import {
     CheckCircle,
     Clock,
     IndianRupee,
-    PieChart,
     ShoppingBag,
     Star,
     Users,
@@ -19,6 +18,7 @@ import {
     Area,
     AreaChart,
     CartesianGrid,
+    PieChart,
     Pie,
     ResponsiveContainer,
     Tooltip,
@@ -199,12 +199,16 @@ export default function AdminDashboard() {
     const users = useCountUp(14280, 1300, 300);
 
     return (
-        <div className="">
+        <div className=" p=[28px]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 ">
                 <div>
-                    <h1>Dashboard</h1>
-                    <p>Wednesday, March 4, 2026. All data is live</p>
+                    <h1 className="text-xl font-black text-gray-900 tracking-tight">
+                        Dashboard
+                    </h1>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                        Wednesday, March 4, 2026. All data is live
+                    </p>
                 </div>
 
                 <div>
@@ -405,7 +409,7 @@ export default function AdminDashboard() {
                         This month
                     </p>
 
-                    <ResponsiveContainer width="100%" height={148}>
+                    <ResponsiveContainer width="100%" height={180}>
                         <PieChart>
                             <Pie
                                 data={categoryData}
@@ -415,6 +419,7 @@ export default function AdminDashboard() {
                                 paddingAngle={3}
                                 dataKey="value"
                                 strokeWidth={0}
+                                outerRadius={66}
                             >
                                 {categoryData.map((e, i) => (
                                     <Cell key={i} fill={e.color} />
@@ -439,11 +444,11 @@ export default function AdminDashboard() {
                             >
                                 <span className="flex items-center gap-2 text-gray-600">
                                     <span
-                                        className="w-2 h-2 rounded-full flex-shrink-0"
+                                        className="inline-block w-2 h-2 rounded-full flex-shrink-0"
                                         style={{ background: c.color }}
-                                    >
-                                        {c.name}
-                                    </span>
+                                    />
+
+                                    {c.name}
                                 </span>
                                 <span className="font-bold text-gray-900">
                                     {c.value}
@@ -453,6 +458,7 @@ export default function AdminDashboard() {
                     </div>
                 </div>
             </div>
+
             {/* Bottom Row : Recent Orders + Top Restaurants + pending */}
 
             <div className="grid grid-cols-3 gap-4">
@@ -469,8 +475,8 @@ export default function AdminDashboard() {
 
                     <div>
                         {recentOrders.map((o) => (
-                            <div>
-                                <div>
+                            <div className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-none">
+                                <div className="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center flex-shrink-0">
                                     <ShoppingBag
                                         size={12}
                                         className="text-rose-500"
@@ -485,7 +491,7 @@ export default function AdminDashboard() {
                                     </div>
                                 </div>
                                 <div className="flex-shrink-0 text-right">
-                                    <div className="text-xs font-bold text-gray-900 ">
+                                    <div className="text-xs font-semibold text-gray-900 truncate ">
                                         ₹{o.amount}
                                     </div>
                                     <StatusBadge status={o.status} />
@@ -496,7 +502,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Top Restaurants */}
-                <div className="col-span-1 bg-white rounded-2xl border-gray-100 shadow-sm p-5">
+                <div className="col-span-1 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-sm font-bold text-gray-900">
                             Top Restaurants
@@ -525,9 +531,9 @@ export default function AdminDashboard() {
                                     {i + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-semibold text-gray-900 truncate">
+                                    <span className="text-xs font-semibold text-gray-900 truncate">
                                         {r.name}
-                                    </div>
+                                    </span>
                                     <div className="text-[10px] text-gray-400 ">
                                         {r.city} · {r.orders}
                                     </div>
