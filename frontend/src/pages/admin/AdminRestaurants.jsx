@@ -245,7 +245,7 @@ export default function AdminRestaurants() {
             </div>
 
             <div>
-                <table>
+                <table className="w-full">
                     <thead>
                         <tr>
                             {[
@@ -259,7 +259,7 @@ export default function AdminRestaurants() {
                                 "Status",
                                 "Actions",
                             ].map((h) => (
-                                <th className="text-left text-xs font-bold text-gray-500 px-5 py-3.5">
+                                <th className="text-left text-xs items-center font-bold text-gray-500 px-5 py-3.5">
                                     {h}
                                 </th>
                             ))}
@@ -388,14 +388,14 @@ export default function AdminRestaurants() {
                 </table>
 
                 {/* Table Footer */}
-                <div>
-                    <span>
+                <div className="flex justify-between">
+                    <span className="text-xs">
                         Showing {filtered.length} of {restaurants.length}{" "}
                         restaurants
                     </span>
-                    <div>
-                        {[1].map((p) => (
-                            <button>{p}</button>
+                    <div className="text-sm">
+                        {[1, 2, 3].map((p) => (
+                            <button className="">{p}</button>
                         ))}
                     </div>
                 </div>
