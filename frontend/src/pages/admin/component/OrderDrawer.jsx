@@ -1,5 +1,6 @@
 import React from "react";
 import StatusBadge from "./StatusBadge";
+import { X } from "lucide-react";
 import { Mail, MapPin, Phone, RefreshCw, X } from "lucide-react";
 
 export default function OrderDrawer({ order: o, onClose }) {
@@ -10,6 +11,17 @@ export default function OrderDrawer({ order: o, onClose }) {
 
     return (
         <>
+            <div onClick={onclose} />
+            <div>
+                {/* Header */}
+                <div>
+                    <div>
+                        <div>{o.id}</div>
+                        <div>
+                            {o.date} . {o.time}
+                        </div>
+                    </div>
+                    <div>
             <div
                 className="fixed inset-0 bg-black/20 z-40 blur-md"
                 onClick={onClose}
