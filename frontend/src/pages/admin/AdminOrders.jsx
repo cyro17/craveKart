@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import OrderStats from "./component/OrderStats";
 import { orders } from "../../seeds/admin";
-import { Download, Eye, RefreshCcw, RefreshCw, Search, X } from "lucide-react";
+import { Download, Eye, RefreshCw, Search, X } from "lucide-react";
 import OrderDrawer from "./component/OrderDrawer";
 
 const statusConfig = {
