@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import OrderStats from "./component/OrderStats";
 import { orders } from "../../seeds/admin";
+import { Download, Eye, RefreshCw, Search, X } from "lucide-react";
 
 import {
     Download,
@@ -14,7 +15,6 @@ import {
 import StatusBadge from "./component/StatusBadge";
 import OrderDrawer from "./component/OrderDrawer";
 
-=======
 import { Download, Eye, RefreshCcw, RefreshCw, Search, X } from "lucide-react";
 import OrderDrawer from "./component/OrderDrawer";
 
@@ -50,7 +50,6 @@ const STATUS_FILTERS = [
     "cancelled",
 ];
 
-=======
 
 function StatusBadge({ status }) {
     const cfg = statusConfig[status] || {
