@@ -1,0 +1,185 @@
+package com.cyro.cravekart.controllers;
+
+
+import com.cyro.cravekart.config.security.AuthContextService;
+import com.cyro.cravekart.models.enums.USER_ROLE;
+import com.cyro.cravekart.request.AddCartItemRequest;
+import com.cyro.cravekart.request.AddressRequest;
+import com.cyro.cravekart.request.PlaceOrderRequest;
+import com.cyro.cravekart.response.*;
+import com.cyro.cravekart.service.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/customer")
+@RequiredArgsConstructor
+@Slf4j
+public class CustomerController {
+  public final RestaurantService restaurantService;
+  private final CustomerService customerService;
+  private final CartService cartService;
+  private final CartItemService cartItemService;
+  private final OrderService orderService;
+  private final AuthContextService  authService;
+  private final FoodCategoryService foodCategoryService;
+
+
+  @GetMapping("/check")
+  public ResponseEntity<String> healthCheck() {
+
+    for (USER_ROLE role : authService.getCustomer().getUser().getRoles()) {
+      System.out.println(role);
+    }
+    return  new ResponseEntity<>("ok",  HttpStatus.OK);
+  }
+
+  // Restaurants
+  @GetMapping("/restaurants")
+  public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
+      @RequestParam(defaultValue = "1") int pageNo,
+      @RequestParam(defaultValue = "6", required = false) int pageSize
+  ) {
+    return ResponseEntity.ok(restaurantService.getAllRestaurant(pageNo, pageSize));
+  }
+
+  @GetMapping("/restaurants/filter")
+  public ResponseEntity<List<RestaurantResponse>> getRestaurantsByFilters(
+    @RequestParam(required = false) String city,
+    @RequestParam(required = false) String cuisine,
+    @RequestParam(required = false) Double rating,
+    @RequestParam(required = false, defaultValue = "name_asc") String sort,
+    @RequestParam(required = false, defaultValue = "0") int page,
+    @RequestParam(required = false, defaultValue = "10") int size
+  ){
+
+    List<RestaurantResponse> restaurants =
+        restaurantService.getRestaurantsByFilter(city, cuisine, rating, sort, page, size);
+    return ResponseEntity.ok(restaurants);
+  }
+
+  @GetMapping("restaurants/{id}")
+  public ResponseEntity<RestaurantResponse> getRestaurantById(
+      @PathVariable Long id
+  ){
+    RestaurantResponse response = restaurantService.getRestaurantById(id);
+    return ResponseEntity.ok(response);
+  }
+
+//  FOOD API
+
+  @GetMapping("restaurants/{id}/menu")
+  public ResponseEntity<RestaurantMenuResponse> getMenu(@PathVariable Long id){
+    return new ResponseEntity<>(restaurantService.getRestaurantMenu(id), HttpStatus.OK);
+  }
+
+  //cart
+  @GetMapping("/cart")
+  public ResponseEntity<CartResponse> getCart(){
+    CartResponse cart = cartService.getCart();
+    return ResponseEntity.ok(cart);
+  }
+
+  @PostMapping("/cart/add/{foodId}")
+  public ResponseEntity<CartResponse> addFoodToCart(@PathVariable Long foodId){
+    AddCartItemRequest cartItemRequest = AddCartItemRequest.builder().foodId(foodId).quantity(1).build();
+    return ResponseEntity.ok(cartService.addItem(cartItemRequest));
+
+  }
+
+  @PutMapping("/cart/cartItem/inc/{cartItemId}")
+  public ResponseEntity<CartResponse> incrementCartItemQuantity(
+      @PathVariable Long cartItemId){
+
+
+    CartResponse response = cartItemService.incrementCartItemQuantity(cartItemId);
+    return  ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/cart/cartItem/dec/{cartItemId}")
+  public ResponseEntity<CartResponse> decrementCartItemQuantity(@PathVariable Long cartItemId){
+
+    CartResponse response = cartItemService.decrementCartItemQuantity(cartItemId);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+
+  }
+
+  @DeleteMapping("/cart/cartItem/{id}")
+  public ResponseEntity<CartResponse> removeCartItem(@PathVariable Long id){
+
+    CartResponse cartResponse = cartItemService.removeCartItemFromCart(id);
+    return  ResponseEntity.ok(cartResponse);
+
+  }
+
+
+  @DeleteMapping("/cart")
+  public ResponseEntity<String> deleteCart(){
+    cartService.clearCart();
+     return  ResponseEntity.ok("cart cleared");
+  }
+
+  // orders
+  @PostMapping("/order/place")
+  public ResponseEntity<OrderResponse> createOrder(
+      @RequestBody PlaceOrderRequest request
+      ){
+    OrderResponse response = orderService.placeOrder(request);
+    return new ResponseEntity<>(response, HttpStatus.CREATED);
+  }
+
+//  get all orders
+  @GetMapping("/order")
+  public ResponseEntity<List<OrderResponse>> getOrder(){
+    Long customerId = authService.getCustomer().getId();
+    List<OrderResponse> userOrders =
+        orderService.getCustomerOrders(customerId);
+    return  new ResponseEntity<>(userOrders, HttpStatus.OK);
+  }
+
+//  get order by id
+  @GetMapping("/order/{orderId}")
+  public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long orderId){
+    OrderResponse response = orderService.getOrderById(orderId);
+    return  new  ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping("/order/cancel/{orderId}")
+  public ResponseEntity<?> cancelOrder(@PathVariable Long orderId){
+    orderService.cancelOrder(orderId);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+
+  }
+
+  // address
+
+  @GetMapping("/address")
+  public ResponseEntity<List<AddressResponse>> getUserAddress(){
+    List<AddressResponse> userAddress = customerService.getUserAddress();
+    return  new ResponseEntity<>(userAddress, HttpStatus.OK);
+  }
+
+
+  @PostMapping("/address")
+  public ResponseEntity<AddressResponse> saveAddress(@RequestBody AddressRequest request){
+    AddressResponse address = customerService.saveAddress(request);
+    return new ResponseEntity<>(address, HttpStatus.CREATED);
+  }
+
+
+
+  @GetMapping("/test-auth")
+  public ResponseEntity<?> testAuth(Authentication authentication) {
+    System.out.println(authentication.getAuthorities());
+    return ResponseEntity.ok(authentication.getAuthorities());
+  }
+
+
+}
