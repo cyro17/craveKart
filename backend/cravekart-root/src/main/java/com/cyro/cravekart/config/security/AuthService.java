@@ -1,5 +1,9 @@
 package com.cyro.cravekart.config.security;
 
+import com.cravekart.core.events.notification.BaseNotificationEvent;
+import com.cravekart.core.events.notification.UserSignupEvent;
+import com.cyro.cravekart.publishers.NotificationSignupEventPublisher;
+
 import com.cyro.cravekart.exception.ConflictException;
 import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.exception.UnauthorizedException;
@@ -13,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ public class AuthService {
   private final JwtUtil jwtUtil;
   private final ModelMapper modelMapper;
   private final AuthContextService authContextService;
+  private final NotificationSignupEventPublisher notificationSignupEventPublisher;
 
   public User register(SignupRequest request) {
 
@@ -80,6 +84,23 @@ public class AuthService {
         customer.setUser(user);
         customerRepository.save(customer);
         break;
+    }
+
+    try {
+      UserSignupEvent event = UserSignupEvent.builder()
+              .userId(savedUser.getId().toString())
+              .username(savedUser.getUsername())
+              .email(savedUser.getEmail())
+              .firstName(savedUser.getFirstName())
+              .lastName(savedUser.getLastName())
+              .role(savedUser.getRoles().toString())
+              .channel(BaseNotificationEvent.NotificationChannel.EMAIL)
+              .build();
+      notificationSignupEventPublisher.publishUserSignup(event);
+      log.info("User signup event published for : {}", savedUser.getUsername());
+
+    } catch (Exception ex) {
+      log.error("Failed to publish UserSignupEvent for {} : {}", savedUser.getUsername(), ex.getMessage() );
     }
 
     return  savedUser;

@@ -1,5 +1,8 @@
-package com.cyro.cravekart.events.notification;
+package com.cyro.cravekart.publishers;
 
+
+import com.cravekart.core.events.notification.BaseNotificationEvent;
+import com.cravekart.core.events.notification.UserSignupEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

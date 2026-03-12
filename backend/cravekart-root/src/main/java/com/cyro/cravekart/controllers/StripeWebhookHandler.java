@@ -1,8 +1,8 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.kafka.KafkaTopicConfiguration;
-import com.cyro.cravekart.events.PaymentFailedEvent;
-import com.cyro.cravekart.events.PaymentSuccessEvent;
+import com.cyro.cravekart.events.payment.PaymentFailedEvent;
+import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
 import com.cyro.cravekart.models.Payment;
 import com.cyro.cravekart.models.enums.PaymentStatus;
 import com.cyro.cravekart.repository.PaymentRepository;
