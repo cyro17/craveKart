@@ -1,7 +1,7 @@
 package com.cyro.cravekart.listener;
 
-import com.cyro.cravekart.events.PaymentFailedEvent;
-import com.cyro.cravekart.events.PaymentSuccessEvent;
+import com.cyro.cravekart.events.payment.PaymentFailedEvent;
+import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.enums.OrderStatus;
 import com.cyro.cravekart.repository.OrderRepository;

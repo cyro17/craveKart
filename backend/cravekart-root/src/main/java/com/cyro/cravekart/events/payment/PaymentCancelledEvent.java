@@ -1,4 +1,4 @@
-package com.cyro.cravekart.events;
+package com.cyro.cravekart.events.payment;
 
 import lombok.Builder;
 import lombok.Data;

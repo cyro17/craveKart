@@ -1,6 +1,6 @@
 package com.cyro.cravekart.listener;
 
-import com.cyro.cravekart.events.PaymentInitiatedEvent;
+import com.cyro.cravekart.events.payment.PaymentInitiatedEvent;
 import com.cyro.cravekart.service.SseEmitterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

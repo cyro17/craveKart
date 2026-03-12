@@ -2,7 +2,7 @@ package com.cyro.cravekart.service.impl;
 
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.events.OrderCreatedEvent;
+import com.cyro.cravekart.events.order.OrderCreatedEvent;
 import com.cyro.cravekart.exception.BadRequestException;
 import com.cyro.cravekart.exception.ForbiddenException;
 import com.cyro.cravekart.exception.ResourceNotFoundException;

@@ -1,4 +1,4 @@
-package com.cyro.cravekart.events;
+package com.cyro.cravekart.events.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
