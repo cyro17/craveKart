@@ -3,6 +3,7 @@ package com.cravekart.notification_service.handler;
 
 import com.cravekart.core.events.notification.UserSignupEvent;
 import com.cravekart.notification_service.dto.NotificationEvent;
+import com.cravekart.notification_service.dto.NotificationResult;
 import com.cravekart.notification_service.service.EmailNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +46,14 @@ public class UserSignupConsumer {
 
                     .build();
 
-            emailNotificationService.send(notificationEvent);
-            log.info("Welcome email sent to : {}", event.getEmail());
+            NotificationResult result = emailNotificationService.send(notificationEvent);
+            if(result.isSuccess()){
+                log.info("Welcome email sent | to: {} | messageId: {}",
+                        event.getEmail(), result.getMessageId());
+            } else {
+                log.error("Failed to send welcome email | to: {} | reason: {}",
+                        event.getEmail(), result.getErrorMessage());
+            }
 
 
         } catch (Exception e) {
