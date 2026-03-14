@@ -30,19 +30,13 @@ public class OrderResponse {
 
   public static OrderResponse from(Order order) {
 
-    String paymentStatus;
-    switch (order.getOrderStatus()){
-      case PAYMENT_PENDING ->  paymentStatus = "PENDING";
-      case PAID ->  paymentStatus = "PAID";
-      case CANCELLED ->  paymentStatus = "FAILED";
-      default ->  paymentStatus = "NOT_APPLICABLE";
-    }
 
-    PaymentSummary paymentSummary = PaymentSummary.builder()
-        .paymentId(null)
-        .paymentMethod(null)
-        .paymentStatus(paymentStatus)
-        .build();
+
+//    PaymentSummary paymentSummary = PaymentSummary.builder()
+//        .paymentId(payment.getPaymentId())
+//        .paymentMethod(null)
+////        .paymentStatus(paymentStatus)
+//        .build();
 
 
     return OrderResponse.builder()
@@ -86,7 +80,7 @@ public class OrderResponse {
         )
 
         .delivery(order.getDeliveryAddressLine())
-        .payment(paymentSummary)
+//        .payment(paymentSummary)
         .createdAt(order.getCreatedAt())
         .estimatedDeliveryTime(
             order.getCreatedAt() != null ?

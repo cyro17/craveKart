@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class OrderCofirmedEventPublisher {
+public class OrderEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void publish(OrderConfirmedEvent event){
+    public void publishOrderPaid(OrderConfirmedEvent event){
         String key = event.getOrderId().toString();
 
-        kafkaTemplate.send(KafkaTopicConfiguration.ORDER_CONFIRMED,
+        kafkaTemplate.send(KafkaTopicConfiguration.NOTIF_ORDER_PAID,
                 key,
                 event)
                 .whenComplete((result, ex)->{
@@ -26,7 +26,7 @@ public class OrderCofirmedEventPublisher {
                         log.error("Failed to publish order confirmed event | orderId = {}, error = {} ",
                                 event.getOrderId(), ex.getMessage());
                     }else {
-                        log.info("Published Orderconfirmed OrderConfirmedEvent | orderId= {} | offset = {} ",
+                        log.info("Published notif.order.paid for orderId= {} | offset = {} ",
                                 event.getOrderId(),
                                 result.getRecordMetadata().offset());
                     }

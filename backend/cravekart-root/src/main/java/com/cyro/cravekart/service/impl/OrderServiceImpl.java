@@ -124,6 +124,7 @@ public class OrderServiceImpl implements OrderService {
     Order savedOrder = orderRepository.save(order);
     log.info("Order saved, id = {}", savedOrder.getId());
 
+    /* Publish order created event */
     publishOrderCreatedEvent(savedOrder);
 
     // clear cart
@@ -135,7 +136,7 @@ public class OrderServiceImpl implements OrderService {
   // restaurant partner
 
   @Override
-  public Order confirmOrder(Long orderId) {
+  public void markAsConfirmed(Long orderId) {
     RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
     Order order = orderRepository.findById(orderId).orElseThrow(
         () -> new ResourceNotFoundException("Order does not exist")
@@ -144,14 +145,17 @@ public class OrderServiceImpl implements OrderService {
       throw new ForbiddenException("Order does not belong to your restaurant");
     }
 
-    if(order.getOrderStatus() != OrderStatus.PAID){
+    if(order.getOrderStatus() != OrderStatus.PAYMENT_PENDING){
       throw new BadRequestException("Pending payment...");
     }
 
     order.setOrderStatus(OrderStatus.CONFIRMED);
     order.setAcceptedAt(LocalDateTime.now());
 
-    return orderRepository.save(order);
+
+    orderRepository.save(order);
+
+    log.info("Order {} marked as CONFIRMED", orderId);
   }
 
   @Override
@@ -242,38 +246,38 @@ public class OrderServiceImpl implements OrderService {
   public List<Order> getPendingOrdersForRestaurant() {
     RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
     Long restaurantId = restaurantPartner.getRestaurant().getId();
-    return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.PAID);
+    return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.CONFIRMED);
 
   }
 
   // ==================== Payment Callbacks ==================
 
-  @Override
-  public void markAsPaid(Long orderId) {
-      Order order = orderRepository.findById(orderId)
-          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-      if(order.getOrderStatus() == OrderStatus.PAID){
-        log.info("Order {} is already PAID, skipping duplicate event.", orderId);
-        return;
-
-      }
-
-      if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
-        log.warn("Order {} cannot be marked as PAID from status {}",
-            orderId, order.getOrderStatus());
-        return;
-      }
-
-      order.setOrderStatus(OrderStatus.PAID);
-      order.setPaidAt(LocalDateTime.now());
-      log.info("Order {} marked as PAID", orderId);
-
-      orderRepository.save(order);
-      log.info("Order {} marked as PAID", orderId);
-
-
-    }
+//  @Override
+//  public void markAsPaid(Long orderId) {
+//      Order order = orderRepository.findById(orderId)
+//          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+//
+//      if(order.getOrderStatus() == OrderStatus.PAID){
+//        log.info("Order {} is already PAID, skipping duplicate event.", orderId);
+//        return;
+//
+//      }
+//
+//      if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
+//        log.warn("Order {} cannot be marked as PAID from status {}",
+//            orderId, order.getOrderStatus());
+//        return;
+//      }
+//
+//      order.setOrderStatus(OrderStatus.PAID);
+//      order.setPaidAt(LocalDateTime.now());
+//      log.info("Order {} marked as PAID", orderId);
+//
+//      orderRepository.save(order);
+//      log.info("Order {} marked as PAID", orderId);
+//
+//
+//    }
 
   @Override
   public void markAsFailed(Long orderId) {
@@ -385,7 +389,7 @@ public class OrderServiceImpl implements OrderService {
     String paymentStatus;
     switch (order.getOrderStatus()){
       case PAYMENT_PENDING ->  paymentStatus = "PENDING";
-      case PAID ->  paymentStatus = "PAID";
+      case CONFIRMED ->  paymentStatus = "PAID";
       case CANCELLED ->  paymentStatus = "FAILED";
       default ->  paymentStatus = "NOT_APPLICABLE";
     }

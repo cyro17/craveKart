@@ -14,7 +14,8 @@ import java.util.List;
 
 public interface OrderService {
   OrderResponse placeOrder(PlaceOrderRequest request);
-  Order confirmOrder(Long orderId) ; // restaurant
+   // restaurant
+
   Order updatePreparationStatus(Long orderId, OrderStatus orderStatus);
   Order pickupOrder(Long orderId) ; // delivery
   Order deliveryOrder(Long orderId);
@@ -26,6 +27,8 @@ public interface OrderService {
   List<Order> getOrdersOfRestaurant(Long restaurantId, String orderStatus);
   public List<Order> getPendingOrdersForRestaurant();
 
+
+  void markAsConfirmed(Long orderId) ;
   void markAsPaid(Long orderId);
   void markAsFailed(Long orderId);
 }

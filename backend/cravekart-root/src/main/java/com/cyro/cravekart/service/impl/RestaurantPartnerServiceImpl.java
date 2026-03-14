@@ -9,7 +9,7 @@ import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.RestaurantPartner;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.models.enums.OrderStatus;
-import com.cyro.cravekart.publishers.OrderCofirmedEventPublisher;
+import com.cyro.cravekart.publishers.OrderEventPublisher;
 import com.cyro.cravekart.repository.CustomerRepository;
 import com.cyro.cravekart.repository.OrderRepository;
 import com.cyro.cravekart.repository.RestaurantPartnerRepository;
@@ -42,11 +42,11 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
 
 
   private static final Set<OrderStatus> RESTAURANT_ACTIONABLE = Set.of(
-          OrderStatus.PAID,
+          OrderStatus.PAYMENT_PENDING,
           OrderStatus.CONFIRMED,
           OrderStatus.PREPARING
   );
-  private final OrderCofirmedEventPublisher orderCofirmedEventPublisher;
+  private final OrderEventPublisher orderCofirmedEventPublisher;
 
   // Order queue
 
@@ -57,7 +57,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
 
     Long restaurantId = partner.getRestaurant().getId();
 
-    return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.PAID)
+    return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.CONFIRMED)
             .stream()
             .map(this::toSummary)
             .toList();
@@ -106,7 +106,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   public RestaurantOrderSummary acceptOrder(Long orderId) {
 
     Order order = getOrderForPartner(orderId);
-    if(order.getOrderStatus() != OrderStatus.PAID){
+    if(order.getOrderStatus() != OrderStatus.CONFIRMED){
       throw new BadRequestException(
               "Order can only be accepted when status is PAID, current: " + order.getOrderStatus());
     }
@@ -210,14 +210,14 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   public void rejectOrder(Long orderId, String reason) {
     Order order = getOrderForPartner(orderId);
 
-    if (order.getOrderStatus() != OrderStatus.PAID) {
+    if (order.getOrderStatus() != OrderStatus.CONFIRMED) {
       throw new BadRequestException(
               "Order can only be rejected when status is PAID. Current: "
                       + order.getOrderStatus()
       );
     }
 
-    order.setOrderStatus(OrderStatus.PAYMENT_FAILED);
+    order.setOrderStatus(OrderStatus.CANCELLED);
     order.setCancelledAt(LocalDateTime.now());
     orderRepository.save(order);
 

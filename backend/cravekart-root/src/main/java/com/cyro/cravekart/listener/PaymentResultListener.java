@@ -25,10 +25,10 @@ public class PaymentResultListener {
   )
   public void handlePaymentSucceeded(PaymentSuccessEvent event){
     log.info("Payment succeeded for orderId: {}", event.getOrderId());
-    orderService.markAsPaid(event.getOrderId());
-    sseEmitterService.pushOrderConfirmed(
-        event.getOrderId(), event.getCustomerId()
-    );
+    orderService.markAsConfirmed(event.getOrderId());
+//    sseEmitterService.pushOrderConfirmed(
+//        event.getOrderId(), event.getCustomerId()
+//    );
   }
 
   @KafkaListener(

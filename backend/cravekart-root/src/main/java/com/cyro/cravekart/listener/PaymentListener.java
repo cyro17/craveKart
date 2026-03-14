@@ -5,7 +5,6 @@ import com.cyro.cravekart.events.payment.PaymentFailedEvent;
 import com.cyro.cravekart.events.payment.PaymentInitiatedEvent;
 import com.cyro.cravekart.models.Payment;
 import com.cyro.cravekart.models.enums.PaymentProvider;
-import com.cyro.cravekart.models.enums.PaymentStatus;
 import com.cyro.cravekart.repository.PaymentRepository;
 import com.cyro.cravekart.response.PaymentIntentResult;
 import com.cyro.cravekart.service.StripeService;
@@ -53,7 +52,6 @@ public class PaymentListener {
           .provider(PaymentProvider.STRIPE)
           .stripePaymentIntentId(paymentIntentResult.getPaymentIntentId())
           .clientSecret(paymentIntentResult.getClientSecret())
-          .status(PaymentStatus.PENDING)
           .retryCount(0)
           .build();
 
@@ -69,11 +67,11 @@ public class PaymentListener {
 
 
     } catch (Exception ex){
-      log.info("Failed to create payment for orderId = {}", event.getOrderId());
+      log.error("Failed to create payment for orderId = {}", ex.getMessage());
+
       publishPaymentFailed(event.getOrderId(),
           event.getCustomerId(),
           "Stripe creation failed");
-      throw ex;
     }
   }
 
