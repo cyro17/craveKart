@@ -12,8 +12,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-  List<Order>  findByCustomerId(Long customerId);
+  List<Order> findByCustomerId(Long customerId);
   List<Order> findByRestaurantId(Long restaurantId);
+  void deleteByCustomerId(Long customerId);
 
   List<Order> findByRestaurantIdAndOrderStatus(
       Long restaurantId, OrderStatus orderStatus);
@@ -22,6 +23,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
       Long deliveryPartnerId, OrderStatus orderStatus
   );
 
-  List<Order> findByCustomerIdOrderByCreatedAtDesc(Long customerId);
 
+
+  List<Order> findByCustomerIdOrderByCreatedAtDesc(Long customerId);
+  List<Order> findByRestaurantIdAndOrderStatusIn(Long restaurantId, List<OrderStatus> statuses);
+
+  List<Order> findByRestaurantIdOrderByCreatedAtDesc(Long id);
+
+  List<Order> findByDeliveryPartnerIdAndOrderStatusIn(Long deliveryPartnerId, List<OrderStatus> statuses);
 }

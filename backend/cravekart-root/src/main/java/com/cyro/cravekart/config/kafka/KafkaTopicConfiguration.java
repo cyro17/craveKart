@@ -19,6 +19,9 @@ public class KafkaTopicConfiguration {
   public static final String PAYMENT_FAILED = "payment-failed";
   public static final String PAYMENT_CANCELLED = "payment-cancelled";
   public static final String NOTIF_SIGNUP = "notif-signup";
+  public static final String ORDER_CONFIRMED = "order-confirmed";
+
+
 
   @Bean
   public NewTopic orderCreatedTopic() {
@@ -65,5 +68,12 @@ public class KafkaTopicConfiguration {
     return TopicBuilder.name(NOTIF_SIGNUP)
             .partitions(3)
             .replicas(3).build();
+  }
+
+  @Bean
+  public NewTopic orderConfirmedTopic() {
+    return TopicBuilder.name(ORDER_CONFIRMED)
+            .partitions(1)
+            .replicas(1).build();
   }
 }

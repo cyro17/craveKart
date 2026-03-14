@@ -1,6 +1,7 @@
 package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.config.security.AuthContextService;
+import com.cyro.cravekart.models.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -84,14 +85,43 @@ public class SseEmitterServiceImpl implements SseEmitterService {
 
   @Override
   public void pushOrderConfirmed(Long orderId, Long customerId) {
+    this.pushEvent(customerId, "order-confirmed", Map.of(
+            "status", "CONFIRMED",
+            "message", "Your order has been confirmed !"
+
+    ));
 
   }
 
   @Override
   public void pushPaymentFailed(Long orderId, Long customerId, String reason) {
+    this.pushEvent(customerId, "payment-failed", Map.of(
+            "status", "PAYMENT_FAILED",
+            "message", reason
+    ));
+  }
 
+  @Override
+  public void pushOrderStatusUpdate(Long customerId, Long orderId, OrderStatus orderStatus, String message) {
+    this.pushEvent(customerId, "order-status", Map.of(
+            "orderId", orderId,
+            "status", orderStatus.name(),
+            "message", message
+    ));
   }
 
 //  ==================== helper ===============================
-  
+    private void pushEvent(Long customerId, String eventName, Object data){
+      SseEmitter emitter = emitters.get(customerId);
+      if(emitter == null){
+        log.warn("SSE emitter not found for orderId = {}", customerId);
+        return;
+      }
+      try {
+        emitter.send(SseEmitter.event().name(eventName).data(data));
+      } catch (IOException e) {
+          log.error("Failed to push SSE event for orderId = {}", customerId, e);
+          emitters.remove(customerId);
+      }
+    }
 }
