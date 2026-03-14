@@ -15,24 +15,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @RequiredArgsConstructor
 public class SseEmitterServiceImpl implements SseEmitterService {
+
   private final Map<Long, SseEmitter> emitters =
       new ConcurrentHashMap<>();
+
+  // ── Register ──────────────────────────────────────────────
+
 
   @Override
   public SseEmitter register(Long customerId) {
 
     SseEmitter existingEmitter = emitters.get(customerId);
+
     // close stale emitter if exist
     if(existingEmitter != null){
       existingEmitter.complete();
     }
-
 
     SseEmitter emitter = new SseEmitter(120_000L);
 
     emitter.onCompletion(
         ()-> emitters.remove(customerId)
     );
+
     emitter.onTimeout(()->{
       log.warn("SSE timeout for orderId = {}", customerId);
       emitters.remove(customerId);
@@ -48,6 +53,8 @@ public class SseEmitterServiceImpl implements SseEmitterService {
 
     return  emitter;
   }
+
+  // send clientSecret to frontend ─────────────────
 
   @Override
   public void pushClientSecret(Long orderId,
@@ -83,15 +90,45 @@ public class SseEmitterServiceImpl implements SseEmitterService {
     }
   }
 
-  @Override
-  public void pushOrderConfirmed(Long orderId, Long customerId) {
-    this.pushEvent(customerId, "order-confirmed", Map.of(
-            "status", "CONFIRMED",
-            "message", "Your order has been confirmed !"
+  // ── Step 2: Stripe confirmed — payment received ───────────
 
+  @Override
+  public void pushPaymentReceived(Long customerId, Long orderId){
+    this.pushEvent(customerId, "payment-received", Map.of(
+            "customerID",  customerId,
+            "orderId",   orderId,
+            "status", OrderStatus.CONFIRMED.name(),
+            "message", "Payment Received! waiting for restaurant to accept"
+    ));
+  }
+
+  @Override
+  public void pushOrderStatusUpdate(Long customerId, Long orderId,
+                                    OrderStatus orderStatus, String message) {
+    this.pushEvent(customerId, "order-status", Map.of(
+            "customerId",   customerId,
+            "orderId", orderId,
+            "status", orderStatus.name(),
+            "message", message
     ));
 
+    if(orderStatus == OrderStatus.DELIVERED ||
+    orderStatus == OrderStatus.CANCELLED ||
+            orderStatus == OrderStatus.PAYMENT_FAILED){
+      SseEmitter emitter = emitters.remove(customerId);
+      if(emitter != null) emitter.complete();
+    }
   }
+
+//  @Override
+//  public void pushOrderConfirmed(Long orderId, Long customerId) {
+//    this.pushEvent(customerId, "order-confirmed", Map.of(
+//            "status", "CONFIRMED",
+//            "message", "Your order has been confirmed !"
+//
+//    ));
+//  }
+//
 
   @Override
   public void pushPaymentFailed(Long orderId, Long customerId, String reason) {
@@ -101,14 +138,7 @@ public class SseEmitterServiceImpl implements SseEmitterService {
     ));
   }
 
-  @Override
-  public void pushOrderStatusUpdate(Long customerId, Long orderId, OrderStatus orderStatus, String message) {
-    this.pushEvent(customerId, "order-status", Map.of(
-            "orderId", orderId,
-            "status", orderStatus.name(),
-            "message", message
-    ));
-  }
+
 
 //  ==================== helper ===============================
     private void pushEvent(Long customerId, String eventName, Object data){

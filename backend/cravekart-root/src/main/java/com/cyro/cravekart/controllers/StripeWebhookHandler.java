@@ -4,7 +4,6 @@ import com.cyro.cravekart.config.kafka.KafkaTopicConfiguration;
 import com.cyro.cravekart.events.payment.PaymentFailedEvent;
 import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
 import com.cyro.cravekart.models.Payment;
-import com.cyro.cravekart.models.enums.PaymentStatus;
 import com.cyro.cravekart.repository.PaymentRepository;
 import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.model.Event;
@@ -39,12 +38,6 @@ public class StripeWebhookHandler {
       @RequestBody String payload,
       @RequestHeader("Stripe-Signature") String sigHeader
   ){
-    log.info("webhook-secret: {}", webhookSecret);
-    log.info("🔔 Webhook hit. Payload length={}", payload.length());
-    log.info("🔔 Webhook hit. Payload={}", payload);
-
-    log.info("🔔 Event type will be parsed...");
-
 
     // verify payment event
     
@@ -105,13 +98,9 @@ public class StripeWebhookHandler {
       log.info("Payment intent received for event {}", eventId, intent);
 
       paymentRepository.findByStripePaymentIntentId(intent.getId())
-          .ifPresentOrElse((payment) -> {
-            if(payment.getStatus() == PaymentStatus.SUCCESS){
-              log.warn("Payment {} already done, skipping ", payment.getId());
-              return;
-            }
+          .ifPresentOrElse(
+                  payment -> {
 
-            payment.setStatus(PaymentStatus.SUCCESS);
             payment.setPaidAt(LocalDateTime.now());
             payment.setStripeEventId(eventId);
             payment.setClientSecret(null);
@@ -122,38 +111,71 @@ public class StripeWebhookHandler {
 
             publishPaymentSucceeded(payment);
 
-          }, ()-> log.error("Payment not found for intentid = {}", intent.getId()));
+          }, ()-> log.error("Payment not found for intent id  = {}", intent.getId()));
+    }
+
+    private void handlePaymentFailed(PaymentIntent intent, String eventId) {
+        paymentRepository.findByStripePaymentIntentId(intent.getId())
+                .ifPresentOrElse(
+                        payment-> {
+                          payment.setFailedAt(LocalDateTime.now());
+                          payment.setStripeEventId(eventId);
+                          payment.setFailureReason(
+                                  intent.getLastPaymentError() != null ?
+                                          intent.getLastPaymentError().getMessage() :
+                                          "Payment declined"
+                          );
+                          payment.setFailureCode(
+                                  intent.getLastPaymentError() != null ?
+                                          intent.getLastPaymentError().getCode()
+                                          : null
+                          );
+
+                          paymentRepository.save(payment);
+
+                          log.info("Published payment-failed for order id = {}", payment.getOrderId());
+
+                          PaymentFailedEvent failedEvent = PaymentFailedEvent.builder().orderId(payment.getOrderId())
+                                  .orderId(payment.getOrderId())
+                                  .customerId(payment.getCustomerId())
+                                  .reason(payment.getFailureReason())
+                                  .build();
+                          publishPaymentFailed(payment, failedEvent);
+
+                        }, ()-> log.error("Payment not found for intent id  = {}", intent.getId())
+                );
+
     }
 
 
     // ========== Kafka Publishers ==================
 
     private void publishPaymentSucceeded(Payment payment) {
-      kafkaTemplate.send(
-          KafkaTopicConfiguration.PAYMENT_SUCCESS,
-          payment.getOrderId().toString(),
-          PaymentSuccessEvent.builder()
+      PaymentSuccessEvent event = PaymentSuccessEvent.builder()
               .orderId(payment.getOrderId())
               .customerId(payment.getCustomerId())
               .amount(payment.getAmount())
               .currency(payment.getCurrency())
               .stripePaymentIntentId(payment.getStripePaymentIntentId())
-              .build()
+              .build();
+
+      kafkaTemplate.send(
+          KafkaTopicConfiguration.PAYMENT_SUCCESS,
+          payment.getOrderId().toString(),
+          event
       );
 
       log.info("Published payment-succeeded for order id ={} ",
           payment.getOrderId());
+
     }
 
-    private void publishPaymentFailed(Payment payment, String reason) {
-      kafkaTemplate.send(
+    private void publishPaymentFailed(Payment payment, PaymentFailedEvent event) {
+
+    kafkaTemplate.send(
           KafkaTopicConfiguration.PAYMENT_FAILED,
           payment.getOrderId().toString(),
-          PaymentFailedEvent.builder()
-              .orderId(payment.getOrderId())
-              .customerId(payment.getCustomerId())
-              .reason(reason)
-              .build()
+          event
       );
 
       log.info("Published payment-failed for order id ={} ", payment.getOrderId());

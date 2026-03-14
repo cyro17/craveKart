@@ -59,14 +59,17 @@ public class Payment {
     @Column(length = 512)
     private String clientSecret;
 
+    @Column(unique = true)
     private String stripeEventId;
 
     private String idempotencyKey;
 
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatus status;
+
+
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private PaymentStatus status;
 
     @Builder.Default
     private Integer retryCount = 0;
