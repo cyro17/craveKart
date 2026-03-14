@@ -6,6 +6,7 @@ import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.RestaurantPartner;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.response.AcceptOrderResponse;
+import com.cyro.cravekart.response.RestaurantOrderSummary;
 import com.cyro.cravekart.response.RestaurantPartnerResponse;
 import com.cyro.cravekart.service.RestaurantPartnerService;
 import lombok.RequiredArgsConstructor;
@@ -42,18 +43,56 @@ public class RestaurantPartnerController {
     return null;
   }
 
-//  public ResponseEntity<RestaurantPartnerResponse> getStatus(){
-//    RestaurantPartner restaurantPartner = authContextService.getRestaurantPartner();
-//    restaurantPartnerService.getStatus(restaurantPartner);
-//
-//  }
+//  Order Queues
 
+  @GetMapping("/orders/new")
+  public ResponseEntity<List<RestaurantOrderSummary>> getNewOrders(){
+    return  ResponseEntity.ok(restaurantPartnerService.getNewOrders());
+  }
 
+  // active orders
 
-//  @PostMapping("/acceptOrderRequest/{orderRequestId}")
-//  public AcceptOrderResponse acceptOrderRequest(@PathVariable Long orderRequestId,
-//                                                @RequestBody AcceptOrderDto acceptOrderDto){
-//    return restaurantPartnerService.acceptOrder(orderRequestId);
-//  }
+  @GetMapping("/orders/active")
+  public ResponseEntity<List<RestaurantOrderSummary>> getActiveOrders(){
+    return  ResponseEntity.ok(restaurantPartnerService.getActiveOrders());
+  }
+
+  // order history
+
+  @GetMapping("/orders/history")
+  public ResponseEntity<List<RestaurantOrderSummary>> getHistoryOrders(){
+    return ResponseEntity.ok(restaurantPartnerService.getOrderHistory());
+  }
+
+//  Order LifeCycle
+
+  @GetMapping("/orders/{orderId}/accept")
+  public ResponseEntity<RestaurantOrderSummary> acceptOrder(
+          @PathVariable Long orderId
+  ) {
+    return ResponseEntity.ok(restaurantPartnerService.acceptOrder(orderId));
+  }
+
+  @PostMapping("/orders/{orderId}/reject")
+  public ResponseEntity<String> rejectOrder(
+          @PathVariable Long orderId,
+          @RequestParam(required = false) String reason
+  ){
+    restaurantPartnerService.rejectOrder(orderId, reason);
+    return ResponseEntity.ok("Order rejected. Customer has been notified");
+
+  }
+
+  @PostMapping("/orders/{orderId}/prepare")
+  public ResponseEntity<RestaurantOrderSummary> markPreparing(@PathVariable Long orderId){
+    return ResponseEntity.ok(restaurantPartnerService.markPreparing(orderId));
+  }
+
+  @PostMapping("/orders/{orderId}/ready")
+  public ResponseEntity<RestaurantOrderSummary> markReadyForPickup(@PathVariable Long orderId) {
+    return ResponseEntity.ok(
+            restaurantPartnerService.markReadyForPickUp(orderId));
+  }
+
 
 }
