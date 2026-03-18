@@ -25,7 +25,9 @@ export default function Orders() {
 
         orders?.forEach((order) => {
             if (
-                ["DELIVERED", "CANCELLED", "FAILED"].includes(order.orderStatus)
+                ["DELIVERED", "CANCELLED", "PAYMENT_FAILED"].includes(
+                    order.orderStatus
+                )
             ) {
                 past.push(order);
             } else active.push(order);

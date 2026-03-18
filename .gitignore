@@ -5,4 +5,5 @@ application-prod.yml
 application-dev.yml
 backend/target/
 *.jar
+.env
 /backend/target/classes/application.yml

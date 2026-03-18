@@ -61,13 +61,14 @@ export const placeOrder = createAsyncThunk(
             const token = localStorage.getItem("token");
 
             const clientSecretPromise = waitForPaymentReady(token);
+            await new Promise(res => setTimeout(res, 300));
 
             const { data } = await api.post("/customer/order/place", values);
             console.log("order placed: ", data);
 
             const clientSecret = await clientSecretPromise;
 
-            console.log("fetched clietn secret: ", clientSecret);
+            console.log("fetched client secret: ", clientSecret);
 
             return { ...data, clientSecret };
         } catch (err) {

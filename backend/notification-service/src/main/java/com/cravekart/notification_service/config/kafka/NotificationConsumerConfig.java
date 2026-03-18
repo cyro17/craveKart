@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Configuration
 @Slf4j
-public class NotificationConsumer {
+public class NotificationConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {

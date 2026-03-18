@@ -14,6 +14,7 @@ export const PENDING_STATUSES = ["CREATED", "PAYMENT_PENDING"];
 
 export default function StatusChip({ status }) {
     let color = "default";
+    if (!status) return;
 
     if (ACTIVE_STATUSES.includes(status)) {
         color = "success"; // 🟢 green
