@@ -2,29 +2,26 @@ package com.cyro.cravekart.service.impl;
 
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.dto.*;
-import com.cyro.cravekart.exception.FoodException;
 import com.cyro.cravekart.exception.ResourceNotFoundException;
 import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.Customer;
+import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.repository.AddressRepository;
 import com.cyro.cravekart.repository.CustomerRepository;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.AddressRequest;
-import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.response.AddressResponse;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.OrderResponse;
 import com.cyro.cravekart.service.*;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.naming.ServiceUnavailableException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,15 +39,15 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public CartResponse addFoodToCart(Long foodId) {
-    AddCartItemRequest cartItemRequest = AddCartItemRequest.builder().foodId(foodId)
-        .quantity(1).build();
+    AddCartItemRequest cartItemRequest =
+        AddCartItemRequest.builder().foodId(foodId).quantity(1).build();
     return cartService.addItem(cartItemRequest);
   }
 
   @Override
   public CartItemDto incrementCartItemQuantity(Long cartItemId, Long cartId, Integer quantity) {
 
-    return  null;
+    return null;
   }
 
   @Override
@@ -64,9 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public void deletecart(Long cartId) {
-
-  }
+  public void deletecart(Long cartId) {}
 
   @Override
   public OrderResponse placeOrder() {
@@ -85,7 +80,13 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public CustomerDto getMyProfile() {
-    return null;
+    User customer = authService.getCustomer().getUser();
+    List<Address> customerAddresses = addressRepository.findByCustomerId(customer.getId());
+    return CustomerDto.builder()
+        .customerName(customer.getFirstName())
+        .customerEmail(customer.getEmail())
+        .customerPhone(customer.getContact().getMobile())
+        .build();
   }
 
   @Override
@@ -102,24 +103,19 @@ public class CustomerServiceImpl implements CustomerService {
   public AddressResponse saveAddress(AddressRequest request) {
     Customer user = authService.getCustomer();
 
-    Customer customer = customerRepository.findById(user.getId()).orElseThrow(
-        ()-> new ResourceNotFoundException("Customer with id " + user.getId() + " not found")
-    );
+    Customer customer =
+        customerRepository
+            .findById(user.getId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Customer with id " + user.getId() + " not found"));
     return addressService.createAddress(request, customer.getId());
-
   }
 
   @Override
   public List<AddressResponse> getUserAddress() {
     Customer user = authService.getCustomer();
     return addressService.getCustomerAddresses(user.getId());
-
   }
-
-
-
-
-
-
-
 }

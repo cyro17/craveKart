@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, JpaSpecificationExecutor<Restaurant> {
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long>,
+        JpaSpecificationExecutor<Restaurant> {
 
   @Query("select r from Restaurant r where" +
       " lower(r.name) LIKE  lower(concat('%', :query, '%')) or " +

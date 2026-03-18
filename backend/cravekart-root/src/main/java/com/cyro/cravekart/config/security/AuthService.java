@@ -96,8 +96,9 @@ public class AuthService {
               .role(savedUser.getRoles().toString())
               .channel(BaseNotificationEvent.NotificationChannel.EMAIL)
               .build();
-      notificationSignupEventPublisher.publishUserSignup(event);
-      log.info("User signup event published for : {}", savedUser.getUsername());
+
+        notificationSignupEventPublisher.publishUserSignup(event);
+        log.info("User signup event published for : {}", savedUser.getUsername());
 
     } catch (Exception ex) {
       log.error("Failed to publish UserSignupEvent for {} : {}", savedUser.getUsername(), ex.getMessage() );

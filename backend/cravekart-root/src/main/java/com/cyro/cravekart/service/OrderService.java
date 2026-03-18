@@ -29,6 +29,6 @@ public interface OrderService {
 
 
   void markAsConfirmed(Long orderId) ;
-  void markAsPaid(Long orderId);
+//  void markAsPaid(Long orderId);
   void markAsFailed(Long orderId);
 }

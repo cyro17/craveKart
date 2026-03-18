@@ -16,11 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ConditionalOnProperty(
-    name = "kafka.enabled",
-    havingValue = "true",
-    matchIfMissing = true
-)
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true")
 public class KafkaProducerConfiguration {
 
   @Bean

@@ -7,11 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-@ConditionalOnProperty(
-    name = "kafka.enabled",
-    havingValue = "true",
-    matchIfMissing = true
-)
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true")
 public class KafkaTopicConfiguration {
   public static final String ORDER_CREATED = "order-created";
   public static final String PAYMENT_INITIATED = "payment-initiated";
@@ -19,62 +15,42 @@ public class KafkaTopicConfiguration {
   public static final String PAYMENT_FAILED = "payment-failed";
   public static final String PAYMENT_CANCELLED = "payment-cancelled";
   public static final String NOTIF_SIGNUP = "notif-signup";
+  //  public static final String ORDER_CONFIRMED = "order-confirmed";
 
   public static final String NOTIF_ORDER_PAID = "notif.order-paid";
 
-
-
   @Bean
   public NewTopic orderCreatedTopic() {
-    return TopicBuilder.name(ORDER_CREATED)
-        .partitions(3)
-        .replicas(1)
-        .build();
+    return TopicBuilder.name(ORDER_CREATED).partitions(3).replicas(1).build();
   }
 
   @Bean
   public NewTopic paymentInitiatedTopic() {
-    return TopicBuilder.name(PAYMENT_INITIATED)
-        .partitions(3)
-        .replicas(1)
-        .build();
+    return TopicBuilder.name(PAYMENT_INITIATED).partitions(3).replicas(1).build();
   }
 
   @Bean
   public NewTopic paymentSuccessTopic() {
-    return TopicBuilder.name(PAYMENT_SUCCESS)
-        .partitions(3)
-        .replicas(1)
-        .build();
+    return TopicBuilder.name(PAYMENT_SUCCESS).partitions(3).replicas(1).build();
   }
 
   @Bean
   public NewTopic paymentFailedTopic() {
-    return TopicBuilder.name(PAYMENT_FAILED)
-        .partitions(3)
-        .replicas(1)
-        .build();
+    return TopicBuilder.name(PAYMENT_FAILED).partitions(3).replicas(1).build();
   }
 
   @Bean
   public NewTopic paymentCancelledTopic() {
-    return TopicBuilder.name(PAYMENT_CANCELLED)
-        .partitions(3)
-        .replicas(1)
-        .build();
+    return TopicBuilder.name(PAYMENT_CANCELLED).partitions(3).replicas(1).build();
   }
 
   @Bean
-  public NewTopic SignupNotificationTopic(){
-    return TopicBuilder.name(NOTIF_SIGNUP)
-            .partitions(3)
-            .replicas(3).build();
+  public NewTopic SignupNotificationTopic() {
+    return TopicBuilder.name(NOTIF_SIGNUP).partitions(3).replicas(3).build();
   }
 
   @Bean
   public NewTopic orderConfirmedTopic() {
-    return TopicBuilder.name(NOTIF_ORDER_PAID)
-            .partitions(1)
-            .replicas(1).build();
+    return TopicBuilder.name(NOTIF_ORDER_PAID).partitions(1).replicas(1).build();
   }
 }

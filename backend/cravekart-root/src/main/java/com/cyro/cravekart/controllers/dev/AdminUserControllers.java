@@ -25,7 +25,7 @@ public class AdminUserControllers {
 
   @GetMapping("/check")
   public ResponseEntity<String> healthCheck(){
-    for (USER_ROLE role : authService.getCustomer().getUser().getRoles()) {
+    for (USER_ROLE role : authService.getAdmin().getUser().getRoles()) {
       System.out.println(role);
     }
     return ResponseEntity.ok("OK");
@@ -34,7 +34,7 @@ public class AdminUserControllers {
   @GetMapping("/users")
   public ResponseEntity<List<UserResponse>> getAllUsers(){
     List<UserResponse> users = userService.findAllUsers();
-    return  new  ResponseEntity<>(users, HttpStatus.CREATED);
+    return  new  ResponseEntity<>(users, HttpStatus.OK);
   }
 
   @GetMapping("/users/{id}")

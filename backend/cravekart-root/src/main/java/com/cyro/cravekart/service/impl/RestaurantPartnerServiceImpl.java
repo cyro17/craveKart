@@ -46,8 +46,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
           OrderStatus.CONFIRMED,
           OrderStatus.PREPARING
   );
-  private final OrderEventPublisher orderCofirmedEventPublisher;
-
+  private final OrderEventPublisher orderEventPublisher;
   // Order queue
 
   @Override
@@ -129,7 +128,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
 
     log.info("Order {} accepted by restaurant {} ",orderId, order.getRestaurantId());
 
-    orderCofirmedEventPublisher.publish(OrderConfirmedEvent.builder()
+    orderEventPublisher.publishOrderPaid(OrderConfirmedEvent.builder()
                     .orderId(order.getId())
                     .customerId(order.getCustomerId())
                     .customerName(order.getCustomerName())

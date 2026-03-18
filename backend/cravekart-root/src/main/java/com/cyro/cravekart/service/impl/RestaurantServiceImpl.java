@@ -14,6 +14,10 @@ import com.cyro.cravekart.service.RestaurantPartnerService;
 import com.cyro.cravekart.service.RestaurantService;
 import com.cyro.cravekart.specification.RestaurantSpecification;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,11 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -48,21 +47,22 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   // ======================= CREATE ====================================
 
-
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "restaurants", allEntries = true),
-      @CacheEvict(value = "restaurantByKeyword", allEntries = true),
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "restaurants", allEntries = true),
+        @CacheEvict(value = "restaurantByKeyword", allEntries = true),
+      })
   public OnboardRestaurantResponse onboardRestaurant(
       OnboardRestaurantRequest req, Long restaurantPartnerId) {
 
     // restaurant partner
-    RestaurantPartner partner = restaurantPartnerRepository.findById(restaurantPartnerId).orElseThrow(
-        () -> new ResourceNotFoundException("Restaurant partner not found")
-    );
+    RestaurantPartner partner =
+        restaurantPartnerRepository
+            .findById(restaurantPartnerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Restaurant partner not found"));
 
-    if(partner.getRestaurant() != null) {
+    if (partner.getRestaurant() != null) {
       throw new ConflictException("Partner already has a restaurant");
     }
 
@@ -88,14 +88,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         .build();
   }
 
-
   // ====================== CREATE  restaurant================================
   @Override
   public CreateRestaurantResponse createRestaurant(CreateRestaurantRequest req) {
 
     // check if restaurant exists
     boolean exists = restaurantRepository.existsByNameIgnoreCase(req.getName());
-    if(exists) throw new ConflictException("Restaurant already exists");
+    if (exists) throw new ConflictException("Restaurant already exists");
 
     Address address = modelMapper.map(req.getAddressRequest(), Address.class);
     addressRepository.save(address);
@@ -116,13 +115,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   public boolean assignPartner(Long restaurantId, Long partnerId) {
     Restaurant restaurant = getRestaurantOrThrow(restaurantId);
-    if(restaurant.getRestaurantPartner() != null)
+    if (restaurant.getRestaurantPartner() != null)
       throw new ConflictException("Restaurant already assigned");
 
-    RestaurantPartner partner = restaurantPartnerRepository.findById(partnerId)
-        .orElseThrow(
-        () -> new ResourceNotFoundException("Partner not found")
-    );
+    RestaurantPartner partner =
+        restaurantPartnerRepository
+            .findById(partnerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Partner not found"));
 
     restaurant.setRestaurantPartner(partner);
     restaurant.setOpen(true);
@@ -133,51 +132,50 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     restaurantRepository.save(restaurant);
     RestaurantPartner savedPartner = restaurantPartnerRepository.save(partner);
-    if(savedPartner != null) {return true;}
-    return  false;
-
+    if (savedPartner != null) {
+      return true;
+    }
+    return false;
   }
 
-
-//  ===========================READ ===========================================
+  //  ===========================READ ===========================================
 
   @Override
-  @Cacheable(value = "restaurants")
-  public List<RestaurantResponse> getAllRestaurant(
-      int pageNo, int pageSize
-  ) {
+  @Cacheable(cacheNames = "restaurants", key = "#pageNo + '-' + #pageSize")
+  public List<RestaurantResponse> getAllRestaurant(int pageNo, int pageSize) {
     PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize);
-    return  restaurantRepository.findAll(pageRequest)
-        .stream()
+    return restaurantRepository.findAll(pageRequest).stream()
         .map(RestaurantResponse::from)
         .toList();
   }
 
   @Override
   public List<RestaurantResponse> getRestaurantsByFilter(
-      String city, String cuisine, Double rating, String sort, int page, int size){
-
+      String city, String cuisine, Double rating, String sort, int page, int size) {
 
     // Initialize spec as null
     Specification<Restaurant> spec = null;
 
     // Dynamic filters
     if (city != null && !city.isEmpty()) {
-      spec = (spec == null)
-          ? RestaurantSpecification.hasCity(city)
-          : spec.and(RestaurantSpecification.hasCity(city));
+      spec =
+          (spec == null)
+              ? RestaurantSpecification.hasCity(city)
+              : spec.and(RestaurantSpecification.hasCity(city));
     }
 
     if (cuisine != null && !cuisine.isEmpty()) {
-      spec = (spec == null)
-          ? RestaurantSpecification.hasCuisine(cuisine)
-          : spec.and(RestaurantSpecification.hasCuisine(cuisine));
+      spec =
+          (spec == null)
+              ? RestaurantSpecification.hasCuisine(cuisine)
+              : spec.and(RestaurantSpecification.hasCuisine(cuisine));
     }
 
     if (rating != null) {
-      spec = (spec == null)
-          ? RestaurantSpecification.hasMinRating(rating)
-          : spec.and(RestaurantSpecification.hasMinRating(rating));
+      spec =
+          (spec == null)
+              ? RestaurantSpecification.hasMinRating(rating)
+              : spec.and(RestaurantSpecification.hasMinRating(rating));
     }
 
     // If no filters were provided, spec must be at least Specification.where(null)
@@ -185,69 +183,71 @@ public class RestaurantServiceImpl implements RestaurantService {
       spec = Specification.where((Specification<Restaurant>) null);
     }
 
-
     PageRequest pageRequest = PageRequest.of(page, size, getSort(sort));
 
-    return restaurantRepository.findAll(spec, pageRequest)
-        .stream()
+    return restaurantRepository.findAll(spec, pageRequest).stream()
         .map(RestaurantResponse::from)
         .toList();
   }
 
-
   // ==================== GET RESTAURANT MENU ============================
 
   @Override
+  @Cacheable(cacheNames = "restaurantMenu", key = "#restaurantId", unless = "#result == null")
   public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) {
-    Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
-        () -> new ResourceNotFoundException("Restaurant not found")
-    );
+    Restaurant restaurant =
+        restaurantRepository
+            .findById(restaurantId)
+            .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
 
-    List<FoodCategory> categories = foodCategoryRepository.findByRestaurantIdOrderByIdAsc(restaurantId);
+    List<FoodCategory> categories =
+        foodCategoryRepository.findByRestaurantIdOrderByIdAsc(restaurantId);
 
-    List<Food> foods = foodRepository.findByRestaurantIdAndAvailableTrueOrderByCategoryIdAsc(restaurantId);
+    List<Food> foods =
+        foodRepository.findByRestaurantIdAndAvailableTrueOrderByCategoryIdAsc(restaurantId);
 
-    Map<Long, List<Food>> foodMap = foods.stream()
-        .collect(Collectors.groupingBy(
-            food -> food.getCategory().getId()
-        ));
+    Map<Long, List<Food>> foodMap =
+        foods.stream()
+            .filter(food -> food.getCategory() != null)
+            .collect(Collectors.groupingBy(food -> food.getCategory().getId()));
 
-    List<FoodCategoryResponse> foodCategoryResponse = categories.stream()
-        .map(category -> {
+    List<FoodCategoryResponse> foodCategoryResponse =
+        categories.stream()
+            .map(
+                category -> {
+                  List<FoodResponse> foodResponse =
+                      foodMap.getOrDefault(category.getId(), List.of()).stream()
+                          .map(
+                              food ->
+                                  FoodResponse.builder()
+                                      .id(food.getId())
+                                      .name(food.getName())
+                                      .description(food.getDescription())
+                                      .price(food.getPrice())
+                                      .vegetarian(food.isVegetarian())
+                                      .images(food.getImages())
+                                      .build())
+                          .toList();
 
-          List<FoodResponse> foodResponse = foodMap.getOrDefault(category.getId(), List.of())
-              .stream()
-              .map(food -> FoodResponse.builder()
-                  .id(food.getId())
-                  .name(food.getName())
-                  .description(food.getDescription())
-                  .price(food.getPrice())
-                  .vegetarian(food.isVegetarian())
-                  .images(food.getImages())
-                  .build())
-              .toList();
+                  return FoodCategoryResponse.builder()
+                      .id(category.getId())
+                      .name(category.getName())
+                      .foods(foodResponse)
+                      .build();
+                })
+            .toList();
 
-          return FoodCategoryResponse.builder()
-              .id(category.getId())
-              .name(category.getName())
-              .foods(foodResponse)
-              .build();
-
-        }).toList();
-
+    log.info("Restaurant food api response: {}" + restaurant.getName());
     return RestaurantMenuResponse.builder()
         .id(restaurant.getId())
         .name(restaurant.getName())
         .categories(foodCategoryResponse)
         .build();
-
   }
-
 
   @Override
   @Cacheable(value = "restaurantById", key = "#id")
-  public RestaurantResponse getRestaurantById(Long id)
-      throws RestaurantException {
+  public RestaurantResponse getRestaurantById(Long id) throws RestaurantException {
 
     Restaurant restaurant = getRestaurantOrThrow(id);
     log.info("getRestaurantById restaurant {}", restaurant.getName());
@@ -256,40 +256,41 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   @Override
   public Restaurant getRestaurantByPartnerId(Long partnerId) throws RestaurantException {
-    return  restaurantRepository.findByRestaurantPartner(partnerId);
+    return restaurantRepository.findByRestaurantPartner(partnerId);
   }
 
   @Override
   @Cacheable(value = "restaurantByKeyword", key = "#keyword")
   public List<RestaurantResponse> searchRestaurant(String keyword) {
-    return restaurantRepository
-        .findBySearchQuery(keyword)
-        .stream()
+    return restaurantRepository.findBySearchQuery(keyword).stream()
         .map(RestaurantResponse::from)
         .toList();
   }
 
+  //  @Override
+  //  public Restaurant getRestaurantBySlug(String slug){
+  //    Restaurant restaurant =
+  // restaurantRepository.findBySlugWithCategoriesAndFoods(slug).orElseThrow(
+  //        () -> new RestaurantException("Not Found")
+  //    );
+  //    return  restaurant;
+  //  }
 
-
-
-//  @Override
-//  public Restaurant getRestaurantBySlug(String slug){
-//    Restaurant restaurant = restaurantRepository.findBySlugWithCategoriesAndFoods(slug).orElseThrow(
-//        () -> new RestaurantException("Not Found")
-//    );
-//    return  restaurant;
-//  }
-
-//  ===================== update ========================
+  //  ===================== update ========================
 
   @Override
-  public RestaurantResponse updateRestaurant(
-      Long restaurantId, CreateRestaurantRequest req)
+  @Caching(
+      evict = {
+        @CacheEvict(value = "restaurantById", key = "#restaurantId"),
+        @CacheEvict(value = "restaurants", allEntries = true),
+        @CacheEvict(value = "restaurantByKeyword", allEntries = true)
+      })
+  public RestaurantResponse updateRestaurant(Long restaurantId, CreateRestaurantRequest req)
       throws RestaurantException {
 
     Restaurant restaurant = getRestaurantOrThrow(restaurantId);
 
-    log.info("udpate request for restaurant",  restaurant.getName());
+    log.info("udpate request for restaurant", restaurant.getName());
 
     if (req.getCuisineType() != null) {
       restaurant.setCuisineType(req.getCuisineType());
@@ -304,28 +305,26 @@ public class RestaurantServiceImpl implements RestaurantService {
       restaurant.setContactInfo(req.getContactInfo());
     }
 
-    return  RestaurantResponse.from(restaurantRepository.save(restaurant));
+    return RestaurantResponse.from(restaurantRepository.save(restaurant));
   }
 
-
   @Override
-  public RestaurantDto addToFavorites(Long restaurantId,
-                                      Customer customer)
+  public RestaurantDto addToFavorites(Long restaurantId, Customer customer)
       throws RestaurantException {
 
     Restaurant restaurant = getRestaurantOrThrow(restaurantId);
     Set<Restaurant> favorites = customer.getFavoriteRestaurants();
-    boolean isFavoured  = favorites.contains(restaurant);
+    boolean isFavoured = favorites.contains(restaurant);
 
-    if(isFavoured) {
+    if (isFavoured) {
       favorites.remove(restaurant);
-    }else {
+    } else {
       favorites.add(restaurant);
     }
 
     customerRepository.save(customer);
 
-    return modelMapper.map(restaurant,  RestaurantDto.class);
+    return modelMapper.map(restaurant, RestaurantDto.class);
   }
 
   @Override
@@ -335,35 +334,35 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     restaurantRepository.save(restaurant);
 
-    return  RestaurantResponse.from(restaurant);
+    return RestaurantResponse.from(restaurant);
   }
-
 
   // ================= DELETE =================
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "restaurants", allEntries = true),
+        @CacheEvict(value = "restaurantByKeyword", allEntries = true),
+        @CacheEvict(value = "restaurantById", key = "#restaurantId")
+      })
   public void deleteRestaurant(Long restaurantId) throws RestaurantException {
     Restaurant restaurant = getRestaurantOrThrow(restaurantId);
     restaurantRepository.delete(restaurant);
   }
 
-
-
-
-
-//  ============================ UTIL ===================================
-
+  //  ============================ UTIL ===================================
 
   public Restaurant getRestaurantById_util(Long id) {
-    return   restaurantRepository.findById(id).orElseThrow(
-        ()->  new ResourceNotFoundException("Restaurant not found with id : " + id)
-    );
+    return restaurantRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with id : " + id));
   }
 
   private Restaurant getRestaurantOrThrow(Long id) {
-    return restaurantRepository.findById(id)
-        .orElseThrow(() ->
-            new ResourceNotFoundException("Restaurant not found with id : " + id));
+    return restaurantRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found with id : " + id));
   }
 
   private Address mapAddress(OnboardRestaurantRequest req) {

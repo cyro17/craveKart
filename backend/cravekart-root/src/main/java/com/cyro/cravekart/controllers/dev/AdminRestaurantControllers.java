@@ -2,11 +2,13 @@ package com.cyro.cravekart.controllers.dev;
 
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.exception.RestaurantException;
+import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/admin/restaurant")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
+@Slf4j
 public class AdminRestaurantControllers {
 
   private final RestaurantService restaurantService;
@@ -25,6 +28,8 @@ public class AdminRestaurantControllers {
 
   @GetMapping("/check")
   public ResponseEntity<String> healthCheck() {
+    List<USER_ROLE> roles = authContextService.getAdmin().getUser().getRoles();
+    log.info("**************** User Role  = {}    *********** ",roles);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

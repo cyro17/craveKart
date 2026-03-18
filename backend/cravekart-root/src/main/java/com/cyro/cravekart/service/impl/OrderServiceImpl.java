@@ -1,6 +1,5 @@
 package com.cyro.cravekart.service.impl;
 
-
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.events.order.OrderCreatedEvent;
 import com.cyro.cravekart.exception.BadRequestException;
@@ -14,18 +13,17 @@ import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.OrderService;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -45,18 +43,22 @@ public class OrderServiceImpl implements OrderService {
 
   // customer
   @Override
-  public OrderResponse placeOrder(PlaceOrderRequest request)  {
+  @Transactional
+  public OrderResponse placeOrder(PlaceOrderRequest request) {
 
     // fetch customer
     Customer customer = authService.getCustomer();
 
+    log.info("*************** fetched address id : {}************** ", request.getAddressId());
+
     // get cart
-    Cart cart = cartRepository.findByCustomerId(
-        customer.getId()).orElseThrow(
-        () -> new ResourceNotFoundException("User does not exist")
-    );
+    Cart cart =
+        cartRepository
+            .findByCustomerId(customer.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+
     // check if cart is empty
-    if(cart.getItems().isEmpty()) {
+    if (cart.getItems().isEmpty()) {
       throw new BadRequestException("cart is empty");
     }
 
@@ -66,54 +68,55 @@ public class OrderServiceImpl implements OrderService {
     String deliveryAddressLine = null;
 
     // add delivery address
-    if(request.getDeliveryType() == DeliveryType.DELIVERY){
-      Address address = addressRepository.findById(request.getAddressId()).orElseThrow(
-          () -> new ResourceNotFoundException("Address not found")
-      );
+    if (request.getDeliveryType() == DeliveryType.DELIVERY) {
+      Address address =
+          addressRepository
+              .findById(request.getAddressId())
+              .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
-      if(!address.getCustomer().getId().equals(customer.getId())){
+      if (!address.getCustomer().getId().equals(customer.getId())) {
         throw new BadRequestException("Invalid address for this customer");
       }
 
       deliveryAddressLine = address.getFullAddress();
+
+      log.info("*************** fetched deliveryAddress line : {}", deliveryAddressLine);
     }
 
     // creating order
-    Order order = Order.builder()
-        .customerId(customer.getId())
-        .customerName(customer.getUser().getUsername())
-        .customerPhone(customer.getUser().getContact().getMobile())
-        .deliveryAddressLine(deliveryAddressLine)
-        .restaurantId(restaurant.getId())
-        .restaurantName(restaurant.getName())
-        .restaurantAddress(restaurant.getAddress().getStreetAddress())
-        .specialInstruction(request.getSpecialInstruction())
-        .orderStatus(OrderStatus.PAYMENT_PENDING)
-        .build();
-
+    Order order =
+        Order.builder()
+            .customerId(customer.getId())
+            .customerName(customer.getUser().getUsername())
+            .customerPhone(customer.getUser().getContact().getMobile())
+            .deliveryAddressLine(deliveryAddressLine)
+            .restaurantId(restaurant.getId())
+            .restaurantName(restaurant.getName())
+            .restaurantAddress(restaurant.getAddress().getStreetAddress())
+            .specialInstruction(request.getSpecialInstruction())
+            .orderStatus(OrderStatus.PAYMENT_PENDING)
+            .build();
 
     // creating order items
-    List<OrderItem> orderItems = cart.getItems().stream()
-        .map(cartItem ->
-            OrderItem.builder()
-                .order(order)
-                .foodName(cartItem.getFood().getName())
-                .foodPrice(cartItem.getFood().getPrice())
-                .quantity(cartItem.getQuantity())
-                .totalPrice(cartItem.getTotalPrice())
-                .imageUrl(cartItem.getImageUrl())
-                .build()
-        ).toList();
+    List<OrderItem> orderItems =
+        cart.getItems().stream()
+            .map(
+                cartItem ->
+                    OrderItem.builder()
+                        .order(order)
+                        .foodName(cartItem.getFood().getName())
+                        .foodPrice(cartItem.getFood().getPrice())
+                        .quantity(cartItem.getQuantity())
+                        .totalPrice(cartItem.getTotalPrice())
+                        .imageUrl(cartItem.getImageUrl())
+                        .build())
+            .toList();
 
     order.setOrderItems(orderItems);
-    order.setTotalItems(
-        orderItems.stream()
-            .mapToInt(OrderItem::getQuantity)
-            .sum()
-    );
+    order.setTotalItems(orderItems.stream().mapToInt(OrderItem::getQuantity).sum());
 
     // apply voucher
-    if(request.getVoucherCode() != null) {
+    if (request.getVoucherCode() != null) {
       this.applycoupon(order, request.getVoucherCode());
     }
 
@@ -125,33 +128,42 @@ public class OrderServiceImpl implements OrderService {
     log.info("Order saved, id = {}", savedOrder.getId());
 
     /* Publish order created event */
-    publishOrderCreatedEvent(savedOrder);
+    try {
+
+      publishOrderCreatedEvent(savedOrder);
+
+    } catch (Exception e) {
+      log.error("Error in publishOrderCreatedEvent");
+    }
 
     // clear cart
     cartRepository.deleteByCustomerId(customer.getId());
 
-    return  buildOrderResponse(savedOrder);
+    return buildOrderResponse(savedOrder);
   }
 
   // restaurant partner
 
   @Override
+  @Transactional
   public void markAsConfirmed(Long orderId) {
-    RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
-    Order order = orderRepository.findById(orderId).orElseThrow(
-        () -> new ResourceNotFoundException("Order does not exist")
-    );
-    if( !order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())){
-      throw new ForbiddenException("Order does not belong to your restaurant");
-    }
+    //    RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
+    //    if (!order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())) {
+    //      throw new ForbiddenException("Order does not belong to your restaurant");
+    //    }
 
-    if(order.getOrderStatus() != OrderStatus.PAYMENT_PENDING){
+    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
       throw new BadRequestException("Pending payment...");
     }
 
     order.setOrderStatus(OrderStatus.CONFIRMED);
     order.setAcceptedAt(LocalDateTime.now());
 
+    log.info("*****************Order marked as confirmed, id = {}*********************", orderId);
 
     orderRepository.save(order);
 
@@ -167,8 +179,10 @@ public class OrderServiceImpl implements OrderService {
   public Order pickupOrder(Long orderId) throws BadRequestException {
     DeliveryPartner partner = authService.getDeliveryPartner();
 
-    Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
     if (order.getOrderStatus() != OrderStatus.READY_FOR_PICKUP) {
       throw new BadRequestException("Order not ready");
@@ -188,50 +202,49 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public String cancelOrder(Long orderId)  {
+  public String cancelOrder(Long orderId) {
 
     Customer customer = authService.getCustomer();
-    Order order = orderRepository.findById(orderId).orElseThrow(
-        ()-> new ResourceNotFoundException("Order does not exist")
-    );
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
 
-    if( !order.getCustomerId().equals(customer.getId())) {
-      throw new ForbiddenException("This order request does not belong to the customer with id :" +
-          customer.getId());
+    if (!order.getCustomerId().equals(customer.getId())) {
+      throw new ForbiddenException(
+          "This order request does not belong to the customer with id :" + customer.getId());
     }
 
-    if(order.getOrderStatus() == OrderStatus.CONFIRMED ||
-        order.getOrderStatus() == OrderStatus.OUT_FOR_DELIVERY ||
-        order.getOrderStatus() == OrderStatus.DELIVERED){
+    if (order.getOrderStatus() == OrderStatus.CONFIRMED
+        || order.getOrderStatus() == OrderStatus.OUT_FOR_DELIVERY
+        || order.getOrderStatus() == OrderStatus.DELIVERED) {
       throw new ForbiddenException("Order request cannot be Cancelled");
     }
 
     order.setOrderStatus(OrderStatus.CANCELLED);
     order.setCancelledAt(LocalDateTime.now());
     orderRepository.save(order);
-    return  "Order Cancelled SUccesfully";
+    return "Order Cancelled SUccesfully";
   }
 
   private boolean updateOrderStatus(Long orderId, OrderStatus orderStatus) {
     Optional<Order> order = orderRepository.findById(orderId);
-    if(!order.isPresent()) return  false;
+    if (!order.isPresent()) return false;
     order.get().setOrderStatus(orderStatus);
     return true;
   }
 
   @Override
   public List<OrderResponse> getCustomerOrders(Long customerId) {
-    List<Order> orders = orderRepository.
-        findByCustomerIdOrderByCreatedAtDesc(customerId);
-    return  orders.stream()
-        .map(this::buildOrderResponse)
-        .toList();
+    List<Order> orders = orderRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+    return orders.stream().map(this::buildOrderResponse).toList();
   }
 
   public OrderResponse getOrderById(Long orderId) {
-    Order order = orderRepository.findById(orderId).orElseThrow(
-        () -> new ResourceNotFoundException("Order does not exist")
-    );
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
     return buildOrderResponse(order);
   }
 
@@ -240,55 +253,55 @@ public class OrderServiceImpl implements OrderService {
     return List.of();
   }
 
-
   @Override
   @PreAuthorize("hasRole('RESTAURANT_PARTNER')")
   public List<Order> getPendingOrdersForRestaurant() {
     RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
     Long restaurantId = restaurantPartner.getRestaurant().getId();
     return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.CONFIRMED);
-
   }
 
   // ==================== Payment Callbacks ==================
 
-//  @Override
-//  public void markAsPaid(Long orderId) {
-//      Order order = orderRepository.findById(orderId)
-//          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-//
-//      if(order.getOrderStatus() == OrderStatus.PAID){
-//        log.info("Order {} is already PAID, skipping duplicate event.", orderId);
-//        return;
-//
-//      }
-//
-//      if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
-//        log.warn("Order {} cannot be marked as PAID from status {}",
-//            orderId, order.getOrderStatus());
-//        return;
-//      }
-//
-//      order.setOrderStatus(OrderStatus.PAID);
-//      order.setPaidAt(LocalDateTime.now());
-//      log.info("Order {} marked as PAID", orderId);
-//
-//      orderRepository.save(order);
-//      log.info("Order {} marked as PAID", orderId);
-//
-//
-//    }
+  //  @Override
+  //  public void markAsPaid(Long orderId) {
+  //      Order order = orderRepository.findById(orderId)
+  //          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+  //
+  //      if(order.getOrderStatus() == OrderStatus.PAID){
+  //        log.info("Order {} is already PAID, skipping duplicate event.", orderId);
+  //        return;
+  //
+  //      }
+  //
+  //      if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
+  //        log.warn("Order {} cannot be marked as PAID from status {}",
+  //            orderId, order.getOrderStatus());
+  //        return;
+  //      }
+  //
+  //      order.setOrderStatus(OrderStatus.PAID);
+  //      order.setPaidAt(LocalDateTime.now());
+  //      log.info("Order {} marked as PAID", orderId);
+  //
+  //      orderRepository.save(order);
+  //      log.info("Order {} marked as PAID", orderId);
+  //
+  //
+  //    }
 
   @Override
   public void markAsFailed(Long orderId) {
-    Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-    if(order.getOrderStatus() == OrderStatus.CANCELLED){
+    if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       return;
     }
 
-    if(order.getOrderStatus() != OrderStatus.PAYMENT_PENDING){
+    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
       log.warn("invalid payment failure state for order {}", orderId);
       return;
     }
@@ -299,72 +312,69 @@ public class OrderServiceImpl implements OrderService {
     log.info("Order {} marked as CANCELLED due to payment failure ", orderId);
   }
 
-
   // ==================== Utility methods ==================
 
-//  create order publisher
+  //  create order publisher
 
-  private void publishOrderCreatedEvent(Order savedOrder){
+  private void publishOrderCreatedEvent(Order savedOrder) {
 
-    //amount
-    long amountInPaise = savedOrder.getTotalPrice()
-        .setScale(2, RoundingMode.HALF_UP)
-        .multiply(BigDecimal.valueOf(100)).longValueExact();
+    // amount
+    long amountInPaise =
+        savedOrder
+            .getTotalPrice()
+            .setScale(2, RoundingMode.HALF_UP)
+            .multiply(BigDecimal.valueOf(100))
+            .setScale(0, RoundingMode.HALF_UP)
+            .longValueExact();
 
     // event
-    OrderCreatedEvent event = OrderCreatedEvent.builder()
-        .orderId(savedOrder.getId())
-        .customerId(savedOrder.getCustomerId())
-        .restaurantId(savedOrder.getRestaurantId())
-        .customerName(savedOrder.getCustomerName())
-        .currency("inr")
-        .amount(amountInPaise)
-        .build();
+    OrderCreatedEvent event =
+        OrderCreatedEvent.builder()
+            .orderId(savedOrder.getId())
+            .customerId(savedOrder.getCustomerId())
+            .restaurantId(savedOrder.getRestaurantId())
+            .customerName(savedOrder.getCustomerName())
+            .currency("inr")
+            .amount(amountInPaise)
+            .build();
 
     // publish event
-    kafkaTemplate.send("order-created",
-        savedOrder.getId().toString(),
-        event
-    ).whenComplete((result, ex)-> {
-      if (ex != null) {
-        log.error("Failed to publish order-created for orderId = {}",
-            savedOrder.getId(), ex);
-        // ✅ throw so cart is NOT cleared and customer can retry
-        throw new BadRequestException(
-            "Failed to initiate payment for order: " + savedOrder.getId());
-      }
-      log.info("Published order-created for orderId = {}", savedOrder.getId());
-    });
-
-
+    kafkaTemplate
+        .send("order-created", savedOrder.getId().toString(), event)
+        .whenComplete(
+            (result, ex) -> {
+              if (ex != null) {
+                log.error(
+                    "Failed to publish order-created for orderId = {}", savedOrder.getId(), ex);
+                // ✅ throw so cart is NOT cleared and customer can retry
+                throw new BadRequestException(
+                    "Failed to initiate payment for order: " + savedOrder.getId());
+              }
+              log.info("Published order-created for orderId = {}", savedOrder.getId());
+            });
   }
 
-
-  private void calculateOrderTotals(Order order){
+  private void calculateOrderTotals(Order order) {
 
     // subtotal
-    BigDecimal subTotal = order.getOrderItems().stream()
-        .map(OrderItem::getTotalPrice)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    BigDecimal subTotal =
+        order.getOrderItems().stream()
+            .map(OrderItem::getTotalPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     // tax rate + commission rate
 
     BigDecimal taxRate = new BigDecimal("0.05");
-    BigDecimal commissionRate = new  BigDecimal("0.20");
+    BigDecimal commissionRate = new BigDecimal("0.20");
 
     BigDecimal tax = subTotal.multiply(taxRate);
     BigDecimal restaurantCharge = new BigDecimal("50");
-    BigDecimal deliveryFee =  order.getDeliveryAddressLine() != null ?
-        new BigDecimal("40") : BigDecimal.ZERO;
+    BigDecimal deliveryFee =
+        order.getDeliveryAddressLine() != null ? new BigDecimal("40") : BigDecimal.ZERO;
 
-    BigDecimal discount = order.getDiscount() != null ?
-        order.getDiscount() : BigDecimal.ZERO;
+    BigDecimal discount = order.getDiscount() != null ? order.getDiscount() : BigDecimal.ZERO;
 
-    BigDecimal total = subTotal
-        .add(tax)
-        .add(deliveryFee)
-        .add(restaurantCharge)
-        .subtract(discount);
+    BigDecimal total = subTotal.add(tax).add(deliveryFee).add(restaurantCharge).subtract(discount);
 
     BigDecimal commission = subTotal.multiply(commissionRate);
 
@@ -375,31 +385,30 @@ public class OrderServiceImpl implements OrderService {
     order.setDiscount(discount);
     order.setTotalPrice(total);
     order.setPlatformFee(commission);
-
   }
 
-  private void applycoupon(Order order, String couponCode){
-    if("NEW50".equalsIgnoreCase(couponCode)){
-      order.setDiscount(new  BigDecimal("50"));
+  private void applycoupon(Order order, String couponCode) {
+    if ("NEW50".equalsIgnoreCase(couponCode)) {
+      order.setDiscount(new BigDecimal("50"));
     }
   }
 
-  private OrderResponse buildOrderResponse(Order order){
+  private OrderResponse buildOrderResponse(Order order) {
 
     String paymentStatus;
-    switch (order.getOrderStatus()){
-      case PAYMENT_PENDING ->  paymentStatus = "PENDING";
-      case CONFIRMED ->  paymentStatus = "PAID";
-      case CANCELLED ->  paymentStatus = "FAILED";
-      default ->  paymentStatus = "NOT_APPLICABLE";
+    switch (order.getOrderStatus()) {
+      case PAYMENT_PENDING -> paymentStatus = "PENDING";
+      case CONFIRMED -> paymentStatus = "PAID";
+      case CANCELLED -> paymentStatus = "FAILED";
+      default -> paymentStatus = "NOT_APPLICABLE";
     }
 
-    PaymentSummary paymentSummary = PaymentSummary.builder()
-        .paymentId(null)
-        .paymentMethod(null)
-        .paymentStatus(paymentStatus)
-        .build();
-
+    PaymentSummary paymentSummary =
+        PaymentSummary.builder()
+            .paymentId(null)
+            .paymentMethod(null)
+            .paymentStatus(paymentStatus)
+            .build();
 
     return OrderResponse.builder()
         .orderId(order.getId())
@@ -409,26 +418,24 @@ public class OrderServiceImpl implements OrderService {
                 .restaurantId(order.getRestaurantId())
                 .name(order.getRestaurantName())
                 .restaurantAddress(order.getRestaurantAddress())
-                .build()
-        )
+                .build())
         .customer(
             CustomerSummary.builder()
                 .customerId(order.getCustomerId())
                 .name(order.getCustomerName())
-                .build()
-        )
+                .build())
         .items(
             order.getOrderItems().stream()
-                .map(item-> OrderItemResponse.builder()
-                    .foodName(item.getFoodName())
-                    .quantity(item.getQuantity())
-                    .unitPrice(item.getFoodPrice())
-                    .totalPrice(item.getTotalPrice())
-                    .imageUrl(item.getImageUrl())
-                    .build())
-                .toList()
-        )
-
+                .map(
+                    item ->
+                        OrderItemResponse.builder()
+                            .foodName(item.getFoodName())
+                            .quantity(item.getQuantity())
+                            .unitPrice(item.getFoodPrice())
+                            .totalPrice(item.getTotalPrice())
+                            .imageUrl(item.getImageUrl())
+                            .build())
+                .toList())
         .pricing(
             PriceBreakdown.builder()
                 .subtotal(order.getSubtotal())
@@ -438,17 +445,12 @@ public class OrderServiceImpl implements OrderService {
                 .discount(order.getDiscount())
                 .platformFee(order.getPlatformFee())
                 .total(order.getTotalPrice())
-                .build()
-        )
-
+                .build())
         .delivery(order.getDeliveryAddressLine())
         .payment(paymentSummary)
         .createdAt(order.getCreatedAt())
         .estimatedDeliveryTime(
-            order.getCreatedAt() != null ?
-                order.getCreatedAt().plusMinutes(32) : null)
-
+            order.getCreatedAt() != null ? order.getCreatedAt().plusMinutes(32) : null)
         .build();
-
   }
 }

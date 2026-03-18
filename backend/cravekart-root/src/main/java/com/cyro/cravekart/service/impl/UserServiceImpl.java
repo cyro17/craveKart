@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Cacheable(value = "allUsers")
   @CacheEvict(allEntries = true)
-//  @Transactional
   public List<UserResponse> findAllUsers() {
     return  userRepository.findAll()
                 .stream()

@@ -1,7 +1,7 @@
 package com.cyro.cravekart.repository;
 
 import com.cyro.cravekart.models.Payment;
-import com.cyro.cravekart.models.enums.PaymentStatus;
+//import com.cyro.cravekart.models.enums.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +19,7 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
   boolean existsByOrderId(Long orderId);
   Optional<Payment> findByIdempotencyKey(String idempotencyKey);
 
-  long countByStatus(PaymentStatus status);
+//  long countByStatus(PaymentStatus status);
 
 
 }

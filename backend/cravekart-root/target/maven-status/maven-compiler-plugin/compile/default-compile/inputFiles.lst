@@ -99,6 +99,7 @@
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/models/enums/RestaurantStatus.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/models/enums/USER_ROLE.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/publishers/NotificationSignupEventPublisher.java
+/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/publishers/OrderEventPublisher.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/repository/AddressRepository.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/repository/AdminRepository.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/repository/CartItemRepository.java
@@ -131,6 +132,7 @@
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/LoginRequest.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/OnboardRestaurantRequest.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/OrderNotifcationEvent.java
+/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/OrderStatusUpdateRequest.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/PaymentRequest.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/PlaceOrderRequest.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/request/SigninRequest.java
@@ -160,6 +162,7 @@
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/PaymentSummary.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/PriceBreakdown.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/RestaurantMenuResponse.java
+/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/RestaurantOrderSummary.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/RestaurantPartnerResponse.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/RestaurantResponse.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/response/RestaurantSummary.java
@@ -196,7 +199,6 @@
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/FoodServiceImpl.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/IngredientsServiceImpl.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/MailService.java
-/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/NotificationService.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/OrderServiceImpl.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantPartnerServiceImpl.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantServiceImpl.java

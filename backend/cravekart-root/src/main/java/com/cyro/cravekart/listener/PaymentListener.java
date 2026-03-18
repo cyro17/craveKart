@@ -22,85 +22,73 @@ public class PaymentListener {
 
   private final PaymentRepository paymentRepository;
   private final StripeService stripeService;
-  private final KafkaTemplate<String, Object>  kafkaTemplate;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
-
-  @KafkaListener(topics = "order-created", groupId = "payment-service" )
+  @KafkaListener(topics = "order-created", groupId = "payment-service")
   public void handleOrderCreated(OrderCreatedEvent event) throws StripeException {
     log.info("Received order-created event for orderId = {}", event.getOrderId());
 
     // Idempotency check
-    if(paymentRepository.existsByOrderId(event.getOrderId())){
-      log.warn("Payment already exists for orderId = {}", event.getOrderId());
-      return;
-    }
+    //    if(paymentRepository.existsByOrderId(event.getOrderId())){
+    //      log.warn("Payment already exists for orderId = {}", event.getOrderId());
+    //      return;
+    //    }
 
     try {
       // create stripe payment intent
-      PaymentIntentResult paymentIntentResult = stripeService.createPaymentIntent(
-          event.getAmount(),
-          event.getCurrency(),
-          event.getOrderId()
-      );
+      PaymentIntentResult paymentIntentResult =
+          stripeService.createPaymentIntent(
+              event.getAmount(), event.getCurrency(), event.getOrderId());
 
-
-      Payment payment = Payment.builder()
-          .orderId(event.getOrderId())
-          .customerId(event.getCustomerId())
-          .amount(event.getAmount())
-          .currency(event.getCurrency())
-          .provider(PaymentProvider.STRIPE)
-          .stripePaymentIntentId(paymentIntentResult.getPaymentIntentId())
-          .clientSecret(paymentIntentResult.getClientSecret())
-          .retryCount(0)
-          .build();
+      Payment payment =
+          Payment.builder()
+              .orderId(event.getOrderId())
+              .customerId(event.getCustomerId())
+              .amount(event.getAmount())
+              .currency(event.getCurrency())
+              .provider(PaymentProvider.STRIPE)
+              .stripePaymentIntentId(paymentIntentResult.getPaymentIntentId())
+              .clientSecret(paymentIntentResult.getClientSecret())
+              .retryCount(0)
+              .build();
 
       paymentRepository.save(payment);
 
       log.info("Payment created for orderId = {}", event.getOrderId());
 
       publishPaymentInitiated(
-          event.getOrderId(),
-          event.getCustomerId(),
-          paymentIntentResult.getClientSecret()
-      );
+          event.getOrderId(), event.getCustomerId(), paymentIntentResult.getClientSecret());
 
-
-    } catch (Exception ex){
+    } catch (Exception ex) {
       log.error("Failed to create payment for orderId = {}", ex.getMessage());
 
-      publishPaymentFailed(event.getOrderId(),
-          event.getCustomerId(),
-          "Stripe creation failed");
+      publishPaymentFailed(event.getOrderId(), event.getCustomerId(), "Stripe creation failed");
     }
   }
 
   // ============== helper ================================
-  private void publishPaymentInitiated(Long orderId,
-                                       Long customerId,
-                                       String clientSecret){
-    PaymentInitiatedEvent payment = PaymentInitiatedEvent.builder()
-        .orderId(orderId)
-        .customerId(customerId)
-        .clientSecret(clientSecret)
-        .build();
+  private void publishPaymentInitiated(Long orderId, Long customerId, String clientSecret) {
+    PaymentInitiatedEvent payment =
+        PaymentInitiatedEvent.builder()
+            .orderId(orderId)
+            .customerId(customerId)
+            .clientSecret(clientSecret)
+            .build();
 
-    kafkaTemplate.send(
-        "payment-initiated",
-        orderId.toString(),
-        payment);
+    kafkaTemplate.send("payment-initiated", orderId.toString(), payment);
 
     log.info("Payment initiated event for orderId = {}", orderId);
   }
 
-  private void publishPaymentFailed(Long orderId, Long customerId,  String message) {
-    PaymentFailedEvent failedEvent = PaymentFailedEvent.builder()
-        .orderId(orderId)
-        .customerId(customerId)
-        .reason(message).build();
+  private void publishPaymentFailed(Long orderId, Long customerId, String message) {
+    PaymentFailedEvent failedEvent =
+        PaymentFailedEvent.builder()
+            .orderId(orderId)
+            .customerId(customerId)
+            .reason(message)
+            .build();
 
-    kafkaTemplate.send("payment-failed", orderId.toString(),  failedEvent);
+    kafkaTemplate.send("payment-failed", orderId.toString(), failedEvent);
     log.info("Payment failed event for orderId = {}", orderId);
   }
-
 }

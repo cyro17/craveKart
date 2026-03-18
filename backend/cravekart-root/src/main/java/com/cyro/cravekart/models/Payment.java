@@ -1,7 +1,7 @@
 package com.cyro.cravekart.models;
 
 import com.cyro.cravekart.models.enums.PaymentProvider;
-import com.cyro.cravekart.models.enums.PaymentStatus;
+//import com.cyro.cravekart.models.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +22,8 @@ import java.util.UUID;
 @Table(
     name = "payments",
     indexes = {
-        @Index(name = "idx_payment_order_id", columnList = "orderId"),
-        @Index(name = "idx_payment_status", columnList = "status")
+        @Index(name = "idx_payment_order_id", columnList = "orderId")
+//        @Index(name = "idx_payment_status", columnList = "status")
     }
 )
 @Builder
