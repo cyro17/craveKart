@@ -26,6 +26,8 @@ const initialState = {
     paymentStep: "idle",  // idle -> placing-> pay-> confirmed/failed -> idle
     paymentMethod: null,
 
+    idempotencyKey: null
+
 
 }
 
@@ -54,6 +56,7 @@ const orderSlice = createSlice({
             state.totalPrice = 0;
             state.clientSecret = null;
             state.paymentStep = "idle";
+            state.idempotencyKey = null;
         },
 
         setPaymentConfirmed: (state) => {
@@ -65,6 +68,9 @@ const orderSlice = createSlice({
         setPaymentFailed: (state, action) => {
             state.paymentStep = "failed";
             state.error = action.payload || "Payment failed.";
+        },
+        setIdempotencyKey: (state, action) => {
+            state.idempotencyKey = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -99,5 +105,5 @@ const orderSlice = createSlice({
     }
 });
 
-export const { resetOrder, setPaymentConfirmed, setPaymentFailed } = orderSlice.actions;
+export const { resetOrder, setPaymentConfirmed, setPaymentFailed, setIdempotencyKey } = orderSlice.actions;
 export const orderReducer = orderSlice.reducer;

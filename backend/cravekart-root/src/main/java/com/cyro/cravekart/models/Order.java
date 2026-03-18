@@ -1,19 +1,17 @@
 package com.cyro.cravekart.models;
 
 import com.cyro.cravekart.models.enums.OrderStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -35,6 +33,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "idempotency_key", unique = true)
+    private String idempotencyKey;
 
     // customer snapshot
     @Column(name = "customer_id", nullable = false)

@@ -120,8 +120,10 @@ public class CustomerController {
 
   // orders
   @PostMapping("/order/place")
-  public ResponseEntity<OrderResponse> createOrder(@RequestBody PlaceOrderRequest request) {
-    OrderResponse response = orderService.placeOrder(request);
+  public ResponseEntity<OrderResponse> createOrder(
+      @RequestBody PlaceOrderRequest request,
+      @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
+    OrderResponse response = orderService.placeOrder(request, idempotencyKey);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

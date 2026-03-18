@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api, { API_URL } from "../../config/api";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { v4 as uuidv4 } from "uuid";
+import { setIdempotencyKey } from "./orderSlice";
 
 export const waitForPaymentReady = (token) => {
     return new Promise((resolve, reject) => {
@@ -55,15 +57,34 @@ export const waitForPaymentReady = (token) => {
 
 export const placeOrder = createAsyncThunk(
     "order/placeOrder",
-    async (values, { rejectWithValue }) => {
+    async (values, { getState, dispatch, rejectWithValue }) => {
         try {
 
             const token = localStorage.getItem("token");
 
+            // console.log("state coming from createasyncthunk: ", getState());
+
+            let idempotencyKey = getState().order.idempotencyKey;
+            console.log("idempotency key added to header : {}", idempotencyKey);
+
+            if (!idempotencyKey) {
+                idempotencyKey = uuidv4();
+                console.log("idempotency key added to header : {}", idempotencyKey);
+
+                dispatch(setIdempotencyKey(idempotencyKey));
+            }
+
+
+
+
             const clientSecretPromise = waitForPaymentReady(token);
             await new Promise(res => setTimeout(res, 300));
 
-            const { data } = await api.post("/customer/order/place", values);
+            const { data } = await api.post("/customer/order/place", values, {
+                headers: {
+                    "Idempotency-Key": idempotencyKey
+                }
+            });
             console.log("order placed: ", data);
 
             const clientSecret = await clientSecretPromise;

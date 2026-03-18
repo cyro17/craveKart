@@ -3,7 +3,7 @@ package com.cyro.cravekart.controllers.dev;
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.OrderResponse;
-//import com.cyro.cravekart.response.PlaceOrderResponse;
+// import com.cyro.cravekart.response.PlaceOrderResponse;
 import com.cyro.cravekart.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,20 +19,21 @@ public class OrderController {
   private final AuthContextService authService;
 
   @PostMapping("/place")
-  public ResponseEntity<OrderResponse> createOrder(@RequestBody PlaceOrderRequest
-                                                        request){
-      OrderResponse response = orderService.placeOrder(request);
-      return new ResponseEntity<>(response, HttpStatus.CREATED);
+  public ResponseEntity<OrderResponse> createOrder(
+      @RequestBody PlaceOrderRequest request,
+      @RequestHeader(value = "Idempotency-key", required = false) String idempotency_key) {
+    OrderResponse response = orderService.placeOrder(request, idempotency_key);
+    return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
-//  @GetMapping("/user")
-//  public ResponseEntity<List<Order>> getAllUsersOrders(){
-//
-//    Customer customer = authService.getCustomer();
-//    if(customer.getId() != null){
-//      List<Order> userOrders = orderService.getCustomerOrders(customer.getId());
-//      return new ResponseEntity<>(userOrders, HttpStatus.OK);
-//    } else return  new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//  }
+  //  @GetMapping("/user")
+  //  public ResponseEntity<List<Order>> getAllUsersOrders(){
+  //
+  //    Customer customer = authService.getCustomer();
+  //    if(customer.getId() != null){
+  //      List<Order> userOrders = orderService.getCustomerOrders(customer.getId());
+  //      return new ResponseEntity<>(userOrders, HttpStatus.OK);
+  //    } else return  new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
+  //  }
 
 }

@@ -44,8 +44,21 @@ public class OrderServiceImpl implements OrderService {
   // customer
   @Override
   @Transactional
-  public OrderResponse placeOrder(PlaceOrderRequest request) {
+  public OrderResponse placeOrder(PlaceOrderRequest request, String idempotencyKey) {
 
+    if (idempotencyKey != null) {
+      Optional<Order> existing = orderRepository.findByIdempotencyKey(idempotencyKey);
+      if (existing.isPresent()) {
+        log.info(
+            "Order already exists for idempotency key {}, returning exisiting order {}",
+            idempotencyKey,
+            existing.get().getId());
+
+        publishOrderCreatedEvent(existing.get());
+
+        return buildOrderResponse(existing.get());
+      }
+    }
     // fetch customer
     Customer customer = authService.getCustomer();
 
@@ -95,6 +108,7 @@ public class OrderServiceImpl implements OrderService {
             .restaurantAddress(restaurant.getAddress().getStreetAddress())
             .specialInstruction(request.getSpecialInstruction())
             .orderStatus(OrderStatus.PAYMENT_PENDING)
+            .idempotencyKey(idempotencyKey)
             .build();
 
     // creating order items
@@ -128,13 +142,8 @@ public class OrderServiceImpl implements OrderService {
     log.info("Order saved, id = {}", savedOrder.getId());
 
     /* Publish order created event */
-    try {
 
-      publishOrderCreatedEvent(savedOrder);
-
-    } catch (Exception e) {
-      log.error("Error in publishOrderCreatedEvent");
-    }
+    publishOrderCreatedEvent(savedOrder);
 
     // clear cart
     cartRepository.deleteByCustomerId(customer.getId());
@@ -339,19 +348,17 @@ public class OrderServiceImpl implements OrderService {
             .build();
 
     // publish event
-    kafkaTemplate
-        .send("order-created", savedOrder.getId().toString(), event)
-        .whenComplete(
-            (result, ex) -> {
-              if (ex != null) {
-                log.error(
-                    "Failed to publish order-created for orderId = {}", savedOrder.getId(), ex);
-                // ✅ throw so cart is NOT cleared and customer can retry
-                throw new BadRequestException(
-                    "Failed to initiate payment for order: " + savedOrder.getId());
-              }
-              log.info("Published order-created for orderId = {}", savedOrder.getId());
-            });
+    try {
+      kafkaTemplate.send("order-created", savedOrder.getId().toString(), event).get();
+    } catch (Exception e) {
+      log.error(
+          "Failed to publish order-created for orderId={}, cause={}",
+          savedOrder.getId(),
+          e.getMessage(),
+          e);
+      throw new BadRequestException(
+          "Failed to publish order-created for orderId=" + savedOrder.getId());
+    }
   }
 
   private void calculateOrderTotals(Order order) {
