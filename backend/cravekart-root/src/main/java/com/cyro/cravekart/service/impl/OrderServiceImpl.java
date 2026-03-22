@@ -12,6 +12,7 @@ import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.OrderService;
+import com.cyro.cravekart.service.OutboxService;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -31,38 +30,33 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OrderServiceImpl implements OrderService {
   private final AddressRepository addressRepository;
-  private final FoodRepository foodRepository;
-  private final RestaurantRepository restaurantRepository;
-  private final FoodCategoryRepository foodCategoryRepository;
   private final CartRepository cartRepository;
   private final AuthContextService authService;
   private final OrderRepository orderRepository;
-  private final ModelMapper modelMapper;
-
-  private final KafkaTemplate<String, Object> kafkaTemplate;
+  private final OutboxService outboxService;
 
   // customer
   @Override
   @Transactional
   public OrderResponse placeOrder(PlaceOrderRequest request, String idempotencyKey) {
 
+    /* *********************** 1. Idempotency Check *********************************** */
     if (idempotencyKey != null) {
       Optional<Order> existing = orderRepository.findByIdempotencyKey(idempotencyKey);
       if (existing.isPresent()) {
         log.info(
-            "Order already exists for idempotency key {}, returning exisiting order {}",
+            "Duplicate request for idempotency key {}, returning existing order {}",
             idempotencyKey,
             existing.get().getId());
-
-        publishOrderCreatedEvent(existing.get());
-
         return buildOrderResponse(existing.get());
       }
     }
+
     // fetch customer
+
     Customer customer = authService.getCustomer();
 
-    log.info("*************** fetched address id : {}************** ", request.getAddressId());
+    log.debug("*************** fetched address id : {}************** ", request.getAddressId());
 
     // get cart
     Cart cart =
@@ -78,23 +72,8 @@ public class OrderServiceImpl implements OrderService {
     // fetch restaurant
     Restaurant restaurant = cart.getItems().get(0).getFood().getRestaurant();
 
-    String deliveryAddressLine = null;
-
-    // add delivery address
-    if (request.getDeliveryType() == DeliveryType.DELIVERY) {
-      Address address =
-          addressRepository
-              .findById(request.getAddressId())
-              .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
-
-      if (!address.getCustomer().getId().equals(customer.getId())) {
-        throw new BadRequestException("Invalid address for this customer");
-      }
-
-      deliveryAddressLine = address.getFullAddress();
-
-      log.info("*************** fetched deliveryAddress line : {}", deliveryAddressLine);
-    }
+    // delivery address
+    String deliveryAddressLine = this.resolveDeliveryAddress(request, customer);
 
     // creating order
     Order order =
@@ -137,13 +116,10 @@ public class OrderServiceImpl implements OrderService {
     // calculate total
     calculateOrderTotals(order);
 
-    // order created and saved, now create a order created event
     Order savedOrder = orderRepository.save(order);
     log.info("Order saved, id = {}", savedOrder.getId());
 
-    /* Publish order created event */
-
-    publishOrderCreatedEvent(savedOrder);
+    this.queueOrderCreatedEvent(savedOrder);
 
     // clear cart
     cartRepository.deleteByCustomerId(customer.getId());
@@ -236,12 +212,12 @@ public class OrderServiceImpl implements OrderService {
     return "Order Cancelled SUccesfully";
   }
 
-  private boolean updateOrderStatus(Long orderId, OrderStatus orderStatus) {
-    Optional<Order> order = orderRepository.findById(orderId);
-    if (!order.isPresent()) return false;
-    order.get().setOrderStatus(orderStatus);
-    return true;
-  }
+  //  private boolean updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+  //    Optional<Order> order = orderRepository.findById(orderId);
+  //    if (!order.isPresent()) return false;
+  //    order.get().setOrderStatus(orderStatus);
+  //    return true;
+  //  }
 
   @Override
   public List<OrderResponse> getCustomerOrders(Long customerId) {
@@ -270,36 +246,8 @@ public class OrderServiceImpl implements OrderService {
     return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.CONFIRMED);
   }
 
-  // ==================== Payment Callbacks ==================
-
-  //  @Override
-  //  public void markAsPaid(Long orderId) {
-  //      Order order = orderRepository.findById(orderId)
-  //          .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-  //
-  //      if(order.getOrderStatus() == OrderStatus.PAID){
-  //        log.info("Order {} is already PAID, skipping duplicate event.", orderId);
-  //        return;
-  //
-  //      }
-  //
-  //      if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
-  //        log.warn("Order {} cannot be marked as PAID from status {}",
-  //            orderId, order.getOrderStatus());
-  //        return;
-  //      }
-  //
-  //      order.setOrderStatus(OrderStatus.PAID);
-  //      order.setPaidAt(LocalDateTime.now());
-  //      log.info("Order {} marked as PAID", orderId);
-  //
-  //      orderRepository.save(order);
-  //      log.info("Order {} marked as PAID", orderId);
-  //
-  //
-  //    }
-
   @Override
+  @Transactional
   public void markAsFailed(Long orderId) {
     Order order =
         orderRepository
@@ -317,6 +265,7 @@ public class OrderServiceImpl implements OrderService {
 
     order.setOrderStatus(OrderStatus.CANCELLED);
     order.setCancelledAt(LocalDateTime.now());
+    orderRepository.save(order);
 
     log.info("Order {} marked as CANCELLED due to payment failure ", orderId);
   }
@@ -325,7 +274,7 @@ public class OrderServiceImpl implements OrderService {
 
   //  create order publisher
 
-  private void publishOrderCreatedEvent(Order savedOrder) {
+  private void queueOrderCreatedEvent(Order savedOrder) {
 
     // amount
     long amountInPaise =
@@ -347,18 +296,8 @@ public class OrderServiceImpl implements OrderService {
             .amount(amountInPaise)
             .build();
 
-    // publish event
-    try {
-      kafkaTemplate.send("order-created", savedOrder.getId().toString(), event).get();
-    } catch (Exception e) {
-      log.error(
-          "Failed to publish order-created for orderId={}, cause={}",
-          savedOrder.getId(),
-          e.getMessage(),
-          e);
-      throw new BadRequestException(
-          "Failed to publish order-created for orderId=" + savedOrder.getId());
-    }
+    outboxService.save("order-created", "OrderCreatedEvent", event);
+    log.info("Outbox event queued for orderId={}", savedOrder.getId());
   }
 
   private void calculateOrderTotals(Order order) {
@@ -459,5 +398,23 @@ public class OrderServiceImpl implements OrderService {
         .estimatedDeliveryTime(
             order.getCreatedAt() != null ? order.getCreatedAt().plusMinutes(32) : null)
         .build();
+  }
+
+  private String resolveDeliveryAddress(PlaceOrderRequest request, Customer customer) {
+    // add delivery address
+    if (request.getDeliveryType() != DeliveryType.DELIVERY) return null;
+
+    Address address =
+        addressRepository
+            .findById(request.getAddressId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Address not found with id: " + request.getAddressId()));
+    if (!address.getCustomer().getId().equals(customer.getId())) {
+      throw new BadRequestException("Invalid address for this customer");
+    }
+
+    return address.getFullAddress();
   }
 }

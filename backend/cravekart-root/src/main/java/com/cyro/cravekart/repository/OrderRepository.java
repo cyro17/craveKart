@@ -2,6 +2,7 @@ package com.cyro.cravekart.repository;
 
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.enums.OrderStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
   List<Order> findByDeliveryPartnerIdAndOrderStatusIn(
       Long deliveryPartnerId, List<OrderStatus> statuses);
+
+  // scheduled cancelling
+
+  List<Order> findByOrderStatusAndConfirmedAtBefore(OrderStatus orderStatus, LocalDateTime cutoff);
 }

@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum OrderStatus {
+  PAYMENT_PENDING, // order placed
+  CONFIRMED, // Stripe confirms this
 
-
-  PAYMENT_PENDING,    // order placed
-  CONFIRMED,          // Stripe confirms this
+  ACCEPTED,
   PREPARING,
   READY_FOR_PICKUP,
   OUT_FOR_DELIVERY,
   DELIVERED,
 
-  PAYMENT_FAILED,       // payment failed updated by webhook
+  REJECTED,
+  REFUND_INITIATED,
+  PAYMENT_FAILED, // payment failed updated by webhook
   CANCELLED
-
 }

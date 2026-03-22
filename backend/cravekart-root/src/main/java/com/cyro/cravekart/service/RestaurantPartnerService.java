@@ -1,13 +1,10 @@
 package com.cyro.cravekart.service;
 
-import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.RestaurantPartner;
 import com.cyro.cravekart.models.User;
+import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.RestaurantOrderSummary;
-import org.apache.coyote.BadRequestException;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.nio.file.AccessDeniedException;
+import com.cyro.cravekart.response.RestaurantPartnerResponse;
 import java.util.List;
 
 public interface RestaurantPartnerService {
@@ -29,9 +26,9 @@ public interface RestaurantPartnerService {
   /* === ADMIN Method ===== */
   public RestaurantPartner createRestaurantPartner(User user);
 
-  RestaurantPartner getById(Long restaurantPartnerId) ;
+  RestaurantPartnerResponse getById(Long restaurantPartnerId) ;
 
-  void apply(RestaurantPartner restaurantPartner);
+  void apply(CreateRestaurantRequest restaurantRequest);
 //  public RestaurantOrderSummary getOrderDetail(Long orderId);
 //
   void getStatus(RestaurantPartner restaurantPartner);

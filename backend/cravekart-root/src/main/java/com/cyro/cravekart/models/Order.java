@@ -21,102 +21,100 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(
     name = "orders",
     indexes = {
-        @Index(name = "idx_orders_customer_id", columnList = "customer_id"),
-        @Index(name = "idx_orders_order_status", columnList = "orderStatus"),
-        @Index(name = "idx_orders_restaurant_id", columnList = "restaurantId"),
-        @Index(name = "idx_orders_created_at", columnList = "createdAt"),
-        @Index(name = "idx_orders_customer_status", columnList = "customer_id,orderStatus"),
-        @Index(name = "idx_orders_restaurant_status", columnList = "restaurantId,orderStatus")
-    }
-)
+      @Index(name = "idx_orders_customer_id", columnList = "customer_id"),
+      @Index(name = "idx_orders_order_status", columnList = "orderStatus"),
+      @Index(name = "idx_orders_restaurant_id", columnList = "restaurantId"),
+      @Index(name = "idx_orders_created_at", columnList = "createdAt"),
+      @Index(name = "idx_orders_customer_status", columnList = "customer_id,orderStatus"),
+      @Index(name = "idx_orders_restaurant_status", columnList = "restaurantId,orderStatus")
+    })
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "idempotency_key", unique = true)
-    private String idempotencyKey;
+  @Column(name = "idempotency_key", unique = true)
+  private String idempotencyKey;
 
-    // customer snapshot
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
-    @Column(name = "customer_name", nullable = false)
-    private String customerName;
-    @Column(name = "customer_phone", nullable = false)
-    private String customerPhone;
+  // customer snapshot
+  @Column(name = "customer_id", nullable = false)
+  private Long customerId;
 
-    // restaurant snapshot
-    @Column(name = "restaurant_id", nullable = false)
-    private Long restaurantId;
-    @Column(name = "restaurant_name",  nullable = false)
-    private String restaurantName;
-    @Column(name = "restaurant_address", nullable = false)
-    private String restaurantAddress;
+  @Column(name = "customer_name", nullable = false)
+  private String customerName;
 
-    // delivery partner
-    @Column(name = "delivery_partner_id")
-    private Long deliveryPartnerId;
-    @Column(name = "delivery_partner_name")
-    private String deliveryPartnerName;
+  @Column(name = "customer_phone", nullable = false)
+  private String customerPhone;
 
-    // delivery snapshot
-    @Column(name = "delivery_address_line",  nullable = false)
-    private String deliveryAddressLine;
-//    @Column(name = "delivery_city",   nullable = false)
-//    private String deliveryCity;
-//    @Column(name = "delivery_pincode",   nullable = false)
-//    private String deliveryPinCode;
+  // restaurant snapshot
+  @Column(name = "restaurant_id", nullable = false)
+  private Long restaurantId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_status", nullable = false)
-    private OrderStatus orderStatus;
+  @Column(name = "restaurant_name", nullable = false)
+  private String restaurantName;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "deliveryAddress_id")
-//    private Address deliveryAddress;
+  @Column(name = "restaurant_address", nullable = false)
+  private String restaurantAddress;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems = new ArrayList<>();
+  // delivery partner
+  @Column(name = "delivery_partner_id")
+  private Long deliveryPartnerId;
 
-//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-//    private Payment payment;
+  @Column(name = "delivery_partner_name")
+  private String deliveryPartnerName;
 
-    @Column(name = "total_items",  nullable = false)
-    private Integer totalItems;
+  // delivery snapshot
+  @Column(name = "delivery_address_line", nullable = false)
+  private String deliveryAddressLine;
 
-    private BigDecimal subtotal;
-    private BigDecimal taxAmount;
-    private BigDecimal deliveryFee;
-    private BigDecimal restaurantCharge;
-    private BigDecimal discount;
-    private BigDecimal platformFee;
+  //    @Column(name = "delivery_city",   nullable = false)
+  //    private String deliveryCity;
+  //    @Column(name = "delivery_pincode",   nullable = false)
+  //    private String deliveryPinCode;
 
-    private String specialInstruction;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "order_status", nullable = false)
+  private OrderStatus orderStatus;
 
+  //    @ManyToOne(fetch = FetchType.LAZY)
+  //    @JoinColumn(name = "deliveryAddress_id")
+  //    private Address deliveryAddress;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalPrice;
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  private List<OrderItem> orderItems = new ArrayList<>();
 
-    private LocalDateTime acceptedAt;
-    private LocalDateTime preparedAt;
-    private LocalDateTime pickedUpAt;
-    private LocalDateTime deliveredAt;
-    private LocalDateTime paidAt;
-    private LocalDateTime cancelledAt;
+  //    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+  //    private Payment payment;
 
+  @Column(name = "total_items", nullable = false)
+  private Integer totalItems;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+  private BigDecimal subtotal;
+  private BigDecimal taxAmount;
+  private BigDecimal deliveryFee;
+  private BigDecimal restaurantCharge;
+  private BigDecimal discount;
+  private BigDecimal platformFee;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+  private String specialInstruction;
 
+  @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+  private BigDecimal totalPrice;
 
+  private LocalDateTime acceptedAt;
+  private LocalDateTime preparedAt;
+  private LocalDateTime pickedUpAt;
+  private LocalDateTime deliveredAt;
+  private LocalDateTime paidAt;
+  private LocalDateTime cancelledAt;
 
+  @CreationTimestamp private LocalDateTime createdAt;
 
-//    @PrePersist
-//    public void onCreate(){
-//        this.createdAt = LocalDateTime.now();
-//        this.orderStatus = OrderStatus.CREATED;
-//    }
+  @UpdateTimestamp private LocalDateTime updatedAt;
+
+  private LocalDateTime confirmedAt;
+
+  private LocalDateTime assignedAt;
+
+  private LocalDateTime rejectedAt;
 }

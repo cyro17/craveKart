@@ -1,16 +1,14 @@
 package com.cyro.cravekart.config;
 
 import com.cyro.cravekart.config.security.JwtAuthFilter;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,12 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity
 public class AppConfig {
 
   private final JwtAuthFilter jwtAuthFilter;
@@ -36,38 +32,42 @@ public class AppConfig {
   }
 
   @Bean
-  public  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return  http
-        .cors(cors->cors.configurationSource(corsConfigurationSource()))
-        .sessionManagement(session -> session
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(request->
-            request
-                .requestMatchers(
-                    "/api/public/**",
-                    "/api/auth/**", "/api/restaurant/**",
-                    "/api/webhook/**",
-                    "/swagger-ui/**",
-                    "/api/notification/stream/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**")
-                  .permitAll()
-//                .requestMatchers("/notification/stream/**").authenticated()
-                .requestMatchers("/api/admin/**")
-                  .hasAnyRole("RESTAURANT_PARTNER","ADMIN")
-                .requestMatchers("/api/customer/**")
-                  .hasRole("CUSTOMER")
-                .requestMatchers("/api/**")
-                  .authenticated()
-                .anyRequest().authenticated()
-        )
-        .csrf(csrf->csrf.disable())
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            request ->
+                request
+                    .requestMatchers(
+                        "/api/public/**",
+                        "/api/auth/**",
+                        "/api/restaurant/**",
+                        "/api/webhook/**",
+                        "/swagger-ui/**",
+                        "/api/notification/stream/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**")
+                    .permitAll()
+                    //                .requestMatchers("/notification/stream/**").authenticated()
+
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers("/api/restaurantPartners/")
+                    .hasRole("RESTAURANT_PARTNER")
+                    .requestMatchers("/api/customer/**")
+                    .hasRole("CUSTOMER")
+                    .requestMatchers("/api/**")
+                    .authenticated()
+                    .anyRequest()
+                    .authenticated())
+        .csrf(csrf -> csrf.disable())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
 
   @Bean
-  public CorsConfigurationSource corsConfigurationSource(){
+  public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration corsConfiguration = new CorsConfiguration();
     corsConfiguration.addAllowedOrigin("http://localhost:3000");
     corsConfiguration.addAllowedHeader("*");
@@ -79,9 +79,9 @@ public class AppConfig {
     return source;
   }
 
-
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+  public AuthenticationManager authenticationManager(
+      AuthenticationConfiguration authenticationConfiguration) {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -93,10 +93,10 @@ public class AppConfig {
   @Bean
   public ModelMapper modelMapper() {
     ModelMapper modelMapper = new ModelMapper();
-    modelMapper.getConfiguration()
+    modelMapper
+        .getConfiguration()
         .setMatchingStrategy(MatchingStrategies.STRICT)
         .setFieldMatchingEnabled(true);
     return modelMapper;
   }
-
 }

@@ -1,18 +1,16 @@
 package com.cyro.cravekart.request;
 
-import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.models.ContactInfo;
 import com.cyro.cravekart.models.customAnnotations.UniqueEmail;
 import com.cyro.cravekart.models.customAnnotations.UniqueUsername;
 import com.cyro.cravekart.models.enums.USER_ROLE;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,6 +34,6 @@ public class SignupRequest {
 
   @NotNull(message = "Role must not be null")
   private USER_ROLE role;
-  private ContactInfo contactInfo;
 
+  @Valid private ContactInfo contactInfo;
 }

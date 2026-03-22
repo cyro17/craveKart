@@ -7,14 +7,13 @@ import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.CreateRestaurantResponse;
 import com.cyro.cravekart.response.RestaurantResponse;
 import com.cyro.cravekart.service.RestaurantService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/restaurant")
@@ -33,6 +32,8 @@ public class AdminRestaurantControllers {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  // GET ALL RESTAURANTS
+
   @GetMapping
   public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
       @RequestParam(defaultValue = "1") int pageNo,
@@ -42,7 +43,8 @@ public class AdminRestaurantControllers {
     return new ResponseEntity<>(allRestaurant, HttpStatus.OK);
   }
 
-  // CREATE
+  // CREATE RESTAURANT
+
   @PostMapping
   public ResponseEntity<CreateRestaurantResponse> createRestaurant(
       @RequestBody CreateRestaurantRequest request) {

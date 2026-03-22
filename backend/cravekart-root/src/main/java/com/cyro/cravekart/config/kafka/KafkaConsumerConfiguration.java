@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -20,6 +21,7 @@ import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfiguration {
 
   @Bean
@@ -36,19 +38,17 @@ public class KafkaConsumerConfiguration {
 
     props.put(JacksonJsonDeserializer.USE_TYPE_INFO_HEADERS, true);
 
-    return  props;
+    return props;
   }
 
   @Bean
   public ConsumerFactory<String, Object> consumerFactory() {
-    return  new DefaultKafkaConsumerFactory<>(consumerProperties());
+    return new DefaultKafkaConsumerFactory<>(consumerProperties());
   }
 
   @Bean
   public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-      ConsumerFactory<String, Object> consumerFactory,
-      DefaultErrorHandler kafkaErrorHandler
-  ) {
+      ConsumerFactory<String, Object> consumerFactory, DefaultErrorHandler kafkaErrorHandler) {
     ConcurrentKafkaListenerContainerFactory<String, Object> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
@@ -58,25 +58,23 @@ public class KafkaConsumerConfiguration {
   }
 
   @Bean
-  public DefaultErrorHandler kafkaErrorHandler(
-      KafkaTemplate<String, Object> kafkaTemplate
-  ){
+  public DefaultErrorHandler kafkaErrorHandler(KafkaTemplate<String, Object> kafkaTemplate) {
 
     DeadLetterPublishingRecoverer deadLetterPublishingRecoverer =
-        new DeadLetterPublishingRecoverer(kafkaTemplate,
-        (record, ex) -> {
-          log.error("Message sent to DLT. Topic: {}, Error : {}",
-              record.topic(), ex.getMessage());
+        new DeadLetterPublishingRecoverer(
+            kafkaTemplate,
+            (record, ex) -> {
+              log.error(
+                  "Message sent to DLT. Topic: {}, Error : {}", record.topic(), ex.getMessage());
 
-          return new TopicPartition(record.topic() + ".DLT",
-              record.partition());
-        });
+              return new TopicPartition(record.topic() + ".DLT", record.partition());
+            });
 
     ExponentialBackOffWithMaxRetries backoff = new ExponentialBackOffWithMaxRetries(3);
     backoff.setInitialInterval(1_000L);
     backoff.setMultiplier(2);
     backoff.setMaxInterval(10_000L);
 
-    return  new DefaultErrorHandler(deadLetterPublishingRecoverer, backoff);
+    return new DefaultErrorHandler(deadLetterPublishingRecoverer, backoff);
   }
 }

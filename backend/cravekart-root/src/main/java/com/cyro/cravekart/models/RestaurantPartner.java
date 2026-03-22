@@ -1,14 +1,15 @@
 package com.cyro.cravekart.models;
 
+import com.cyro.cravekart.models.enums.OnboardingStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "restaurant_partners")
@@ -17,10 +18,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RestaurantPartner {
-  @Id
-  private Long id;
+  @Id private Long id;
 
-  @OneToOne(fetch =  FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY)
   @MapsId
   @JoinColumn(name = "user_id")
   private User user;
@@ -33,12 +33,27 @@ public class RestaurantPartner {
   @JoinColumn(name = "onboarding_admin")
   private Admin onboardingAdmin;
 
-  private boolean active = false;
-  private boolean verified = false;
+  @OneToOne(
+      mappedBy = "restaurantPartner",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  private OnboardingApplication application;
 
-  @CreationTimestamp
-  private LocalDateTime createdAt;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  @Builder.Default
+  private OnboardingStatus onboardingStatus = OnboardingStatus.NOT_APPLIED;
 
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
+  private List<String> images = new ArrayList<>();
+
+  private String rejectionReason;
+
+  @Builder.Default private boolean active = false;
+  @Builder.Default private boolean verified = false;
+
+  private LocalDateTime approvedAt;
+  private LocalDateTime appliedAt;
+
+  @CreationTimestamp private LocalDateTime createdAt;
 }
