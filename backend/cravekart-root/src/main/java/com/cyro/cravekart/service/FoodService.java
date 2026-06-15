@@ -1,27 +1,22 @@
 package com.cyro.cravekart.service;
 
-import com.cyro.cravekart.exception.FoodException;
 import com.cyro.cravekart.models.Food;
-import com.cyro.cravekart.request.AdminCreateFoodRequest;
-import com.cyro.cravekart.request.CreateFoodRequest;
-
+import com.cyro.cravekart.request.AddFoodRequest;
+import com.cyro.cravekart.response.FoodResponse;
 import java.util.List;
 
 public interface FoodService {
 
-  public Food createFood(CreateFoodRequest req) ;
+  public Food addFood(AddFoodRequest req);
 
-  void deleteFood(Long foodId);
+  boolean deleteFood(Long foodId, Long restaurantId);
 
-  public List<Food> getRestaurantFoods(Long restaurantId,
-                                       boolean isVeg,
-                                       boolean isSeasonal ,
-                                       String foodCategory) ;
+  public List<Food> getRestaurantFoods(
+      Long restaurantId, boolean isVeg, boolean isSeasonal, String foodCategory);
 
   public List<Food> searchFood(String keyword);
 
-  public  Food findFoodById(Long foodId) ;
+  public Food findFoodById(Long foodId);
 
-  public Food updateAvailibilityStatus(Long foodId) ;
-
+  public FoodResponse updateAvailibilityStatus(Long foodId, Long restaurantId);
 }

@@ -6,18 +6,18 @@ import com.cyro.cravekart.request.CreateRestaurantRequest;
 import com.cyro.cravekart.response.RestaurantOrderSummary;
 import com.cyro.cravekart.response.RestaurantPartnerResponse;
 import com.cyro.cravekart.service.RestaurantPartnerService;
+import jakarta.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/restaurantPartner")
-@Secured("ROLE_RESTAURANT_PARTNER")
+// @Secured("ROLE_RESTAURANT_PARTNER")
 @RequiredArgsConstructor
 public class RestaurantPartnerController {
   private final RestaurantPartnerService restaurantPartnerService;
@@ -30,9 +30,8 @@ public class RestaurantPartnerController {
 
   @PostMapping("/apply")
   public ResponseEntity<?> applyForPartnership(
-      @RequestBody CreateRestaurantRequest restaurantRequest) {
+      @Valid  @RequestBody CreateRestaurantRequest restaurantRequest) {
     restaurantPartnerService.apply(restaurantRequest);
-
     return ResponseEntity.status(HttpStatus.ACCEPTED).body("Applied for restaurant partnership");
   }
 

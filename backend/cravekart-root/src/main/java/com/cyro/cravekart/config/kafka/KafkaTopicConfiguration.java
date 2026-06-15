@@ -15,42 +15,55 @@ public class KafkaTopicConfiguration {
   public static final String PAYMENT_FAILED = "payment-failed";
   public static final String PAYMENT_CANCELLED = "payment-cancelled";
   public static final String NOTIF_SIGNUP = "notif-signup";
-  //  public static final String ORDER_CONFIRMED = "order-confirmed";
-
   public static final String NOTIF_ORDER_PAID = "notif.order-paid";
+
+  /**
+   * Produced by OutboxScheduler keyed by restaurantId. All orders for the same restaurant land on
+   * the same partition → ordered delivery.
+   */
+  public static final String ORDER_CONFIRMED = "order-confirmed";
 
   @Bean
   public NewTopic orderCreatedTopic() {
-    return TopicBuilder.name(ORDER_CREATED).partitions(3).replicas(1).build();
+    return topic(ORDER_CREATED, 3);
   }
 
   @Bean
   public NewTopic paymentInitiatedTopic() {
-    return TopicBuilder.name(PAYMENT_INITIATED).partitions(3).replicas(1).build();
+    return topic(PAYMENT_INITIATED, 3);
   }
 
   @Bean
   public NewTopic paymentSuccessTopic() {
-    return TopicBuilder.name(PAYMENT_SUCCESS).partitions(3).replicas(1).build();
+    return topic(PAYMENT_SUCCESS, 3);
   }
 
   @Bean
   public NewTopic paymentFailedTopic() {
-    return TopicBuilder.name(PAYMENT_FAILED).partitions(3).replicas(1).build();
+    return topic(PAYMENT_FAILED, 3);
   }
 
   @Bean
   public NewTopic paymentCancelledTopic() {
-    return TopicBuilder.name(PAYMENT_CANCELLED).partitions(3).replicas(1).build();
+    return topic(PAYMENT_CANCELLED, 3);
   }
 
   @Bean
-  public NewTopic SignupNotificationTopic() {
-    return TopicBuilder.name(NOTIF_SIGNUP).partitions(3).replicas(3).build();
+  public NewTopic notifSignupTopic() {
+    return topic(NOTIF_SIGNUP, 3);
+  }
+
+  @Bean
+  public NewTopic notifOrderPaidTopic() {
+    return topic(NOTIF_ORDER_PAID, 1);
   }
 
   @Bean
   public NewTopic orderConfirmedTopic() {
-    return TopicBuilder.name(NOTIF_ORDER_PAID).partitions(1).replicas(1).build();
+    return topic(ORDER_CONFIRMED, 3);
+  }
+
+  private NewTopic topic(String name, int partitions) {
+    return TopicBuilder.name(name).partitions(partitions).replicas(1).build();
   }
 }

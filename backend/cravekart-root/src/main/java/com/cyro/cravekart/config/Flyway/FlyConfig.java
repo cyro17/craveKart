@@ -13,7 +13,7 @@ public class FlyConfig {
             .locations("classpath:db/migration")
             .baselineOnMigrate(true)
             .baselineVersion("1")
-            .baselineDescription("Initial schema from Hibernate ddl-auto")
+            //            .baselineDescription("Initial schema from Hibernate ddl-auto")
             .load();
 
     flyway.migrate();

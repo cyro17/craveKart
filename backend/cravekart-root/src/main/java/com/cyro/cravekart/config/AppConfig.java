@@ -20,9 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@EnableWebSecurity
 @Configuration
-@EnableMethodSecurity
+@EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class AppConfig {
 
   private final JwtAuthFilter jwtAuthFilter;
@@ -47,13 +47,14 @@ public class AppConfig {
                         "/swagger-ui/**",
                         "/api/notification/stream/**",
                         "/swagger-ui.html",
-                        "/v3/api-docs/**")
+                        "/v3/api-docs/**",
+                        "/ws/**")
                     .permitAll()
                     //                .requestMatchers("/notification/stream/**").authenticated()
 
                     .requestMatchers("/api/admin/**")
                     .hasRole("ADMIN")
-                    .requestMatchers("/api/restaurantPartners/")
+                    .requestMatchers("/api/restaurantPartner/**", "/api/restaurantPartners/**")
                     .hasRole("RESTAURANT_PARTNER")
                     .requestMatchers("/api/customer/**")
                     .hasRole("CUSTOMER")

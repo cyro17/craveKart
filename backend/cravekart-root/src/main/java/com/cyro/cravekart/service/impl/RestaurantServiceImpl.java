@@ -193,7 +193,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   // ==================== GET RESTAURANT MENU ============================
 
   @Override
-  @Cacheable(cacheNames = "restaurantMenu", key = "#restaurantId", unless = "#result == null")
+  //  @Cacheable(cacheNames = "restaurantMenu", key = "#restaurantId", unless = "#result == null")
   public RestaurantMenuResponse getRestaurantMenu(Long restaurantId) {
     Restaurant restaurant =
         restaurantRepository
@@ -217,16 +217,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 category -> {
                   List<FoodResponse> foodResponse =
                       foodMap.getOrDefault(category.getId(), List.of()).stream()
-                          .map(
-                              food ->
-                                  FoodResponse.builder()
-                                      .id(food.getId())
-                                      .name(food.getName())
-                                      .description(food.getDescription())
-                                      .price(food.getPrice())
-                                      .vegetarian(food.isVegetarian())
-                                      .images(food.getImages())
-                                      .build())
+                          .map(food -> modelMapper.map(food, FoodResponse.class))
                           .toList();
 
                   return FoodCategoryResponse.builder()

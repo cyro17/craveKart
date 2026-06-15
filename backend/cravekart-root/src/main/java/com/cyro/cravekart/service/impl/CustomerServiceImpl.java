@@ -90,6 +90,24 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
+  public CustomerDto getCustomerById(Long customerId) {
+    Customer customer =
+        customerRepository
+            .findById(customerId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Customer with id " + customerId + " not found"));
+
+    User user = customer.getUser();
+    return CustomerDto.builder()
+        .id(customer.getId())
+        .customerName(user.getFirstName())
+        .customerEmail(user.getEmail())
+        .customerPhone(user.getContact().getMobile())
+        .build();
+  }
+
+  @Override
   public CartDto getCartById(Long cartId) {
     return null;
   }

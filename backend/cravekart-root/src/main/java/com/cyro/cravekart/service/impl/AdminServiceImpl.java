@@ -98,9 +98,13 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   public List<RestaurantPartnerResponse> getPendingRestaurantPartners() {
-    return restaurantPartnerRepository.findByOnboardingStatus(OnboardingStatus.PENDING).stream()
-        .map(RestaurantPartnerResponse::from)
-        .toList();
+    List<RestaurantPartnerResponse> list =
+        restaurantPartnerRepository.findByOnboardingStatus(OnboardingStatus.PENDING).stream()
+            .map(RestaurantPartnerResponse::from)
+            .toList();
+
+    log.info(list.toString());
+    return list;
   }
 
   @Override

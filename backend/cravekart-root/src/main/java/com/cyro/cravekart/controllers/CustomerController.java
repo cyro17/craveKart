@@ -1,12 +1,12 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.models.enums.USER_ROLE;
 import com.cyro.cravekart.request.AddCartItemRequest;
 import com.cyro.cravekart.request.AddressRequest;
 import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.*;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomerController {
-  public final RestaurantService restaurantService;
+  private final RestaurantService restaurantService;
   private final CustomerService customerService;
   private final CartService cartService;
   private final CartItemService cartItemService;
@@ -30,10 +30,6 @@ public class CustomerController {
 
   @GetMapping("/check")
   public ResponseEntity<String> healthCheck() {
-
-    for (USER_ROLE role : authService.getCustomer().getUser().getRoles()) {
-      System.out.println(role);
-    }
     return new ResponseEntity<>("ok", HttpStatus.OK);
   }
 
@@ -43,6 +39,8 @@ public class CustomerController {
   public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(
       @RequestParam(defaultValue = "1") int pageNo,
       @RequestParam(defaultValue = "6", required = false) int pageSize) {
+    List<RestaurantResponse> results = new ArrayList<>();
+
     return ResponseEntity.ok(restaurantService.getAllRestaurant(pageNo, pageSize));
   }
 

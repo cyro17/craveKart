@@ -64,7 +64,7 @@ public class Order {
   private String deliveryPartnerName;
 
   // delivery snapshot
-  @Column(name = "delivery_address_line", nullable = false)
+  @Column(name = "delivery_address_line")
   private String deliveryAddressLine;
 
   //    @Column(name = "delivery_city",   nullable = false)

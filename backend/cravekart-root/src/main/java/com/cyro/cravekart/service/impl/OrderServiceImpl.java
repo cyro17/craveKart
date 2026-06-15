@@ -1,6 +1,8 @@
 package com.cyro.cravekart.service.impl;
 
+import com.cyro.cravekart.config.kafka.KafkaTopicConfiguration;
 import com.cyro.cravekart.config.security.AuthContextService;
+import com.cyro.cravekart.events.order.NewOrderEvent;
 import com.cyro.cravekart.events.order.OrderCreatedEvent;
 import com.cyro.cravekart.exception.BadRequestException;
 import com.cyro.cravekart.exception.ForbiddenException;
@@ -12,7 +14,6 @@ import com.cyro.cravekart.repository.*;
 import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.*;
 import com.cyro.cravekart.service.OrderService;
-import com.cyro.cravekart.service.OutboxService;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,14 +34,14 @@ public class OrderServiceImpl implements OrderService {
   private final CartRepository cartRepository;
   private final AuthContextService authService;
   private final OrderRepository orderRepository;
-  private final OutboxService outboxService;
+  private final OutboxServiceImpl outboxService;
 
   // customer
   @Override
   @Transactional
   public OrderResponse placeOrder(PlaceOrderRequest request, String idempotencyKey) {
 
-    /* *********************** 1. Idempotency Check *********************************** */
+    /* ***********************  Idempotency Check *********************************** */
     if (idempotencyKey != null) {
       Optional<Order> existing = orderRepository.findByIdempotencyKey(idempotencyKey);
       if (existing.isPresent()) {
@@ -61,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
     // get cart
     Cart cart =
         cartRepository
-            .findByCustomerId(customer.getId())
+            .findByCustomerIdWithItems(customer.getId())
             .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
 
     // check if cart is empty
@@ -84,7 +85,11 @@ public class OrderServiceImpl implements OrderService {
             .deliveryAddressLine(deliveryAddressLine)
             .restaurantId(restaurant.getId())
             .restaurantName(restaurant.getName())
-            .restaurantAddress(restaurant.getAddress().getStreetAddress())
+            //            .restaurantAddress(restaurant.getAddress().getStreetAddress())
+            .restaurantAddress(
+                restaurant.getAddress() != null
+                    ? restaurant.getAddress().getStreetAddress()
+                    : "Address not available")
             .specialInstruction(request.getSpecialInstruction())
             .orderStatus(OrderStatus.PAYMENT_PENDING)
             .idempotencyKey(idempotencyKey)
@@ -116,10 +121,10 @@ public class OrderServiceImpl implements OrderService {
     // calculate total
     calculateOrderTotals(order);
 
-    Order savedOrder = orderRepository.save(order);
+    Order savedOrder = orderRepository.save(order); // save order to DB
     log.info("Order saved, id = {}", savedOrder.getId());
 
-    this.queueOrderCreatedEvent(savedOrder);
+    this.queueOrderCreatedEvent(savedOrder); // order-place event queued
 
     // clear cart
     cartRepository.deleteByCustomerId(customer.getId());
@@ -129,17 +134,41 @@ public class OrderServiceImpl implements OrderService {
 
   // restaurant partner
 
+  //  @Override
+  //  @Transactional
+  //  public void markAsConfirmed(Long orderId) {
+  //    //    RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
+  //    Order order =
+  //        orderRepository
+  //            .findById(orderId)
+  //            .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
+  //    //    if (!order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())) {
+  //    //      throw new ForbiddenException("Order does not belong to your restaurant");
+  //    //    }
+  //
+  //    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
+  //      throw new BadRequestException("Pending payment...");
+  //    }
+  //
+  //    order.setOrderStatus(OrderStatus.CONFIRMED);
+  //    order.setAcceptedAt(LocalDateTime.now());
+  //
+  //    log.info("*****************Order marked as confirmed, id = {}*********************",
+  // orderId);
+  //
+  //    orderRepository.save(order);
+  //
+  //    log.info("Order {} marked as CONFIRMED", orderId);
+  //  }
+
   @Override
   @Transactional
-  public void markAsConfirmed(Long orderId) {
+  public Order markAsConfirmed(Long orderId) {
     //    RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
     Order order =
         orderRepository
             .findById(orderId)
             .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
-    //    if (!order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())) {
-    //      throw new ForbiddenException("Order does not belong to your restaurant");
-    //    }
 
     if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
       throw new BadRequestException("Pending payment...");
@@ -150,9 +179,14 @@ public class OrderServiceImpl implements OrderService {
 
     log.info("*****************Order marked as confirmed, id = {}*********************", orderId);
 
-    orderRepository.save(order);
+    Order savedOrder = orderRepository.save(order);
+    outboxService.save(
+        KafkaTopicConfiguration.ORDER_CONFIRMED,
+        savedOrder.getRestaurantId().toString(),
+        "NewOrderEvent",
+        buildOrderResponse(savedOrder));
 
-    log.info("Order {} marked as CONFIRMED", orderId);
+    return savedOrder;
   }
 
   @Override
@@ -296,7 +330,7 @@ public class OrderServiceImpl implements OrderService {
             .amount(amountInPaise)
             .build();
 
-    outboxService.save("order-created", "OrderCreatedEvent", event);
+    outboxService.save("order-created", "OrderCreatedEvent", savedOrder.getId().toString(), event);
     log.info("Outbox event queued for orderId={}", savedOrder.getId());
   }
 
@@ -416,5 +450,34 @@ public class OrderServiceImpl implements OrderService {
     }
 
     return address.getFullAddress();
+  }
+
+  private NewOrderEvent buildNewOrderEvent(Order order) {
+    return NewOrderEvent.builder()
+        .orderId(order.getId())
+        .restaurantId(order.getRestaurantId())
+        .restaurantName(order.getRestaurantName())
+        .customerId(order.getCustomerId())
+        .customerName(order.getCustomerName())
+        .customerPhone(order.getCustomerPhone())
+        .deliveryAddress(order.getDeliveryAddressLine()) // field name matches your class
+        .specialInstructions(order.getSpecialInstruction())
+        .subtotal(order.getSubtotal())
+        .totalPrice(order.getTotalPrice()) // BigDecimal → BigDecimal, no conversion
+        .totalItems(order.getTotalItems())
+        .createdAt(order.getCreatedAt())
+        .items(
+            order.getOrderItems().stream()
+                .map(
+                    item ->
+                        NewOrderEvent.Item.builder()
+                            .foodName(item.getFoodName())
+                            .quantity(item.getQuantity())
+                            .unitPrice(item.getFoodPrice())
+                            .totalPrice(item.getTotalPrice())
+                            .imageUrl(item.getImageUrl())
+                            .build())
+                .toList())
+        .build();
   }
 }

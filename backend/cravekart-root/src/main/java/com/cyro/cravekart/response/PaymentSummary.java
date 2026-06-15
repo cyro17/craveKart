@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class PaymentSummary {
   private Long paymentId;
-  private String paymentMethod;   // CARD, UPI, COD
+  private String paymentMethod; // CARD, UPI, COD
   private String paymentStatus;
 }

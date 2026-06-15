@@ -44,26 +44,31 @@ public class RestaurantPartnerResponse {
   public static RestaurantPartnerResponse from(RestaurantPartner partner) {
     OnboardingApplication app = partner.getApplication();
 
-    return RestaurantPartnerResponse.builder()
-        // partner
-        .partnerId(partner.getId())
-        .partnerUsername(partner.getUser().getUsername())
-        .partnerEmail(partner.getUser().getEmail())
-        .onboardingStatus(partner.getOnboardingStatus())
-        .appliedAt(partner.getAppliedAt())
-        .rejectionReason(partner.getRejectionReason())
-        .restaurantName(app != null ? app.getRestaurantName() : null)
-        .cuisineType(app != null ? app.getCuisineType() : null)
-        .description(app != null ? app.getDescription() : null)
-        .openingHours(app != null ? app.getOpeningHours() : null)
-        .fssaiLicence(app != null ? app.getFssaiLicence() : null)
-        .contactNumber(app != null ? app.getContactNumber() : null)
-        .streetAddress(app != null ? app.getStreetAddress() : null)
-        .city(app != null ? app.getCity() : null)
-        .state(app != null ? app.getState() : null)
-        .postalCode(app != null ? app.getPostalCode() : null)
-        .country(app != null ? app.getCountry() : null)
-        .submittedAt(app != null ? app.getSubmittedAt() : null)
-        .build();
+    RestaurantPartnerResponseBuilder builder =
+        RestaurantPartnerResponse.builder()
+            .partnerId(partner.getId())
+            .partnerUsername(partner.getUser().getUsername())
+            .partnerEmail(partner.getUser().getEmail())
+            .onboardingStatus(partner.getOnboardingStatus())
+            .appliedAt(partner.getAppliedAt())
+            .rejectionReason(partner.getRejectionReason());
+
+    if (app != null) {
+      builder
+          .restaurantName(app.getRestaurantName())
+          .cuisineType(app.getCuisineType())
+          .description(app.getDescription())
+          .openingHours(app.getOpeningHours())
+          .fssaiLicence(app.getFssaiLicence())
+          .contactNumber(app.getContactNumber())
+          .streetAddress(app.getStreetAddress())
+          .city(app.getCity())
+          .state(app.getState())
+          .postalCode(app.getPostalCode())
+          .country(app.getCountry())
+          .submittedAt(app.getSubmittedAt());
+    }
+
+    return builder.build();
   }
 }

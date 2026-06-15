@@ -1,6 +1,5 @@
 package com.cyro.cravekart.service.impl;
 
-import com.cravekart.core.events.notification.OrderConfirmedEvent;
 import com.cyro.cravekart.config.security.AuthContextService;
 import com.cyro.cravekart.exception.BadRequestException;
 import com.cyro.cravekart.exception.ForbiddenException;
@@ -113,7 +112,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
     Order order = getOrderForPartner(orderId);
     if (order.getOrderStatus() != OrderStatus.CONFIRMED) {
       throw new BadRequestException(
-          "Order can only be accepted when status is PAID, current: " + order.getOrderStatus());
+          "Order can only be accepted when CONFIRMED, current: " + order.getOrderStatus());
     }
 
     order.setOrderStatus(OrderStatus.ACCEPTED);
@@ -135,18 +134,18 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
 
     log.info("Order {} accepted by restaurant {} ", orderId, order.getRestaurantId());
 
-    orderEventPublisher.publishOrderPaid(
-        OrderConfirmedEvent.builder()
-            .orderId(order.getId())
-            .customerId(order.getCustomerId())
-            .customerName(order.getCustomerName())
-            .customerEmail(customerEmail)
-            .restaurantName(order.getRestaurantName())
-            .totalPrice("₹" + order.getTotalPrice())
-            .estimatedDeliveryTime("30-45 mintues")
-            .build());
-
-    log.info("Order {} confirmed by restaurant {}", orderId, order.getRestaurantId());
+    //    orderEventPublisher.publishOrderPaid(
+    //        OrderConfirmedEvent.builder()
+    //            .orderId(order.getId())
+    //            .customerId(order.getCustomerId())
+    //            .customerName(order.getCustomerName())
+    //            .customerEmail(customerEmail)
+    //            .restaurantName(order.getRestaurantName())
+    //            .totalPrice("₹" + order.getTotalPrice())
+    //            .estimatedDeliveryTime("30-45 mintues")
+    //            .build());
+    //
+    //    log.info("Order {} confirmed by restaurant {}", orderId, order.getRestaurantId());
 
     return this.toSummary(order);
   }
@@ -160,7 +159,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
 
     if (order.getOrderStatus() != OrderStatus.ACCEPTED) {
       throw new BadRequestException(
-          "Order must be CONFIRMED before marking as PREPARING, Current: {}"
+          "Order must be ACCEPTED before marking as PREPARING, Current: {}"
               + order.getOrderStatus());
     }
 
@@ -201,6 +200,9 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
         "Your order is packed and ready! A delivery partner is on the way.");
 
     log.info("Order {} is READY_FOR_PICKUP", orderId);
+
+    // handoff to Delivery saga - deliver partner listeners consume this
+
     return toSummary(order);
   }
 
@@ -267,6 +269,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
   // ═══════════════════════════════════════════════
 
   @Override
+  @Transactional
   public RestaurantPartner createRestaurantPartner(User user) {
     if (restaurantPartnerRepository.existsByUser(user)) {
       throw new BadRequestException("Restaurant already exists");
@@ -304,6 +307,7 @@ public class RestaurantPartnerServiceImpl implements RestaurantPartnerService {
             .state(restaurantRequest.getAddressRequest().getState())
             .country(restaurantRequest.getAddressRequest().getCountry())
             .postalCode(restaurantRequest.getAddressRequest().getPostalCode())
+            .contactNumber(restaurantRequest.getContactInfo().getMobile())
             .build();
 
     partner.setApplication(application);

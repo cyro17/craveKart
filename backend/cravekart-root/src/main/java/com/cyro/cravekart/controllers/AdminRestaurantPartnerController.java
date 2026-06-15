@@ -2,17 +2,17 @@ package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.response.RestaurantPartnerResponse;
 import com.cyro.cravekart.service.AdminService;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/restaurantPartners")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 @Slf4j
 public class AdminRestaurantPartnerController {
 
@@ -24,11 +24,14 @@ public class AdminRestaurantPartnerController {
   }
 
   @GetMapping("/pending")
+  @Transactional
   public ResponseEntity<List<RestaurantPartnerResponse>> getPending() {
+
     return ResponseEntity.ok(adminService.getPendingRestaurantPartners());
   }
 
   @GetMapping("/{partnerId}")
+  @Transactional
   public ResponseEntity<RestaurantPartnerResponse> getApplication(@PathVariable Long partnerId) {
     return ResponseEntity.ok(adminService.getPendingRestaurantPartner(partnerId));
   }

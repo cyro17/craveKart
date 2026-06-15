@@ -1,18 +1,13 @@
 package com.cyro.cravekart.service;
 
 import com.cyro.cravekart.dto.*;
-import com.cyro.cravekart.exception.FoodException;
-import com.cyro.cravekart.models.Address;
 import com.cyro.cravekart.request.AddressRequest;
-import com.cyro.cravekart.request.CreateAddressRequest;
 import com.cyro.cravekart.response.AddressResponse;
 import com.cyro.cravekart.response.CartResponse;
 import com.cyro.cravekart.response.OrderResponse;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import javax.naming.ServiceUnavailableException;
-import java.util.List;
 
 public interface CustomerService {
 
@@ -28,6 +23,7 @@ public interface CustomerService {
   Page<CustomerOrderDTO> getAllMyOrders(PageRequest pageRequest);
 
   CustomerDto getMyProfile();
+  CustomerDto getCustomerById(Long customerId );
 
   CartDto getCartById(Long cartId);
 

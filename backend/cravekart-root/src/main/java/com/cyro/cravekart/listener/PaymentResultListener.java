@@ -3,9 +3,11 @@ package com.cyro.cravekart.listener;
 import com.cravekart.core.events.notification.OrderConfirmedEvent;
 import com.cyro.cravekart.config.kafka.KafkaTopicConfiguration;
 import com.cyro.cravekart.dto.CustomerDto;
+import com.cyro.cravekart.events.order.NewOrderEvent;
 import com.cyro.cravekart.events.payment.PaymentCancelledEvent;
 import com.cyro.cravekart.events.payment.PaymentFailedEvent;
 import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
+import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.publishers.OrderEventPublisher;
 import com.cyro.cravekart.service.CustomerService;
 import com.cyro.cravekart.service.SseEmitterService;
@@ -23,16 +25,17 @@ public class PaymentResultListener {
 
   private final OrderServiceImpl orderService;
   private final SseEmitterService sseEmitterService;
-  private final KafkaTemplate<String, Object> kafkaTemplate;
   private final CustomerService customerService;
   private final OrderEventPublisher orderEventPublisher;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   @KafkaListener(topics = KafkaTopicConfiguration.PAYMENT_SUCCESS, groupId = "order-service")
   public void handlePaymentSucceeded(PaymentSuccessEvent event) {
     log.info("Payment succeeded for orderId: {}", event.getOrderId());
-    orderService.markAsConfirmed(event.getOrderId());
+    Order order = orderService.markAsConfirmed(event.getOrderId());
 
-    CustomerDto customer = customerService.getMyProfile();
+    CustomerDto customer = customerService.getCustomerById(event.getCustomerId());
+
     // send out event to notification service to send email / notification
     OrderConfirmedEvent orderConfirmedEvent =
         OrderConfirmedEvent.builder()
@@ -44,6 +47,25 @@ public class PaymentResultListener {
             .estimatedDeliveryTime("30-45 minutes")
             .build();
     orderEventPublisher.publishOrderPaid(orderConfirmedEvent);
+
+    NewOrderEvent newOrderEvent =
+        NewOrderEvent.builder()
+            .orderId(order.getId())
+            .customerId(order.getCustomerId())
+            .restaurantId(order.getRestaurantId())
+            .customerName(order.getCustomerName())
+            .restaurantName(order.getRestaurantName())
+            .deliveryAddress(order.getDeliveryAddressLine())
+            .totalPrice(order.getTotalPrice())
+            .build();
+
+    kafkaTemplate.send(
+        KafkaTopicConfiguration.ORDER_CONFIRMED, order.getRestaurantId().toString(), newOrderEvent);
+
+    log.info(
+        "Published order-confirmed for orderId: {} restaurandId: {}",
+        order.getId(),
+        order.getRestaurantId());
   }
 
   @KafkaListener(topics = KafkaTopicConfiguration.PAYMENT_FAILED, groupId = "order-service")

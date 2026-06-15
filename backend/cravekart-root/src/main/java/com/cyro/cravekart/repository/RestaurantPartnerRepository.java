@@ -16,6 +16,6 @@ public interface RestaurantPartnerRepository extends JpaRepository<RestaurantPar
   Optional<RestaurantPartner> findByUserId(Long userId);
 
   List<RestaurantPartner> findByOnboardingStatus(OnboardingStatus status);
-  
+
   boolean existsByUser(User user);
 }

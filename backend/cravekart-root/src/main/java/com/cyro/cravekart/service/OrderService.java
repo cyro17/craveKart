@@ -1,15 +1,10 @@
 package com.cyro.cravekart.service;
 
-import com.cyro.cravekart.exception.OrderException;
-import com.cyro.cravekart.exception.RestaurantException;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.models.enums.OrderStatus;
 import com.cyro.cravekart.request.PlaceOrderRequest;
 import com.cyro.cravekart.response.OrderResponse;
 // import com.cyro.cravekart.response.PlaceOrderResponse;
-import org.apache.coyote.BadRequestException;
-
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 public interface OrderService {
@@ -33,7 +28,9 @@ public interface OrderService {
 
   public List<Order> getPendingOrdersForRestaurant();
 
-  void markAsConfirmed(Long orderId);
+  //  void markAsConfirmed(Long orderId);
+
+  Order markAsConfirmed(Long orderId);
 
   //  void markAsPaid(Long orderId);
   void markAsFailed(Long orderId);

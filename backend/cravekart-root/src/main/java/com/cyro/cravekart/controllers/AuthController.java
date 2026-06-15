@@ -1,22 +1,17 @@
 package com.cyro.cravekart.controllers;
 
 import com.cyro.cravekart.config.security.AuthContextService;
-import com.cyro.cravekart.models.Address;
-import com.cyro.cravekart.models.Customer;
+import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.models.User;
 import com.cyro.cravekart.request.*;
 import com.cyro.cravekart.response.LoginResponse;
 import com.cyro.cravekart.response.SignupReponse;
-import com.cyro.cravekart.config.security.AuthService;
 import com.cyro.cravekart.response.UserResponse;
 import com.cyro.cravekart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -67,6 +62,4 @@ public class AuthController {
         .build();
     return ResponseEntity.ok(response);
   }
-
-
 }

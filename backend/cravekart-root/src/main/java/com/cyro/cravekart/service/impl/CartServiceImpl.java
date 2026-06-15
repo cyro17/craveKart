@@ -14,12 +14,11 @@ import com.cyro.cravekart.response.PriceBreakdown;
 import com.cyro.cravekart.service.CartItemService;
 import com.cyro.cravekart.service.CartService;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -43,39 +42,37 @@ public class CartServiceImpl implements CartService {
     Customer user = authService.getCustomer();
     Cart cart = getCartOrCreateNew();
 
-    Food food = foodRepository.findById(request.getFoodId())
-        .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
+    Food food =
+        foodRepository
+            .findById(request.getFoodId())
+            .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 
     String restaurantName = food.getRestaurant().getName();
     List<String> images = food.getImages();
 
-    Optional<CartItem> existing = cart.getItems().stream()
-        .filter(item -> item.getFood().getId().equals(food.getId()))
-        .findFirst();
+    Optional<CartItem> existing =
+        cart.getItems().stream()
+            .filter(item -> item.getFood().getId().equals(food.getId()))
+            .findFirst();
 
-    if(existing.isPresent()) {
+    if (existing.isPresent()) {
       CartItem existingItem = existing.get();
       int updatedQuantity = existingItem.getQuantity() + request.getQuantity();
       existingItem.setQuantity(updatedQuantity);
-      existingItem.setTotalPrice(
-          food.getPrice().multiply(BigDecimal.valueOf(updatedQuantity))
-      );
+      existingItem.setTotalPrice(food.getPrice().multiply(BigDecimal.valueOf(updatedQuantity)));
     } else {
       CartItem item = new CartItem();
       item.setCart(cart);
       item.setFood(food);
       item.setQuantity(request.getQuantity());
       item.setImageUrl(food.getImages().size() > 0 ? food.getImages().get(0) : null);
-      item.setTotalPrice(
-          food.getPrice().multiply(new BigDecimal(request.getQuantity()))
-      );
+      item.setTotalPrice(food.getPrice().multiply(new BigDecimal(request.getQuantity())));
       cart.getItems().add(item);
     }
 
     recalculateCartTotal(cart);
     cartRepository.save(cart);
-    return  mapToCartResponse(cart);
-
+    return mapToCartResponse(cart);
   }
 
   @Override
@@ -86,31 +83,30 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartResponse updateQuantity(Long cartItemId, Integer quantity) {
-    return  null;
+    return null;
   }
 
   @Override
-  public void removeCartItem(Long cartItemId){
+  public void removeCartItem(Long cartItemId) {
     Customer user = authService.getCustomer();
 
     Cart cart = getCartOrThrow();
-    CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
-        () -> new BadRequestException("Item not found"));
+    CartItem cartItem =
+        cartItemRepository
+            .findById(cartItemId)
+            .orElseThrow(() -> new BadRequestException("Item not found"));
     cart.getItems().remove(cartItem);
     cartRepository.save(cart);
   }
 
   @Override
   public Cart getCartByCustomerId(Long userId) {
-    return cartRepository.findByCustomerId(userId).orElseThrow(
-        () -> new ResourceNotFoundException("Cart is not present")
-    );
+    return cartRepository
+        .findByCustomerId(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("Cart is not present"));
   }
 
-
   // -------------------helper method -----------------------------
-
-
 
   private Cart createNewCart() {
     Customer user = authService.getCustomer();
@@ -122,68 +118,62 @@ public class CartServiceImpl implements CartService {
   }
 
   private void recalculateCartTotal(Cart cart) {
-    BigDecimal total = cart.getItems().stream()
-        .map(CartItem::getTotalPrice)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    BigDecimal total =
+        cart.getItems().stream()
+            .map(CartItem::getTotalPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     cart.setCartTotal(total);
   }
 
+  @Transactional
   private CartResponse mapToCartResponse(Cart cart) {
-    List<CartItemResponse> items = cart.getItems().stream()
-        .map(ci-> new CartItemResponse(
-            ci.getId(),
-            ci.getFood().getId(),
-            ci.getFood().getName(),
-            ci.getFood().getDescription(),
-            ci.getQuantity(),
-            ci.getTotalPrice(),
-            ci.getFood().getRestaurant().getName(),
-            ci.getFood().getImages()
-        )).toList();
+    List<CartItemResponse> items =
+        cart.getItems().stream()
+            .map(
+                ci ->
+                    new CartItemResponse(
+                        ci.getId(),
+                        ci.getFood().getId(),
+                        ci.getFood().getName(),
+                        ci.getFood().getDescription(),
+                        ci.getQuantity(),
+                        ci.getTotalPrice(),
+                        ci.getFood().getRestaurant().getName(),
+                        ci.getImageUrl() != null ? List.of(ci.getImageUrl()) : List.of()))
+            .toList();
 
     PriceBreakdown pricing = calculateCartPricing(cart);
-    return CartResponse.builder()
-        .cartId(cart.getId())
-        .items(items)
-        .pricing(pricing)
-        .build();
-
+    return CartResponse.builder().cartId(cart.getId()).items(items).pricing(pricing).build();
   }
 
-  private Cart getCartOrCreateNew(){
+  private Cart getCartOrCreateNew() {
     Customer user = authService.getCustomer();
-    return cartRepository.findByCustomerId(
-            user.getId())
-        .orElseGet(this::createNewCart);
+    return cartRepository.findByCustomerId(user.getId()).orElseGet(this::createNewCart);
   }
 
-  private Cart getCartOrThrow(){
+  private Cart getCartOrThrow() {
     Customer user = authService.getCustomer();
-    return cartRepository.findByCustomerId(user.getId()).orElseThrow(
-        ()->  new BadRequestException("Cart not found"));
+    return cartRepository
+        .findByCustomerId(user.getId())
+        .orElseThrow(() -> new BadRequestException("Cart not found"));
   }
-
 
   private PriceBreakdown calculateCartPricing(Cart cart) {
-    BigDecimal subtotal = cart.getItems().stream()
-        .map(CartItem::getTotalPrice)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    BigDecimal subtotal =
+        cart.getItems().stream()
+            .map(CartItem::getTotalPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     BigDecimal taxRate = new BigDecimal("0.05");
     BigDecimal tax = subtotal.multiply(taxRate);
 
     BigDecimal restaurantCharge = new BigDecimal("50");
 
-
     BigDecimal deliveryFee = new BigDecimal("40");
 
     BigDecimal discount = BigDecimal.ZERO; // apply coupon later
 
-    BigDecimal total = subtotal
-        .add(tax)
-        .add(restaurantCharge)
-        .add(deliveryFee)
-        .subtract(discount);
+    BigDecimal total = subtotal.add(tax).add(restaurantCharge).add(deliveryFee).subtract(discount);
 
     return PriceBreakdown.builder()
         .subtotal(subtotal)

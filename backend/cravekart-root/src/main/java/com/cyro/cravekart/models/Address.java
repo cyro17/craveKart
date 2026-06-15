@@ -1,19 +1,19 @@
 package com.cyro.cravekart.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Entity
 @AllArgsConstructor
@@ -28,6 +28,7 @@ public class Address {
 
   @Column(nullable = false)
   private String firstName;
+
   private String lastName;
 
   private String streetAddress;
@@ -38,12 +39,13 @@ public class Address {
 
   private String state;
 
+  @JsonProperty("zipCode")
+  @JsonAlias("postalCode")
   private String postalCode;
 
   private String country;
 
-  @Builder.Default
-  private Boolean isDefault = false;
+  @Builder.Default private Boolean isDefault = false;
 
   private Double latitude;
   private Double longitude;
@@ -59,10 +61,8 @@ public class Address {
   @OneToOne(fetch = FetchType.LAZY)
   private Restaurant restaurant;
 
-  @CreationTimestamp
-  private LocalDateTime createdAt;
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
+  @CreationTimestamp private LocalDateTime createdAt;
+  @UpdateTimestamp private LocalDateTime updatedAt;
 
   public String getFullAddress() {
     return Stream.of(streetAddress, city, state, postalCode, country)

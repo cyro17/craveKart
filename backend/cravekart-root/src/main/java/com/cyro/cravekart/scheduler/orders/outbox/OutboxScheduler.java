@@ -25,16 +25,17 @@ public class OutboxScheduler {
   @Scheduled(fixedDelayString = "${app.outbox.poll-interval-ms:5000}")
   @Transactional
   public void relay() {
-    List<OutboxEvent> pending = outboxEventRepository.findPendingEvents();
+    List<OutboxEvent> pendingEvents = outboxEventRepository.findPendingEvents();
 
-    if (pending.isEmpty()) return;
+    if (pendingEvents.isEmpty()) return;
 
-    for (OutboxEvent event : pending) {
+    for (OutboxEvent event : pendingEvents) {
       try {
-        kafkaTemplate.send(event.getTopic(), event.getPayload());
+        kafkaTemplate.send(event.getTopic(), event.getAggregateId(), event.getPayload());
         event.setStatus(OutboxEvent.OutboxStatus.PUBLISHED);
         event.setProcessedAt(LocalDateTime.now());
         log.debug("Published outbox event id {} type {}", event.getId(), event.getEventType());
+
       } catch (Exception ex) {
 
         event.setRetryCount(event.getRetryCount() + 1);

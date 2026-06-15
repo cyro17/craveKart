@@ -1,6 +1,5 @@
 package com.cyro.cravekart.controllers.dev;
 
-
 import com.cyro.cravekart.request.AdminCreateFoodRequest;
 import com.cyro.cravekart.service.AdminFoodService;
 import jakarta.validation.Valid;
@@ -19,8 +18,8 @@ public class AdminFoodController {
   private final AdminFoodService adminFoodService;
 
   @PostMapping
-  public ResponseEntity<?> createFood(@Valid @RequestBody AdminCreateFoodRequest request){
+  public ResponseEntity<?> createFood(@Valid @RequestBody AdminCreateFoodRequest request) {
+
     return new ResponseEntity<>(adminFoodService.createFood(request), HttpStatus.CREATED);
   }
-
 }
