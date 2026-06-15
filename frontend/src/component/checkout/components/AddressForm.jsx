@@ -19,7 +19,7 @@ const validationSchema = Yup.object({
     landmark: Yup.string(),
     city: Yup.string().required("City is required"),
     state: Yup.string().required("State is required"),
-    zipCode: Yup.string().required("Postal code is required"),
+    postalCode: Yup.string().required("Postal code is required"),
     country: Yup.string().required("Country is required"),
     deliveryInstruction: Yup.string(),
     isDefault: Yup.boolean(),
@@ -37,7 +37,7 @@ export default function AddressForm({ isOpen, onClose, onSave }) {
         landmark: "",
         city: "",
         state: "",
-        zipCode: "",
+        postalCode: "",
         country: "",
         deliveryInstruction: "",
     };
@@ -143,8 +143,8 @@ export default function AddressForm({ isOpen, onClose, onSave }) {
                                 {/* postal code + country */}
                                 <div className="grid xs:grid-col-1 sm:grid-cols-2 gap-3">
                                     <FormikTextField
-                                        name="zipCode"
-                                        label="Zipcode"
+                                        name="postalCode"
+                                        label="postalCode"
                                     />
                                     <FormikTextField
                                         name="country"

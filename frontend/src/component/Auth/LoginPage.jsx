@@ -2,6 +2,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
     Box,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider,
     IconButton,
     InputAdornment,
@@ -30,6 +34,11 @@ export default function LoginPage({ onSuccess, switchMode }) {
         });
     }
 
+    const [errorModal, setErrorModal] = useState({
+        open: false,
+        message: "",
+    });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -45,6 +54,17 @@ export default function LoginPage({ onSuccess, switchMode }) {
                 navigate("/");
             }, 1500);
         } catch (error) {
+            let message = "Something went wrong";
+            if (error?.status === 404) {
+                message = error?.message || "Invalid credentials";
+            } else if (error.status === 401)
+                message = "Invalid email or password";
+
+            setErrorModal({
+                open: true,
+                message,
+            });
+
             toast.error(error?.message || "Invalid Credentials", {
                 icon: "❌",
             });
@@ -83,6 +103,29 @@ export default function LoginPage({ onSuccess, switchMode }) {
                             fontSize: "18px",
                             fontWeight: "bold",
                             borderRadius: "12px",
+
+                            "& input": {
+                                color: "black",
+                                fontSize: "18px",
+                                fontWeight: "bold",
+                            },
+
+                            "& input:-webkit-autofill": {
+                                WebkitBoxShadow:
+                                    "0 0 0 1000px rgba(255,255,255,0.1) inset",
+                                WebkitTextFillColor: "black",
+                                borderRadius: "12px",
+                            },
+
+                            "& input:-webkit-autofill:hover": {
+                                WebkitBoxShadow:
+                                    "0 0 0 1000px rgba(255,255,255,0.1) inset",
+                            },
+
+                            "& input:-webkit-autofill:focus": {
+                                WebkitBoxShadow:
+                                    "0 0 0 1000px rgba(255,255,255,0.1) inset",
+                            },
                         },
                     }}
                     className="text-black"
@@ -99,6 +142,28 @@ export default function LoginPage({ onSuccess, switchMode }) {
                         "& .MuiOutlinedInput-root": {
                             backgroundColor: "rgba(255,255,255,0.05)",
                             borderRadius: "12px",
+                        },
+                        "& input": {
+                            color: "black",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                        },
+
+                        "& input:-webkit-autofill": {
+                            WebkitBoxShadow:
+                                "0 0 0 1000px rgba(255,255,255,0.1) inset",
+                            WebkitTextFillColor: "black",
+                            borderRadius: "12px",
+                        },
+
+                        "& input:-webkit-autofill:hover": {
+                            WebkitBoxShadow:
+                                "0 0 0 1000px rgba(255,255,255,0.1) inset",
+                        },
+
+                        "& input:-webkit-autofill:focus": {
+                            WebkitBoxShadow:
+                                "0 0 0 1000px rgba(255,255,255,0.1) inset",
                         },
                     }}
                     InputProps={{
@@ -163,6 +228,36 @@ export default function LoginPage({ onSuccess, switchMode }) {
                     Continue with Google
                 </Button>
             </Box>
+
+            <Dialog
+                open={errorModal.open}
+                onClose={() =>
+                    setErrorModal({
+                        ...errorModal,
+                        open: false,
+                    })
+                }
+            >
+                <DialogTitle className="text-red-500 text-3xl">
+                    Error
+                </DialogTitle>
+
+                <DialogContent>
+                    <Typography className="text-black font-bold">
+                        {errorModal.message}
+                    </Typography>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button
+                        onClick={() =>
+                            setErrorModal({ ...errorModal, open: false })
+                        }
+                    >
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

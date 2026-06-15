@@ -16,9 +16,13 @@ export const loginUser = createAsyncThunk(
             return { loginData, user };
 
         } catch (error) {
-            const message = error.response?.data?.message ||
-                "Login failed. Please try again.";
-            return rejectWithValue(message);
+            // const message = error.response?.data?.message ||
+            //     "Login failed. Please try again.";
+            return rejectWithValue({
+                status: error.response?.data.status,
+                error: error.response?.data.error,
+                message: error.response?.data.message
+            });
         }
     }
 );

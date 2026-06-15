@@ -5,67 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="795c0784-cbe3-43e8-bc7e-0e3e97950c1d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/cravekart/core/events/notification/PaymentSuccessEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/cravekart/core/events/notification/PaymentSuccessEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaConsumerConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaConsumerConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaProducerConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaProducerConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaTopicConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/kafka/KafkaTopicConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/security/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/security/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminRestaurantControllers.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminRestaurantControllers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminUserControllers.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminUserControllers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/listener/PaymentResultListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/listener/PaymentResultListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/ContactInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/ContactInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/repository/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/repository/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/repository/RestaurantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/repository/RestaurantRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/response/AddressResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/response/AddressResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/OrderService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cravekart-root/.idea/data_source_mapping.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cravekart-root/src/main/resources/db/migration/V4__add_food_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/.idea/sqldialects.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/Flyway/FlyConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/config/Flyway/FlyConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminFoodController.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/controllers/dev/AdminFoodController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/OutboxEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/models/OutboxEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/OutboxService.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/OutboxService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/AdminFoodServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/AdminFoodServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/OrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantPartnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantPartnerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/OutboxServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/OutboxServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/RestaurantServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/specification/RestaurantSpecification.java" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/java/com/cyro/cravekart/specification/RestaurantSpecification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaConsumerConfiguration.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaConsumerConfiguration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaProducerConfiguration.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaProducerConfiguration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaTopicConfiguration.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/kafka/KafkaTopicConfiguration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/security/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/security/AuthService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/RestaurantPartnerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/RestaurantPartnerController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/StripeWebhookHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/StripeWebhookHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/dev/AdminRestaurantControllers.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/dev/AdminRestaurantControllers.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/dev/AdminUserControllers.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/controllers/dev/AdminUserControllers.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/listener/OrderPaymentListener.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/listener/PaymentListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/listener/PaymentListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/listener/PaymentResultListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/listener/PaymentResultListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/Payment$PaymentBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/Payment$PaymentBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/Payment.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/Payment.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/enums/OrderStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/enums/OrderStatus.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/models/enums/PaymentStatus.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/repository/OrderRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/repository/OrderRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/repository/PaymentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/repository/PaymentRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/AddressResponse$AddressResponseBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/AddressResponse$AddressResponseBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/AddressResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/AddressResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/OrderResponse$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/OrderResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/response/OrderResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/OrderService.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/OrderService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/RestaurantPartnerService.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/RestaurantPartnerService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/SseEmitterService.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/SseEmitterService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/SseEmitterServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/SseEmitterServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/NotificationService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/src/main/resources/db/migration/V3__add_outbox_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/src/main/resources/db/migration/V3__add_outbox_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/Flyway/FlyConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/config/Flyway/FlyConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/AdminFoodServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/AdminFoodServiceImpl.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/OrderServiceImpl$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/OrderServiceImpl$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/OrderServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/OrderServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/RestaurantPartnerServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/RestaurantPartnerServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/UserServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/specification/RestaurantSpecification.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/specification/RestaurantSpecification.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/RestaurantServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/classes/com/cyro/cravekart/service/impl/RestaurantServiceImpl.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/target/cravekart-0.0.1-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/cravekart-0.0.1-SNAPSHOT.jar.original" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cravekart-root/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/cravekart-root/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notification-service/src/main/java/com/cravekart/notification_service/handler/NotificationConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/notification-service/src/main/java/com/cravekart/notification_service/handler/NotificationConsumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/State/order/orderThunk.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/State/order/orderThunk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminOrders.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/AdminOrders.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/component/OrderDrawer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/component/OrderDrawer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/State/Authentication/AuthThunks.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/State/Authentication/AuthThunks.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/component/Auth/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/component/Auth/LoginPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,36 +48,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.CraveKartApplication.executor": "Run",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/cyro_dev/codes/project/craveKart/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.CraveKartApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/cyro_dev/codes/project/craveKart/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="CraveKartApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="cravekart" />
@@ -128,7 +91,6 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>
