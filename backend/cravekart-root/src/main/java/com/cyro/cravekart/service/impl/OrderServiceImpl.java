@@ -40,52 +40,23 @@ public class OrderServiceImpl implements OrderService {
   @Override
   @Transactional
   public OrderResponse placeOrder(PlaceOrderRequest request, String idempotencyKey) {
-
-    /* ***********************  Idempotency Check *********************************** */
-    if (idempotencyKey != null) {
-      Optional<Order> existing = orderRepository.findByIdempotencyKey(idempotencyKey);
-      if (existing.isPresent()) {
-        log.info(
-            "Duplicate request for idempotency key {}, returning existing order {}",
-            idempotencyKey,
-            existing.get().getId());
-        return buildOrderResponse(existing.get());
-      }
-    }
-
-    // fetch customer
+    Optional<OrderResponse> idempotentResponse = checkIdempotency(idempotencyKey);
+    if (idempotentResponse.isPresent()) return idempotentResponse.get();
 
     Customer customer = authService.getCustomer();
-
-    log.debug("*************** fetched address id : {}************** ", request.getAddressId());
-
-    // get cart
-    Cart cart =
-        cartRepository
-            .findByCustomerIdWithItems(customer.getId())
-            .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
-
-    // check if cart is empty
-    if (cart.getItems().isEmpty()) {
-      throw new BadRequestException("cart is empty");
-    }
-
-    // fetch restaurant
+    Cart cart = fetchValidatedCart(customer.getId());
+    String deliveryAddress = resolveDeliveryAddress(request, customer);
     Restaurant restaurant = cart.getItems().get(0).getFood().getRestaurant();
 
-    // delivery address
-    String deliveryAddressLine = this.resolveDeliveryAddress(request, customer);
-
-    // creating order
+    // Step 1 — build order shell
     Order order =
         Order.builder()
             .customerId(customer.getId())
             .customerName(customer.getUser().getUsername())
             .customerPhone(customer.getUser().getContact().getMobile())
-            .deliveryAddressLine(deliveryAddressLine)
+            .deliveryAddressLine(deliveryAddress)
             .restaurantId(restaurant.getId())
             .restaurantName(restaurant.getName())
-            //            .restaurantAddress(restaurant.getAddress().getStreetAddress())
             .restaurantAddress(
                 restaurant.getAddress() != null
                     ? restaurant.getAddress().getStreetAddress()
@@ -95,71 +66,24 @@ public class OrderServiceImpl implements OrderService {
             .idempotencyKey(idempotencyKey)
             .build();
 
-    // creating order items
-    List<OrderItem> orderItems =
-        cart.getItems().stream()
-            .map(
-                cartItem ->
-                    OrderItem.builder()
-                        .order(order)
-                        .foodName(cartItem.getFood().getName())
-                        .foodPrice(cartItem.getFood().getPrice())
-                        .quantity(cartItem.getQuantity())
-                        .totalPrice(cartItem.getTotalPrice())
-                        .imageUrl(cartItem.getImageUrl())
-                        .build())
-            .toList();
+    // Step 2 — build items (no order reference yet)
+    List<OrderItem> items = buildOrderItems(cart, order);
+    order.setOrderItems(items);
+    order.setTotalItems(items.stream().mapToInt(OrderItem::getQuantity).sum());
 
-    order.setOrderItems(orderItems);
-    order.setTotalItems(orderItems.stream().mapToInt(OrderItem::getQuantity).sum());
-
-    // apply voucher
-    if (request.getVoucherCode() != null) {
-      this.applycoupon(order, request.getVoucherCode());
-    }
-
-    // calculate total
+    // Step 3 — apply voucher + calculate totals BEFORE saving
+    applyVoucherIfPresent(order, request.getVoucherCode());
     calculateOrderTotals(order);
 
-    Order savedOrder = orderRepository.save(order); // save order to DB
-    log.info("Order saved, id = {}", savedOrder.getId());
+    // Step 4 — ONE save — cascade saves items CascadeType.ALL is set
+    Order savedOrder = orderRepository.save(order);
 
-    this.queueOrderCreatedEvent(savedOrder); // order-place event queued
-
-    // clear cart
+    log.info("Order saved id={}", savedOrder.getId());
+    queueOrderCreatedEvent(savedOrder);
     cartRepository.deleteByCustomerId(customer.getId());
 
     return buildOrderResponse(savedOrder);
   }
-
-  // restaurant partner
-
-  //  @Override
-  //  @Transactional
-  //  public void markAsConfirmed(Long orderId) {
-  //    //    RestaurantPartner restaurantPartner = authService.getRestaurantPartner();
-  //    Order order =
-  //        orderRepository
-  //            .findById(orderId)
-  //            .orElseThrow(() -> new ResourceNotFoundException("Order does not exist"));
-  //    //    if (!order.getRestaurantId().equals(restaurantPartner.getRestaurant().getId())) {
-  //    //      throw new ForbiddenException("Order does not belong to your restaurant");
-  //    //    }
-  //
-  //    if (order.getOrderStatus() != OrderStatus.PAYMENT_PENDING) {
-  //      throw new BadRequestException("Pending payment...");
-  //    }
-  //
-  //    order.setOrderStatus(OrderStatus.CONFIRMED);
-  //    order.setAcceptedAt(LocalDateTime.now());
-  //
-  //    log.info("*****************Order marked as confirmed, id = {}*********************",
-  // orderId);
-  //
-  //    orderRepository.save(order);
-  //
-  //    log.info("Order {} marked as CONFIRMED", orderId);
-  //  }
 
   @Override
   @Transactional
@@ -308,6 +232,56 @@ public class OrderServiceImpl implements OrderService {
 
   //  create order publisher
 
+  private Optional<OrderResponse> checkIdempotency(String idempotencyKey) {
+    if (idempotencyKey == null) return Optional.empty();
+
+    return orderRepository
+        .findByIdempotencyKey(idempotencyKey)
+        .map(
+            existing -> {
+              log.info(
+                  "Duplicate request for idempotency key {}, returning existing order {}",
+                  idempotencyKey,
+                  existing.getId());
+              return buildOrderResponse(existing);
+            });
+  }
+
+  private Cart fetchValidatedCart(Long customerId) {
+    Cart cart =
+        cartRepository
+            .findByCustomerIdWithItems(customerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Cart not found for customer"));
+
+    if (cart.getItems().isEmpty()) {
+      throw new BadRequestException("Cart is empty");
+    }
+
+    return cart;
+  }
+
+  private List<OrderItem> buildOrderItems(Cart cart, Order order) {
+    // order reference is set after Order is attached in buildOrder
+    return cart.getItems().stream()
+        .map(
+            cartItem ->
+                OrderItem.builder()
+                    .order(order)
+                    .foodName(cartItem.getFood().getName())
+                    .foodPrice(cartItem.getFood().getPrice())
+                    .quantity(cartItem.getQuantity())
+                    .totalPrice(cartItem.getTotalPrice())
+                    .imageUrl(cartItem.getImageUrl())
+                    .build())
+        .toList();
+  }
+
+  private void applyVoucherIfPresent(Order order, String voucherCode) {
+    if (voucherCode != null) {
+      this.applyCoupon(order, voucherCode);
+    }
+  }
+
   private void queueOrderCreatedEvent(Order savedOrder) {
 
     // amount
@@ -367,7 +341,7 @@ public class OrderServiceImpl implements OrderService {
     order.setPlatformFee(commission);
   }
 
-  private void applycoupon(Order order, String couponCode) {
+  private void applyCoupon(Order order, String couponCode) {
     if ("NEW50".equalsIgnoreCase(couponCode)) {
       order.setDiscount(new BigDecimal("50"));
     }

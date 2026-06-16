@@ -17,7 +17,7 @@ public class OrderScheduler {
   private final OrderRepository orderRepository;
   private final SseEmitterService sseEmitterService;
 
-  @Scheduled(fixedRate = 60000)
+  @Scheduled(fixedRate = 3000)
   public void autoCancelUnacceptedOrders() {
     LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
     List<Order> orders =

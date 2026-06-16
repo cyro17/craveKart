@@ -10,8 +10,8 @@ import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
 import com.cyro.cravekart.models.Order;
 import com.cyro.cravekart.publishers.OrderEventPublisher;
 import com.cyro.cravekart.service.CustomerService;
+import com.cyro.cravekart.service.OrderService;
 import com.cyro.cravekart.service.SseEmitterService;
-import com.cyro.cravekart.service.impl.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PaymentResultListener {
 
-  private final OrderServiceImpl orderService;
+  private final OrderService orderService;
   private final SseEmitterService sseEmitterService;
   private final CustomerService customerService;
   private final OrderEventPublisher orderEventPublisher;
@@ -31,7 +31,10 @@ public class PaymentResultListener {
 
   @KafkaListener(topics = KafkaTopicConfiguration.PAYMENT_SUCCESS, groupId = "order-service")
   public void handlePaymentSucceeded(PaymentSuccessEvent event) {
+
     log.info("Payment succeeded for orderId: {}", event.getOrderId());
+
+    //    step - 1 : confirm order + write order-confirmed outbox row (same txn)
     Order order = orderService.markAsConfirmed(event.getOrderId());
 
     CustomerDto customer = customerService.getCustomerById(event.getCustomerId());
@@ -46,6 +49,7 @@ public class PaymentResultListener {
             .totalPrice(event.getAmount().toString())
             .estimatedDeliveryTime("30-45 minutes")
             .build();
+
     orderEventPublisher.publishOrderPaid(orderConfirmedEvent);
 
     NewOrderEvent newOrderEvent =
@@ -58,9 +62,6 @@ public class PaymentResultListener {
             .deliveryAddress(order.getDeliveryAddressLine())
             .totalPrice(order.getTotalPrice())
             .build();
-
-    kafkaTemplate.send(
-        KafkaTopicConfiguration.ORDER_CONFIRMED, order.getRestaurantId().toString(), newOrderEvent);
 
     log.info(
         "Published order-confirmed for orderId: {} restaurandId: {}",
