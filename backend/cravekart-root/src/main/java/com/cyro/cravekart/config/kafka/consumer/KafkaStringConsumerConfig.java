@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -26,27 +27,17 @@ public class KafkaStringConsumerConfig {
   @Value("${app.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
-  public ConsumerFactory<String, String> stringConsumerFactory() {
-    Map<String, Object> props = new HashMap<>();
-
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-    props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    return new DefaultKafkaConsumerFactory<>(props);
-  }
-
   @Bean
   public ConcurrentKafkaListenerContainerFactory<String, String>
-      stringKafkaListenerContainerFactory(KafkaTemplate<String, Object> kafkaTemplate) {
+      stringKafkaListenerContainerFactory(
+          @Qualifier("outboxKafkaTemplate") KafkaTemplate<String, String> outboxKafkaTemplate) {
 
     DeadLetterPublishingRecoverer recoverer =
         new DeadLetterPublishingRecoverer(
-            kafkaTemplate,
+            outboxKafkaTemplate,
             (record, ex) -> {
               log.error("String consumer DLT: topic{}, error {}", record.topic(), ex.getMessage());
-              return new TopicPartition(record.topic(), record.partition());
+              return new TopicPartition(record.topic() + ".DLT", -1);
             });
 
     ExponentialBackOffWithMaxRetries backOffWithMaxRetries =
@@ -60,5 +51,16 @@ public class KafkaStringConsumerConfig {
     factory.setConsumerFactory(stringConsumerFactory());
     factory.setCommonErrorHandler(new DefaultErrorHandler(recoverer, backOffWithMaxRetries));
     return factory;
+  }
+
+  public ConsumerFactory<String, String> stringConsumerFactory() {
+    Map<String, Object> props = new HashMap<>();
+
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+    return new DefaultKafkaConsumerFactory<>(props);
   }
 }

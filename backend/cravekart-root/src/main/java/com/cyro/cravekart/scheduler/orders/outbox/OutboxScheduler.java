@@ -20,7 +20,7 @@ public class OutboxScheduler {
   private static final int MAX_RETRIES = 3;
 
   private final OutboxEventRepository outboxEventRepository;
-  private final KafkaTemplate<String, Object> kafkaTemplate;
+  private final KafkaTemplate<String, String> outboxKafkaTemplate;
 
   @Scheduled(fixedDelayString = "${app.outbox.poll-interval-ms:5000}")
   @Transactional
@@ -31,7 +31,7 @@ public class OutboxScheduler {
 
     for (OutboxEvent event : pendingEvents) {
       try {
-        kafkaTemplate.send(event.getTopic(), event.getAggregateId(), event.getPayload());
+        outboxKafkaTemplate.send(event.getTopic(), event.getAggregateId(), event.getPayload());
         event.setStatus(OutboxEvent.OutboxStatus.PUBLISHED);
         event.setProcessedAt(LocalDateTime.now());
         log.debug("Published outbox event id {} type {}", event.getId(), event.getEventType());

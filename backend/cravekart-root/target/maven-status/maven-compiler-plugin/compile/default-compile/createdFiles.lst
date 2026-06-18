@@ -23,7 +23,6 @@ com/cyro/cravekart/exception/FoodException.class
 com/cyro/cravekart/events/payment/PaymentCancelledEvent$PaymentCancelledEventBuilder.class
 com/cyro/cravekart/response/CreateCategoryResponse.class
 com/cyro/cravekart/models/Food$FoodBuilder.class
-com/cyro/cravekart/listener/PaymentInitiatedListener.class
 com/cyro/cravekart/models/OrderItem.class
 com/cyro/cravekart/models/IngredientItem.class
 com/cyro/cravekart/response/UserResponse$UserResponseBuilder.class

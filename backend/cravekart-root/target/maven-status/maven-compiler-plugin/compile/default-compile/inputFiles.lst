@@ -66,8 +66,6 @@
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/exception/UserException.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/exception/error/ApiError.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/NewOrderListener.java
-/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/OrderPaymentListener.java
-/Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/PaymentInitiatedListener.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/PaymentListener.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/PaymentResultListener.java
 /Users/cyro_dev/codes/project/craveKart/backend/cravekart-root/src/main/java/com/cyro/cravekart/listener/RestaurantSagaListener.java

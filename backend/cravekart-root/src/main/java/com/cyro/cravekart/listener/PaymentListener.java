@@ -19,6 +19,7 @@ import com.cyro.cravekart.service.OrderService;
 import com.cyro.cravekart.service.SseEmitterService;
 import com.cyro.cravekart.service.StripeService;
 import com.cyro.cravekart.service.impl.OutboxServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class PaymentListener {
   private final CustomerService customerService;
   private final SseEmitterService sseEmitterService;
   private final OutboxServiceImpl outboxService;
+  private final ObjectMapper objectMapper;
 
   // ============== Kafka Listeners ================================
 
@@ -48,22 +50,35 @@ public class PaymentListener {
       groupId = "payment-service",
       containerFactory = "stringKafkaListenerContainerFactory")
   public void handleOrderCreated(ConsumerRecord<String, String> record) {
-    log.info("Received order-created event for orderId = {}", event.getOrderId());
+
+    //    step -1 : Deserialize event
+    OrderCreatedEvent event;
     try {
+      //      log.info("Received Kafka message: {}", record.value());
+      event = objectMapper.readValue(record.value(), OrderCreatedEvent.class);
+    } catch (Exception e) {
+      log.error("Failed to deserialize OrderCreatedEvent: {}", record.value(), e);
+      throw new RuntimeException("Deserialization failed", e);
+    }
+
+    //    log.info("Received order-created event for orderId = {}", event.getOrderId());
+    try {
+      //            step -2 : create payment intent
       PaymentIntentResult result = createStripePaymentIntent(event);
       savePayment(event, result);
 
-      outboxService.save(
-          "payment-initiated",
-          event.getOrderId().toString(),
-          "PaymentInitiatedEvent",
-          buildPaymentInitiatedEvent(event, result));
+      // step - 3: push ClientSecret to customer
 
-    } catch (Exception ex) {
+      sseEmitterService.pushClientSecret(
+          event.getOrderId(), event.getCustomerId(), result.getClientSecret());
+      log.info("Payment intent created + client secret pushed for order id {}", event.getOrderId());
+
+    } catch (StripeException ex) {
       log.error(
           "Failed to create payment for orderId = {}, reason = {}",
           event.getOrderId(),
           ex.getMessage());
+
       publishPaymentFailed(event.getOrderId(), event.getCustomerId(), "Stripe creation failed");
     }
   }

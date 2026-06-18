@@ -47,6 +47,19 @@ public class CartServiceImpl implements CartService {
             .findById(request.getFoodId())
             .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 
+    if (!cart.getItems().isEmpty()) {
+      Long cartRestaurantId = cart.getRestaurant().getId();
+      if (!cartRestaurantId.equals(food.getRestaurant().getId())) {
+        throw new BadRequestException(
+            "Your cart contains items from "
+                + cart.getRestaurant().getName()
+                + ". Clear your cart to order from "
+                + food.getRestaurant().getName());
+      } else {
+        cart.setRestaurant(food.getRestaurant());
+      }
+    }
+
     String restaurantName = food.getRestaurant().getName();
     List<String> images = food.getImages();
 
@@ -77,8 +90,13 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public void clearCart() {
-    Customer user = authService.getCustomer();
-    cartRepository.deleteByCustomerId(user.getId());
+    Customer customer = authService.getCustomer();
+    Cart cart = getCartOrThrow();
+    cart.getItems().clear();
+    cart.setRestaurant(null);
+    cart.setCartTotal(BigDecimal.ZERO);
+    cartRepository.save(cart);
+    //    cartRepository.deleteByCustomerId(customer.getId());
   }
 
   @Override
@@ -96,6 +114,9 @@ public class CartServiceImpl implements CartService {
             .findById(cartItemId)
             .orElseThrow(() -> new BadRequestException("Item not found"));
     cart.getItems().remove(cartItem);
+
+    if (cart.getItems().isEmpty()) cart.setRestaurant(null);
+    recalculateCartTotal(cart);
     cartRepository.save(cart);
   }
 
@@ -143,7 +164,12 @@ public class CartServiceImpl implements CartService {
             .toList();
 
     PriceBreakdown pricing = calculateCartPricing(cart);
-    return CartResponse.builder().cartId(cart.getId()).items(items).pricing(pricing).build();
+    return CartResponse.builder()
+        .cartId(cart.getId())
+        .restaurantName(cart.getItems().getFirst().getFood().getRestaurant().getName())
+        .items(items)
+        .pricing(pricing)
+        .build();
   }
 
   private Cart getCartOrCreateNew() {

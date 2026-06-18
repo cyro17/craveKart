@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +17,8 @@ public class OrderEventPublisher {
     public void publishOrderPaid(OrderConfirmedEvent event){
         String key = event.getOrderId().toString();
 
-        kafkaTemplate.send(KafkaTopicConfiguration.NOTIF_ORDER_PAID,
+        kafkaTemplate.send(
+                KafkaTopicConfiguration.NOTIF_ORDER_PAID,
                 key,
                 event)
                 .whenComplete((result, ex)->{

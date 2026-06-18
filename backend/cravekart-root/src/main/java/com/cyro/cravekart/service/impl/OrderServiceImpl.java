@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
   private final AuthContextService authService;
   private final OrderRepository orderRepository;
   private final OutboxServiceImpl outboxService;
+  private final CartServiceImpl cartService;
 
   // customer
   @Override
@@ -47,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
     Cart cart = fetchValidatedCart(customer.getId());
     String deliveryAddress = resolveDeliveryAddress(request, customer);
     Restaurant restaurant = cart.getItems().get(0).getFood().getRestaurant();
+    log.info("restaurant placed order to : {} ", restaurant.getName());
 
     // Step 1 — build order shell
     Order order =
@@ -77,8 +79,9 @@ public class OrderServiceImpl implements OrderService {
 
     // Step 4 — ONE save — cascade saves items CascadeType.ALL is set
     Order savedOrder = orderRepository.save(order);
-
+    cartService.clearCart();
     log.info("Order saved id={}", savedOrder.getId());
+    // step 5 - saves event to outbox
     queueOrderCreatedEvent(savedOrder);
     cartRepository.deleteByCustomerId(customer.getId());
 
@@ -108,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
         KafkaTopicConfiguration.ORDER_CONFIRMED,
         savedOrder.getRestaurantId().toString(),
         "NewOrderEvent",
-        buildOrderResponse(savedOrder));
+        buildNewOrderEvent(savedOrder));
 
     return savedOrder;
   }
@@ -304,7 +307,7 @@ public class OrderServiceImpl implements OrderService {
             .amount(amountInPaise)
             .build();
 
-    outboxService.save("order-created", "OrderCreatedEvent", savedOrder.getId().toString(), event);
+    outboxService.save("order-created", savedOrder.getId().toString(), "OrderCreatedEvent", event);
     log.info("Outbox event queued for orderId={}", savedOrder.getId());
   }
 

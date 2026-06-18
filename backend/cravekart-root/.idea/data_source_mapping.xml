@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/main/resources/db/migration/V3__add_outbox_table.sql" value="e1a35f87-4797-4adf-9c35-2e65e6060e06" />
-  </component>
-</project>

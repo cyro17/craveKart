@@ -3,7 +3,6 @@ package com.cyro.cravekart.listener;
 import com.cravekart.core.events.notification.OrderConfirmedEvent;
 import com.cyro.cravekart.config.kafka.KafkaTopicConfiguration;
 import com.cyro.cravekart.dto.CustomerDto;
-import com.cyro.cravekart.events.order.NewOrderEvent;
 import com.cyro.cravekart.events.payment.PaymentCancelledEvent;
 import com.cyro.cravekart.events.payment.PaymentFailedEvent;
 import com.cyro.cravekart.events.payment.PaymentSuccessEvent;
@@ -37,9 +36,12 @@ public class PaymentResultListener {
     //    step - 1 : confirm order + write order-confirmed outbox row (same txn)
     Order order = orderService.markAsConfirmed(event.getOrderId());
 
+    //    step - 2 : push payment received notification to customer via SSE
+    sseEmitterService.pushPaymentReceived(event.getCustomerId(), event.getOrderId());
+
     CustomerDto customer = customerService.getCustomerById(event.getCustomerId());
 
-    // send out event to notification service to send email / notification
+    //    step - 3 : fire email notification service to send email / notification
     OrderConfirmedEvent orderConfirmedEvent =
         OrderConfirmedEvent.builder()
             .orderId(event.getOrderId())
@@ -52,21 +54,9 @@ public class PaymentResultListener {
 
     orderEventPublisher.publishOrderPaid(orderConfirmedEvent);
 
-    NewOrderEvent newOrderEvent =
-        NewOrderEvent.builder()
-            .orderId(order.getId())
-            .customerId(order.getCustomerId())
-            .restaurantId(order.getRestaurantId())
-            .customerName(order.getCustomerName())
-            .restaurantName(order.getRestaurantName())
-            .deliveryAddress(order.getDeliveryAddressLine())
-            .totalPrice(order.getTotalPrice())
-            .build();
-
     log.info(
-        "Published order-confirmed for orderId: {} restaurandId: {}",
-        order.getId(),
-        order.getRestaurantId());
+        "Order {} confirmed; restaurant saga + notification dispatched",
+        orderConfirmedEvent.getOrderId());
   }
 
   @KafkaListener(topics = KafkaTopicConfiguration.PAYMENT_FAILED, groupId = "order-service")
