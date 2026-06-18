@@ -189,5 +189,3 @@ The service starts on `http://localhost:9091`. Flyway applies migrations automat
 ---
 
 ## License
-
-MIT
